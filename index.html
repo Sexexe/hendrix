@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#1a1a1a">
 <title>SAMPLER HENDRIX 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   
@@ -24,7 +25,6 @@
   
   .container { max-width: 650px; margin: 0 auto; }
   
-  /* Header */
   .header { 
     text-align: center; 
     padding: 16px 0; 
@@ -37,7 +37,6 @@
     margin-bottom: 16px;
   }
   
-  /* Notification Banner */
   .notification {
     background: #1a1a1a;
     border-left: 3px solid #d97706;
@@ -92,7 +91,6 @@
     color: #b0b0b0;
   }
   
-  /* Panels */
   .panel { 
     background: #1a1a1a;
     border: 1px solid #333;
@@ -101,7 +99,6 @@
     margin-bottom: 12px;
   }
   
-  /* Canvas */
   canvas { 
     width: 100%; 
     height: 160px; 
@@ -113,7 +110,6 @@
     touch-action: none;
   }
   
-  /* Pads Grid */
   .pads { 
     display: grid; 
     grid-template-columns: repeat(5, 1fr); 
@@ -188,7 +184,6 @@
     color: #aaa;
   }
   
-  /* Transport Controls */
   .transport { 
     display: grid; 
     grid-template-columns: repeat(4, 1fr); 
@@ -261,7 +256,6 @@
     border-color: #7f1d1d;
   }
   
-  /* Actions Grid */
   .actions { 
     display: grid; 
     grid-template-columns: repeat(3, 1fr); 
@@ -312,7 +306,6 @@
   
   input[type=file] { display: none; }
   
-  /* Status */
   .status { 
     text-align: center; 
     color: #888;
@@ -324,7 +317,6 @@
     white-space: nowrap;
   }
   
-  /* Effects Grid */
   .effects { 
     display: grid; 
     grid-template-columns: repeat(2, 1fr); 
@@ -465,7 +457,19 @@
     transition: width 0.05s;
   }
   
-  /* Responsive */
+  .quality-info {
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid #166534;
+    border-radius: 6px;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 11px;
+    color: #86efac;
+    display: none;
+  }
+  
+  .quality-info.show { display: block; }
+  
   @media (max-width: 500px) { 
     .pads { grid-template-columns: repeat(2, 1fr); gap: 8px; } 
     .pad { min-height: 75px; }
@@ -484,10 +488,9 @@
 <div class="container">
   <div class="header">SAMPLER HENDRIX 5.0</div>
   
-  <!-- Notification Banner -->
   <div class="notification" id="micNotification">
     <button class="notification-close" onclick="closeNotification()">×</button>
-    <div class="notification-title">⚠️ Microphone Setup Required</div>
+    <div class="notification-title">️ Microphone Setup Required</div>
     <div class="notification-text">How to enable the microphone on Android: Settings → Apps → Chrome → Permissions → Microphone → Enable permission</div>
     <div class="notification-text">Как включить микрофон на Android: Настройки → Приложения → Chrome → Разрешения → Микрофон → Включить разрешение</div>
   </div>
@@ -495,6 +498,7 @@
   <div class="panel">
     <canvas id="wave"></canvas>
     <div class="selection-info" id="selInfo">Tap and drag to select</div>
+    <div class="quality-info" id="qualityInfo"></div>
   </div>
   
   <div class="panel">
@@ -519,7 +523,7 @@
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Chop</button>
       <button id="resetBtn" disabled>↺ Reset</button>
-      <button id="exportBtn" disabled> Save</button>
+      <button id="exportBtn" disabled>💾 Save</button>
       <button id="recMixBtn" class="rec-mix">⏺ Rec Mix</button>
       <button id="mergeBtn" class="merge" disabled>🔗 Merge</button>
       <button id="clearBtn" disabled>🗑 Clear</button>
@@ -559,13 +563,21 @@ let isLooping = false;
 let isRecording = false;
 let recStream = null, recMediaRecorder = null;
 let recChunks = [], recStartTime = 0, recTimerInterval = null;
+let recAudioContext = null, recScriptProcessor = null, recSourceNode = null;
 
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 
 const activeChains = new Map();
 let rafId = null;
 
-// === NOTIFICATION ===
+// === TELEGRAM WEB APP ===
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+  console.log('Telegram WebApp initialized');
+}
+
 function checkNotification() {
   const dismissed = localStorage.getItem('micNotificationDismissed');
   if (!dismissed) {
@@ -578,7 +590,6 @@ function closeNotification() {
   localStorage.setItem('micNotificationDismissed', 'true');
 }
 
-// === INITIALIZATION ===
 function init() {
   checkNotification();
   
@@ -586,7 +597,10 @@ function init() {
     window.addEventListener('click', function firstClick() {
       if (!audioCtx) {
         try {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+            sampleRate: 44100,
+            latencyHint: 'interactive'
+          });
         } catch (e) {
           console.error('AudioContext error:', e);
         }
@@ -606,9 +620,18 @@ function init() {
 
 function ensureCtx() {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+      sampleRate: 44100,
+      latencyHint: 'interactive'
+    });
   }
   return audioCtx;
+}
+
+function showQualityInfo(text) {
+  $('qualityInfo').textContent = text;
+  $('qualityInfo').classList.add('show');
+  setTimeout(() => $('qualityInfo').classList.remove('show'), 5000);
 }
 
 function initPads() {
@@ -671,16 +694,11 @@ $('fileInput').onchange = async e => {
   } catch (err) { setStatus('Error: ' + err.message); }
 };
 
-// === RECORDING ===
+// === ЗАПИСЬ С ВЫСОКИМ КАЧЕСТВОМ ===
 $('recBtn').addEventListener('click', async function(e) {
   try {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setStatus('Microphone not supported');
-      return;
-    }
-    
-    if (!window.MediaRecorder) {
-      setStatus('Recording not supported');
       return;
     }
     
@@ -696,17 +714,57 @@ $('recBtn').addEventListener('click', async function(e) {
     
     setStatus('Requesting mic...');
     
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    // Запрашиваем микрофон с максимальным качеством
+    const stream = await navigator.mediaDevices.getUserMedia({ 
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+        channelCount: 1,
+        sampleRate: 44100
+      }
+    }).catch(err => {
+      console.warn('High quality failed, trying basic:', err);
+      return navigator.mediaDevices.getUserMedia({ audio: true });
+    });
+    
+    const audioTrack = stream.getAudioTracks()[0];
+    const settings = audioTrack.getSettings();
+    console.log('Audio settings:', settings);
+    showQualityInfo(`Sample Rate: ${settings.sampleRate || 'unknown'} Hz | Channels: ${settings.channelCount || 1}`);
     
     recStream = stream;
     recChunks = [];
-    recMediaRecorder = new MediaRecorder(stream);
+    
+    // Проверяем поддержку MediaRecorder с высоким битрейтом
+    const mimeTypes = [
+      'audio/webm;codecs=opus;bitrate=128000',
+      'audio/webm;codecs=opus',
+      'audio/webm',
+      'audio/mp4'
+    ];
+    
+    let selectedMime = '';
+    for (const mime of mimeTypes) {
+      if (MediaRecorder.isTypeSupported(mime)) {
+        selectedMime = mime;
+        break;
+      }
+    }
+    
+    console.log('Using MIME type:', selectedMime);
+    
+    recMediaRecorder = new MediaRecorder(stream, {
+      mimeType: selectedMime,
+      audioBitsPerSecond: 128000
+    });
     
     recMediaRecorder.ondataavailable = (e) => {
       if (e.data && e.data.size > 0) recChunks.push(e.data);
     };
     
     recMediaRecorder.onerror = (e) => {
+      console.error('MediaRecorder error:', e);
       setStatus('Recording error');
       stopRecording();
     };
@@ -726,21 +784,22 @@ $('recBtn').addEventListener('click', async function(e) {
       setStatus('Processing...');
       
       try {
-        const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
+        const blob = new Blob(recChunks, { type: selectedMime || 'audio/webm' });
         const arr = await blob.arrayBuffer();
         const buffer = await audioCtx.decodeAudioData(arr);
         
         slots[activeSlot] = buffer;
         selection = null;
         drawWave(); updatePads(); updateTransportButtons();
-        setStatus(`Recorded ${buffer.duration.toFixed(1)}s`);
+        setStatus(`Recorded ${buffer.duration.toFixed(1)}s @ ${buffer.sampleRate}Hz`);
       } catch (err) {
+        console.error('Processing error:', err);
         setStatus('Error: ' + err.message);
       }
       resetRecordingUI();
     };
     
-    recMediaRecorder.start();
+    recMediaRecorder.start(100);
     isRecording = true;
     recStartTime = Date.now();
     
@@ -752,6 +811,7 @@ $('recBtn').addEventListener('click', async function(e) {
     recTimerInterval = setInterval(updateRecTimer, 100);
     
   } catch (err) {
+    console.error('Recording error:', err);
     if (err.name === 'NotAllowedError') {
       setStatus('Permission denied - enable mic in settings');
     } else if (err.name === 'NotFoundError') {
@@ -802,8 +862,13 @@ async function startRecordingMix() {
     mixStreamDest = audioCtx.createMediaStreamDestination();
     mixChunks = [];
     activeChains.forEach(d => d.chain.outputGain.connect(mixStreamDest));
-    const mt = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
-    mixRecorder = new MediaRecorder(mixStreamDest.stream, { mimeType: mt });
+    const mt = MediaRecorder.isTypeSupported('audio/webm;codecs=opus;bitrate=192000') 
+      ? 'audio/webm;codecs=opus;bitrate=192000' 
+      : 'audio/webm;codecs=opus';
+    mixRecorder = new MediaRecorder(mixStreamDest.stream, { 
+      mimeType: mt,
+      audioBitsPerSecond: 192000
+    });
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
     mixRecorder.start(100);
     isRecordingMix = true; mixStartTime = Date.now();
@@ -865,7 +930,6 @@ function f32ToI16(f) {
   return i;
 }
 
-// === AUDIO CHAIN ===
 function createChain(ac, buffer, opts) {
   const source = ac.createBufferSource();
   source.buffer = buffer;
