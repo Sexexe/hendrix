@@ -5,80 +5,503 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0a0a0a">
+<meta name="theme-color" content="#1a1a1a">
 <title>SAMPLER HENDRIX 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0a; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 8px env(safe-area-inset-bottom) 8px; overflow-x: hidden; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-  .container { max-width: 600px; margin: 0 auto; }
-  .header { text-align: center; padding: 12px 0; font-size: 18px; font-weight: 600; color: #fff; letter-spacing: 0.5px; }
-  .panel { background: #1a1a1a; border-radius: 12px; padding: 12px; margin-bottom: 8px; }
-  canvas { width: 100%; height: 140px; background: #000; border-radius: 8px; cursor: crosshair; display: block; touch-action: none; }
-  .pads { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-  .pad { aspect-ratio: 1; background: #2a2a2a; border: 2px solid #333; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.1s; position: relative; min-height: 60px; }
-  .pad:active { transform: scale(0.95); background: #3a3a3a; }
-  .pad.active { border-color: #fff; background: #3a3a3a; }
-  .pad.loaded { background: #1a3a1a; border-color: #2a5a2a; }
-  .pad.loaded.active { background: #2a4a2a; border-color: #fff; }
-  .pad.selected { border-color: #ffd700; background: #3a3a1a; }
-  .pad.playing { animation: padPulse 0.5s infinite; }
-  @keyframes padPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.5); } 50% { box-shadow: 0 0 0 4px rgba(255,255,255,0.3); } }
-  .pad-num { font-size: 18px; font-weight: 700; color: #666; }
-  .pad.loaded .pad-num { color: #fff; }
-  .pad-duration { font-size: 10px; color: #888; margin-top: 2px; }
-  .pad.loaded .pad-duration { color: #aaa; }
-  .transport { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px; }
-  .transport button { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 14px 8px; color: #fff; font-size: 20px; cursor: pointer; transition: all 0.1s; min-height: 52px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
-  .transport button:active { background: #3a3a3a; transform: scale(0.95); }
-  .transport button:disabled { opacity: 0.3; cursor: not-allowed; }
-  .transport button.rec { background: #8b0000; }
-  .transport button.rec.active { background: #ff0000; animation: pulse 1s infinite; }
-  .transport button.play { background: #006400; }
-  .transport button.loop { background: #8b6914; font-size: 14px; letter-spacing: 1px; }
-  .transport button.loop.active { background: #ffd700; color: #000; box-shadow: 0 0 12px rgba(255,215,0,0.6); }
-  .transport button.stop { background: #4a0000; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-  .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .actions button, .actions label { background: #2a2a2a; border: 1px solid #333; border-radius: 8px; padding: 12px 8px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.1s; min-height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; }
-  .actions button:active, .actions label:active { background: #3a3a3a; transform: scale(0.95); }
-  .actions button:disabled { opacity: 0.3; cursor: not-allowed; }
-  .actions button.merge { background: #8b6914; border-color: #ffd700; }
-  .actions button.rec-mix { background: #8b0000; border-color: #ff0000; }
-  .actions button.rec-mix.active { background: #ff0000; animation: pulse 1s infinite; }
+  
+  html, body { 
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #0f0f0f;
+    color: #e0e0e0; 
+    min-height: 100vh; 
+    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; 
+    overflow-x: hidden;
+    user-select: none; 
+    -webkit-user-select: none;
+  }
+  
+  .container { max-width: 650px; margin: 0 auto; }
+  
+  /* Header */
+  .header { 
+    text-align: center; 
+    padding: 16px 0; 
+    font-size: 20px; 
+    font-weight: 600; 
+    color: #fff;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #333;
+    margin-bottom: 16px;
+  }
+  
+  /* Notification Banner */
+  .notification {
+    background: #1a1a1a;
+    border-left: 3px solid #d97706;
+    border-radius: 6px;
+    padding: 14px 45px 14px 14px;
+    margin-bottom: 16px;
+    position: relative;
+    display: none;
+  }
+  
+  .notification.show { display: block; }
+  
+  .notification-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #999;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  
+  .notification-close:hover {
+    background: #333;
+    color: #fff;
+  }
+  
+  .notification-title {
+    font-weight: 600;
+    color: #fbbf24;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  
+  .notification-text {
+    font-size: 12px;
+    color: #a0a0a0;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+  
+  .notification-text:last-child {
+    margin-bottom: 0;
+    color: #b0b0b0;
+  }
+  
+  /* Panels */
+  .panel { 
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px; 
+    padding: 16px; 
+    margin-bottom: 12px;
+  }
+  
+  /* Canvas */
+  canvas { 
+    width: 100%; 
+    height: 160px; 
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 6px; 
+    cursor: crosshair; 
+    display: block; 
+    touch-action: none;
+  }
+  
+  /* Pads Grid */
+  .pads { 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 8px; 
+  }
+  
+  .pad { 
+    aspect-ratio: 1; 
+    background: #2a2a2a;
+    border: 2px solid #3a3a3a;
+    border-radius: 6px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    cursor: pointer; 
+    transition: all 0.1s; 
+    position: relative; 
+    min-height: 70px;
+  }
+  
+  .pad:active { 
+    transform: scale(0.95); 
+  }
+  
+  .pad.active { 
+    border-color: #fff;
+    background: #3a3a3a;
+  }
+  
+  .pad.loaded { 
+    background: #1a2f1a;
+    border-color: #2d5a2d;
+  }
+  
+  .pad.loaded.active { 
+    border-color: #fff;
+    background: #2d4a2d;
+  }
+  
+  .pad.selected { 
+    border-color: #d97706; 
+    background: #3a2f1a;
+  }
+  
+  .pad.playing { 
+    animation: padPulse 0.6s infinite;
+  }
+  
+  @keyframes padPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15); }
+  }
+  
+  .pad-num { 
+    font-size: 20px; 
+    font-weight: 600; 
+    color: #666;
+  }
+  
+  .pad.loaded .pad-num { 
+    color: #fff;
+  }
+  
+  .pad-duration { 
+    font-size: 11px; 
+    color: #888;
+    margin-top: 4px;
+  }
+  
+  .pad.loaded .pad-duration { 
+    color: #aaa;
+  }
+  
+  /* Transport Controls */
+  .transport { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 8px; 
+    margin-bottom: 12px; 
+  }
+  
+  .transport button { 
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px; 
+    padding: 16px 12px;
+    color: #fff; 
+    font-size: 20px; 
+    cursor: pointer; 
+    transition: all 0.1s; 
+    min-height: 60px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 600;
+  }
+  
+  .transport button:active { 
+    transform: scale(0.95);
+    background: #3a3a3a;
+  }
+  
+  .transport button:disabled { 
+    opacity: 0.3; 
+    cursor: not-allowed; 
+  }
+  
+  .transport button.rec { 
+    background: #7f1d1d;
+    border-color: #991b1b;
+  }
+  
+  .transport button.rec.active { 
+    background: #dc2626;
+    border-color: #ef4444;
+    animation: recPulse 1s infinite;
+  }
+  
+  @keyframes recPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+  
+  .transport button.play { 
+    background: #14532d;
+    border-color: #166534;
+  }
+  
+  .transport button.loop { 
+    background: #713f12;
+    border-color: #854d0e;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  
+  .transport button.loop.active { 
+    background: #ca8a04;
+    border-color: #eab308;
+    color: #000;
+  }
+  
+  .transport button.stop { 
+    background: #450a0a;
+    border-color: #7f1d1d;
+  }
+  
+  /* Actions Grid */
+  .actions { 
+    display: grid; 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 8px; 
+  }
+  
+  .actions button, .actions label { 
+    background: #2a2a2a;
+    border: 1px solid #3a3a3a;
+    border-radius: 6px; 
+    padding: 12px 10px; 
+    color: #fff; 
+    font-size: 12px; 
+    font-weight: 500; 
+    cursor: pointer; 
+    transition: all 0.1s; 
+    min-height: 48px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    text-align: center;
+  }
+  
+  .actions button:active, .actions label:active { 
+    transform: scale(0.95);
+    background: #3a3a3a;
+  }
+  
+  .actions button:disabled { 
+    opacity: 0.3; 
+    cursor: not-allowed; 
+  }
+  
+  .actions button.merge { 
+    background: #713f12;
+    border-color: #854d0e;
+  }
+  
+  .actions button.rec-mix { 
+    background: #7f1d1d;
+    border-color: #991b1b;
+  }
+  
+  .actions button.rec-mix.active { 
+    background: #dc2626;
+    animation: recPulse 1s infinite;
+  }
+  
   input[type=file] { display: none; }
-  .status { text-align: center; color: #888; font-size: 12px; margin-top: 8px; min-height: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-  .effect { background: #1a1a1a; border-radius: 8px; padding: 10px; }
-  .effect-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-  .effect-value { color: #fff; font-size: 13px; font-weight: 700; }
-  .effect input[type=range] { width: 100%; height: 6px; border-radius: 3px; background: #333; outline: none; -webkit-appearance: none; appearance: none; }
-  .effect input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
-  .effect input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
-  .toggle { display: flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 11px; }
-  .toggle input { width: 16px; height: 16px; cursor: pointer; }
-  .selection-info { text-align: center; color: #666; font-size: 11px; margin-top: 6px; min-height: 14px; }
-  .mode-indicator { text-align: center; color: #ffd700; font-size: 11px; margin-bottom: 6px; min-height: 14px; font-weight: 600; }
-  .rec-indicator { display: none; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(255,0,0,0.1); border: 1px solid #8b0000; border-radius: 8px; margin-top: 8px; font-size: 12px; color: #ff4444; font-weight: 600; }
+  
+  /* Status */
+  .status { 
+    text-align: center; 
+    color: #888;
+    font-size: 12px; 
+    margin-top: 12px; 
+    min-height: 18px; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    white-space: nowrap;
+  }
+  
+  /* Effects Grid */
+  .effects { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 12px; 
+  }
+  
+  .effect { 
+    background: #141414;
+    border-radius: 6px; 
+    padding: 12px;
+    border: 1px solid #2a2a2a;
+  }
+  
+  .effect-label { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 8px; 
+    font-size: 11px; 
+    font-weight: 600; 
+    color: #888;
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+  }
+  
+  .effect-value { 
+    color: #fff;
+    font-size: 13px; 
+    font-weight: 600;
+  }
+  
+  .effect input[type=range] { 
+    width: 100%; 
+    height: 5px; 
+    border-radius: 3px; 
+    background: #333;
+    outline: none; 
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+  }
+  
+  .effect input[type=range]::-webkit-slider-thumb { 
+    -webkit-appearance: none; 
+    appearance: none; 
+    width: 16px; 
+    height: 16px; 
+    border-radius: 50%; 
+    background: #fff;
+    cursor: pointer; 
+    border: 2px solid #000;
+  }
+  
+  .effect input[type=range]::-moz-range-thumb { 
+    width: 16px; 
+    height: 16px; 
+    border-radius: 50%; 
+    background: #fff;
+    cursor: pointer; 
+    border: 2px solid #000;
+  }
+  
+  .toggle { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    margin-top: 8px; 
+    font-size: 11px;
+    color: #888;
+  }
+  
+  .toggle input { 
+    width: 16px; 
+    height: 16px; 
+    cursor: pointer;
+    accent-color: #fff;
+  }
+  
+  .selection-info { 
+    text-align: center; 
+    color: #666;
+    font-size: 11px; 
+    margin-top: 8px; 
+    min-height: 16px;
+  }
+  
+  .mode-indicator { 
+    text-align: center; 
+    color: #d97706;
+    font-size: 11px; 
+    margin-bottom: 8px; 
+    min-height: 16px; 
+    font-weight: 600;
+  }
+  
+  .rec-indicator { 
+    display: none; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 10px; 
+    padding: 10px; 
+    background: rgba(220, 38, 38, 0.1);
+    border: 1px solid #7f1d1d;
+    border-radius: 6px; 
+    margin-top: 10px; 
+    font-size: 12px; 
+    color: #f87171; 
+    font-weight: 600;
+  }
+  
   .rec-indicator.active { display: flex; }
-  .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #ff0000; animation: pulse 1s infinite; }
-  .rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-  .rec-level-bar { height: 100%; background: linear-gradient(90deg, #00ff00, #ffff00, #ff0000); width: 0%; transition: width 0.05s; }
-  @media (max-width: 480px) { .pads { grid-template-columns: repeat(2, 1fr); } .pad { aspect-ratio: auto; min-height: 70px; } }
-  @media (max-width: 380px) { .transport button { padding: 12px 6px; font-size: 18px; } .transport button.loop { font-size: 12px; } .actions button, .actions label { font-size: 11px; padding: 10px 6px; } .effect { padding: 8px; } }
+  
+  .rec-dot { 
+    width: 10px; 
+    height: 10px; 
+    border-radius: 50%; 
+    background: #dc2626; 
+    animation: recDotPulse 1s infinite;
+  }
+  
+  @keyframes recDotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  .rec-level { 
+    flex: 1; 
+    height: 6px; 
+    background: #333;
+    border-radius: 3px; 
+    overflow: hidden; 
+  }
+  
+  .rec-level-bar { 
+    height: 100%; 
+    background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    width: 0%; 
+    transition: width 0.05s;
+  }
+  
+  /* Responsive */
+  @media (max-width: 500px) { 
+    .pads { grid-template-columns: repeat(2, 1fr); gap: 8px; } 
+    .pad { min-height: 75px; }
+    .header { font-size: 18px; }
+  }
+  
+  @media (max-width: 400px) { 
+    .transport button { padding: 14px 10px; font-size: 18px; } 
+    .transport button.loop { font-size: 12px; }
+    .actions button, .actions label { font-size: 11px; padding: 10px 8px; } 
+    .effect { padding: 10px; }
+  }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">SAMPLER HENDRIX 5.0</div>
+  
+  <!-- Notification Banner -->
+  <div class="notification" id="micNotification">
+    <button class="notification-close" onclick="closeNotification()">×</button>
+    <div class="notification-title">⚠️ Microphone Setup Required</div>
+    <div class="notification-text">How to enable the microphone on Android: Settings → Apps → Chrome → Permissions → Microphone → Enable permission</div>
+    <div class="notification-text">Как включить микрофон на Android: Настройки → Приложения → Chrome → Разрешения → Микрофон → Включить разрешение</div>
+  </div>
+  
   <div class="panel">
     <canvas id="wave"></canvas>
     <div class="selection-info" id="selInfo">Tap and drag to select</div>
   </div>
+  
   <div class="panel">
     <div class="mode-indicator" id="modeIndicator"></div>
     <div class="pads" id="pads"></div>
   </div>
+  
   <div class="panel">
     <div class="transport">
       <button id="recBtn" class="rec">●</button>
@@ -96,7 +519,7 @@
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Chop</button>
       <button id="resetBtn" disabled>↺ Reset</button>
-      <button id="exportBtn" disabled>💾 Save</button>
+      <button id="exportBtn" disabled> Save</button>
       <button id="recMixBtn" class="rec-mix">⏺ Rec Mix</button>
       <button id="mergeBtn" class="merge" disabled>🔗 Merge</button>
       <button id="clearBtn" disabled>🗑 Clear</button>
@@ -104,6 +527,7 @@
     </div>
     <div class="status" id="status">Load audio or record</div>
   </div>
+  
   <div class="panel">
     <div class="effects">
       <div class="effect"><div class="effect-label"><span>Tempo</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
@@ -133,17 +557,57 @@ let currentSourceId = 0;
 let isLooping = false;
 
 let isRecording = false;
-let recStream = null, recMediaRecorder = null, recSource = null, recProcessor = null, recAnalyser = null;
-let recChunks = [], recStartTime = 0, recTimerInterval = null, recLevelRaf = null;
-let recUseMediaRecorder = false, recMimeType = '';
+let recStream = null, recMediaRecorder = null;
+let recChunks = [], recStartTime = 0, recTimerInterval = null;
 
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 
 const activeChains = new Map();
 let rafId = null;
 
+// === NOTIFICATION ===
+function checkNotification() {
+  const dismissed = localStorage.getItem('micNotificationDismissed');
+  if (!dismissed) {
+    $('micNotification').classList.add('show');
+  }
+}
+
+function closeNotification() {
+  $('micNotification').classList.remove('show');
+  localStorage.setItem('micNotificationDismissed', 'true');
+}
+
+// === INITIALIZATION ===
+function init() {
+  checkNotification();
+  
+  try {
+    window.addEventListener('click', function firstClick() {
+      if (!audioCtx) {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+          console.error('AudioContext error:', e);
+        }
+      }
+      window.removeEventListener('click', firstClick);
+    }, { once: false });
+    
+    initPads();
+    updateLabels();
+    updateTransportButtons();
+    
+  } catch (err) {
+    console.error('Init error:', err);
+    setStatus('Init error: ' + err.message);
+  }
+}
+
 function ensureCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
   return audioCtx;
 }
 
@@ -207,104 +671,119 @@ $('fileInput').onchange = async e => {
   } catch (err) { setStatus('Error: ' + err.message); }
 };
 
-$('recBtn').onclick = () => {
-  ensureCtx(); audioCtx.resume();
-  if (!isRecording) startRecording(); else stopRecording();
-};
-
-async function startRecording() {
+// === RECORDING ===
+$('recBtn').addEventListener('click', async function(e) {
   try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus('Mic not supported'); return; }
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    if (audioCtx.state !== 'running') await audioCtx.resume();
-    
-    recStream = stream; recChunks = []; recUseMediaRecorder = false;
-    
-    if (typeof MediaRecorder !== 'undefined') {
-      try {
-        recMediaRecorder = new MediaRecorder(stream);
-        recUseMediaRecorder = true;
-        recMimeType = recMediaRecorder.mimeType || 'audio/webm';
-        
-        recMediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
-        recMediaRecorder.onerror = () => { setStatus('Recording error'); stopRecording(); };
-        recMediaRecorder.onstop = async () => {
-          if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-          if (recChunks.length === 0) { setStatus('No audio recorded'); resetRecordingUI(); return; }
-          setStatus('Processing...');
-          try {
-            const blob = new Blob(recChunks, { type: recMimeType });
-            const arr = await blob.arrayBuffer();
-            const buffer = await audioCtx.decodeAudioData(arr);
-            slots[activeSlot] = buffer; selection = null;
-            drawWave(); updatePads(); updateTransportButtons();
-            setStatus(`Recorded ${buffer.duration.toFixed(1)}s to slot ${activeSlot + 1}`);
-          } catch (err) { setStatus('Decode error: ' + err.message); }
-          resetRecordingUI();
-        };
-        
-        recMediaRecorder.start(100);
-        isRecording = true; recStartTime = Date.now();
-        $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
-        $('recIndicator').classList.add('active'); setStatus('Recording...');
-        recTimerInterval = setInterval(updateRecTimer, 100);
-        setupRecordingVisualizer(stream);
-        return;
-      } catch (err) { recMediaRecorder = null; recUseMediaRecorder = false; recChunks = []; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatus('Microphone not supported');
+      return;
     }
     
-    recSource = audioCtx.createMediaStreamSource(stream);
-    recProcessor = audioCtx.createScriptProcessor(0, 1, 1);
-    recProcessor.onaudioprocess = e => {
-      const d = e.inputBuffer.getChannelData(0);
-      const c = new Float32Array(d.length); c.set(d); recChunks.push(c);
-    };
-    const sg = audioCtx.createGain(); sg.gain.value = 0;
-    recSource.connect(recProcessor); recProcessor.connect(sg); sg.connect(audioCtx.destination);
+    if (!window.MediaRecorder) {
+      setStatus('Recording not supported');
+      return;
+    }
     
-    isRecording = true; recStartTime = Date.now();
-    $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active'); setStatus('Recording...');
+    if (isRecording) {
+      stopRecording();
+      return;
+    }
+    
+    ensureCtx();
+    if (audioCtx.state === 'suspended') {
+      await audioCtx.resume();
+    }
+    
+    setStatus('Requesting mic...');
+    
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    
+    recStream = stream;
+    recChunks = [];
+    recMediaRecorder = new MediaRecorder(stream);
+    
+    recMediaRecorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) recChunks.push(e.data);
+    };
+    
+    recMediaRecorder.onerror = (e) => {
+      setStatus('Recording error');
+      stopRecording();
+    };
+    
+    recMediaRecorder.onstop = async () => {
+      if (recStream) { 
+        recStream.getTracks().forEach(t => t.stop()); 
+        recStream = null; 
+      }
+      
+      if (recChunks.length === 0) {
+        setStatus('No audio recorded');
+        resetRecordingUI();
+        return;
+      }
+      
+      setStatus('Processing...');
+      
+      try {
+        const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
+        const arr = await blob.arrayBuffer();
+        const buffer = await audioCtx.decodeAudioData(arr);
+        
+        slots[activeSlot] = buffer;
+        selection = null;
+        drawWave(); updatePads(); updateTransportButtons();
+        setStatus(`Recorded ${buffer.duration.toFixed(1)}s`);
+      } catch (err) {
+        setStatus('Error: ' + err.message);
+      }
+      resetRecordingUI();
+    };
+    
+    recMediaRecorder.start();
+    isRecording = true;
+    recStartTime = Date.now();
+    
+    $('recBtn').classList.add('active');
+    $('recBtn').textContent = '■';
+    $('recIndicator').classList.add('active');
+    setStatus('Recording...');
+    
     recTimerInterval = setInterval(updateRecTimer, 100);
-    setupRecordingVisualizer(stream);
+    
   } catch (err) {
-    if (err.name === 'NotAllowedError') setStatus('Mic access denied');
-    else setStatus('Error: ' + err.message);
+    if (err.name === 'NotAllowedError') {
+      setStatus('Permission denied - enable mic in settings');
+    } else if (err.name === 'NotFoundError') {
+      setStatus('No microphone found');
+    } else {
+      setStatus('Error: ' + err.message);
+    }
+    
+    if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+    resetRecordingUI();
   }
-}
+});
 
 function stopRecording() {
   if (!isRecording) return;
-  if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
-  if (recLevelRaf) { cancelAnimationFrame(recLevelRaf); recLevelRaf = null; }
-  recAnalyser = null;
   
-  if (recUseMediaRecorder && recMediaRecorder) {
-    if (recMediaRecorder.state !== 'inactive') recMediaRecorder.stop();
-  } else {
-    if (recProcessor) { recProcessor.onaudioprocess = null; recProcessor.disconnect(); recProcessor = null; }
-    if (recSource) { recSource.disconnect(); recSource = null; }
-    if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-    if (recChunks.length > 0) {
-      const len = recChunks.reduce((s, c) => s + c.length, 0);
-      const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-      const ch = buf.getChannelData(0);
-      let off = 0;
-      for (const c of recChunks) { ch.set(c, off); off += c.length; }
-      slots[activeSlot] = buf; selection = null;
-      drawWave(); updatePads(); updateTransportButtons();
-      setStatus(`Recorded ${buf.duration.toFixed(1)}s to slot ${activeSlot + 1}`);
-    } else setStatus('No audio recorded');
-    resetRecordingUI();
+  if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
+  
+  if (recMediaRecorder && recMediaRecorder.state !== 'inactive') {
+    try { recMediaRecorder.stop(); } catch(e) {}
   }
 }
 
 function resetRecordingUI() {
   isRecording = false;
-  $('recBtn').classList.remove('active'); $('recBtn').textContent = '●';
+  $('recBtn').classList.remove('active');
+  $('recBtn').textContent = '●';
   $('recIndicator').classList.remove('active');
-  $('recTime').textContent = '0:00'; $('recLevel').style.width = '0%';
-  recChunks = []; recMediaRecorder = null; recUseMediaRecorder = false;
+  $('recTime').textContent = '0:00';
+  $('recLevel').style.width = '0%';
+  recChunks = [];
+  recMediaRecorder = null;
 }
 
 function updateRecTimer() {
@@ -312,23 +791,7 @@ function updateRecTimer() {
   $('recTime').textContent = `${Math.floor(e/60)}:${(e%60).toString().padStart(2,'0')}`;
 }
 
-function setupRecordingVisualizer(stream) {
-  try {
-    const s = audioCtx.createMediaStreamSource(stream);
-    recAnalyser = audioCtx.createAnalyser(); recAnalyser.fftSize = 256;
-    s.connect(recAnalyser); updateRecLevel();
-  } catch (e) {}
-}
-
-function updateRecLevel() {
-  if (!isRecording || !recAnalyser) { $('recLevel').style.width = '0%'; if (isRecording) recLevelRaf = requestAnimationFrame(updateRecLevel); return; }
-  const d = new Uint8Array(recAnalyser.frequencyBinCount);
-  recAnalyser.getByteFrequencyData(d);
-  let s = 0; for (let i = 0; i < d.length; i++) s += d[i];
-  $('recLevel').style.width = Math.min(100, (s / d.length / 255) * 200) + '%';
-  if (isRecording) recLevelRaf = requestAnimationFrame(updateRecLevel);
-}
-
+// === MIX RECORDING ===
 $('recMixBtn').onclick = async () => {
   ensureCtx(); await audioCtx.resume();
   if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
@@ -402,6 +865,7 @@ function f32ToI16(f) {
   return i;
 }
 
+// === AUDIO CHAIN ===
 function createChain(ac, buffer, opts) {
   const source = ac.createBufferSource();
   source.buffer = buffer;
@@ -629,13 +1093,11 @@ function drawPlayhead() {
     const pos = getCurrentPosition(d.chain);
     const x = (pos / d.chain.bufferDuration) * canvas.width;
     if (si === activeSlot) {
-      ctx.strokeStyle = '#ff0000'; ctx.lineWidth = 2;
-      ctx.shadowBlur = 8; ctx.shadowColor = '#ff0000';
+      ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2;
     } else {
-      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
     }
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    ctx.shadowBlur = 0;
   });
 }
 
@@ -731,8 +1193,13 @@ $('resetBtn').onclick = () => {
 };
 
 $('clearBtn').onclick = () => {
-  stopAll(); slots = Array(10).fill(null); selection = null;
-  drawWave(); updatePads(); updateTransportButtons(); setStatus('All slots cleared');
+  stopSlot(activeSlot);
+  slots[activeSlot] = null;
+  selection = null;
+  drawWave();
+  updatePads();
+  updateTransportButtons();
+  setStatus(`Slot ${activeSlot + 1} cleared`);
 };
 
 $('selectModeBtn').onclick = () => {
@@ -850,7 +1317,7 @@ $('filtOn').addEventListener('change', updateLabels);
 
 function setStatus(t) { $('status').textContent = t; }
 
-initPads(); updateLabels(); updateTransportButtons();
+init();
 </script>
 </body>
 </html>
