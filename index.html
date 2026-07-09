@@ -8,114 +8,16 @@
 <meta name="theme-color" content="#1a1a1a">
 <title>SAMPLER HENDRIX 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
-  html, body { 
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: #0f0f0f;
-    color: #e0e0e0; 
-    min-height: 100vh; 
-    padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; 
-    overflow-x: hidden;
-    user-select: none; 
-    -webkit-user-select: none;
-  }
-  
+  html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
   .container { max-width: 650px; margin: 0 auto; }
+  .header { text-align: center; padding: 16px 0; font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #333; margin-bottom: 16px; }
+  .panel { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
+  canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; cursor: crosshair; display: block; touch-action: none; }
   
-  .header { 
-    text-align: center; 
-    padding: 16px 0; 
-    font-size: 20px; 
-    font-weight: 600; 
-    color: #fff;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    border-bottom: 1px solid #333;
-    margin-bottom: 16px;
-  }
-  
-  .notification {
-    background: #1a1a1a;
-    border-left: 3px solid #d97706;
-    border-radius: 6px;
-    padding: 14px 45px 14px 14px;
-    margin-bottom: 16px;
-    position: relative;
-    display: none;
-  }
-  
-  .notification.show { display: block; }
-  
-  .notification-close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 28px;
-    height: 28px;
-    background: transparent;
-    border: 1px solid #555;
-    border-radius: 4px;
-    color: #999;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-  
-  .notification-close:hover {
-    background: #333;
-    color: #fff;
-  }
-  
-  .notification-title {
-    font-weight: 600;
-    color: #fbbf24;
-    margin-bottom: 8px;
-    font-size: 13px;
-  }
-  
-  .notification-text {
-    font-size: 12px;
-    color: #a0a0a0;
-    line-height: 1.5;
-    margin-bottom: 6px;
-  }
-  
-  .notification-text:last-child {
-    margin-bottom: 0;
-    color: #b0b0b0;
-  }
-  
-  .panel { 
-    background: #1a1a1a;
-    border: 1px solid #333;
-    border-radius: 8px; 
-    padding: 16px; 
-    margin-bottom: 12px;
-  }
-  
-  canvas { 
-    width: 100%; 
-    height: 160px; 
-    background: #0a0a0a;
-    border: 1px solid #333;
-    border-radius: 6px; 
-    cursor: crosshair; 
-    display: block; 
-    touch-action: none;
-  }
-  
-  .pads { 
-    display: grid; 
-    grid-template-columns: repeat(5, 1fr); 
-    gap: 8px; 
-  }
-  
+  /* Пады ВСЕГДА 5 в ряд, 2 ряда */
+  .pads { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
   .pad { 
     aspect-ratio: 1; 
     background: #2a2a2a;
@@ -128,352 +30,66 @@
     cursor: pointer; 
     transition: all 0.1s; 
     position: relative; 
-    min-height: 70px;
+    min-height: 0;
+    padding: 4px;
   }
+  .pad:active { transform: scale(0.95); }
+  .pad.active { border-color: #fff; background: #3a3a3a; }
+  .pad.loaded { background: #1a2f1a; border-color: #2d5a2d; }
+  .pad.loaded.active { border-color: #fff; background: #2d4a2d; }
+  .pad.selected { border-color: #d97706; background: #3a2f1a; }
+  .pad.playing { animation: padPulse 0.6s infinite; }
+  @keyframes padPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); } 50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15); } }
+  .pad-num { font-size: 20px; font-weight: 600; color: #666; line-height: 1; }
+  .pad.loaded .pad-num { color: #fff; }
+  .pad-duration { font-size: 10px; color: #888; margin-top: 4px; line-height: 1; }
+  .pad.loaded .pad-duration { color: #aaa; }
   
-  .pad:active { 
-    transform: scale(0.95); 
-  }
-  
-  .pad.active { 
-    border-color: #fff;
-    background: #3a3a3a;
-  }
-  
-  .pad.loaded { 
-    background: #1a2f1a;
-    border-color: #2d5a2d;
-  }
-  
-  .pad.loaded.active { 
-    border-color: #fff;
-    background: #2d4a2d;
-  }
-  
-  .pad.selected { 
-    border-color: #d97706; 
-    background: #3a2f1a;
-  }
-  
-  .pad.playing { 
-    animation: padPulse 0.6s infinite;
-  }
-  
-  @keyframes padPulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
-    50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15); }
-  }
-  
-  .pad-num { 
-    font-size: 20px; 
-    font-weight: 600; 
-    color: #666;
-  }
-  
-  .pad.loaded .pad-num { 
-    color: #fff;
-  }
-  
-  .pad-duration { 
-    font-size: 11px; 
-    color: #888;
-    margin-top: 4px;
-  }
-  
-  .pad.loaded .pad-duration { 
-    color: #aaa;
-  }
-  
-  .transport { 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 8px; 
-    margin-bottom: 12px; 
-  }
-  
-  .transport button { 
-    background: #2a2a2a;
-    border: 1px solid #3a3a3a;
-    border-radius: 6px; 
-    padding: 16px 12px;
-    color: #fff; 
-    font-size: 20px; 
-    cursor: pointer; 
-    transition: all 0.1s; 
-    min-height: 60px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-weight: 600;
-  }
-  
-  .transport button:active { 
-    transform: scale(0.95);
-    background: #3a3a3a;
-  }
-  
-  .transport button:disabled { 
-    opacity: 0.3; 
-    cursor: not-allowed; 
-  }
-  
-  .transport button.rec { 
-    background: #7f1d1d;
-    border-color: #991b1b;
-  }
-  
-  .transport button.rec.active { 
-    background: #dc2626;
-    border-color: #ef4444;
-    animation: recPulse 1s infinite;
-  }
-  
-  @keyframes recPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.85; }
-  }
-  
-  .transport button.play { 
-    background: #14532d;
-    border-color: #166534;
-  }
-  
-  .transport button.loop { 
-    background: #713f12;
-    border-color: #854d0e;
-    font-size: 13px;
-    letter-spacing: 0.5px;
-  }
-  
-  .transport button.loop.active { 
-    background: #ca8a04;
-    border-color: #eab308;
-    color: #000;
-  }
-  
-  .transport button.stop { 
-    background: #450a0a;
-    border-color: #7f1d1d;
-  }
-  
-  .actions { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 8px; 
-  }
-  
-  .actions button, .actions label { 
-    background: #2a2a2a;
-    border: 1px solid #3a3a3a;
-    border-radius: 6px; 
-    padding: 12px 10px; 
-    color: #fff; 
-    font-size: 12px; 
-    font-weight: 500; 
-    cursor: pointer; 
-    transition: all 0.1s; 
-    min-height: 48px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    text-align: center;
-  }
-  
-  .actions button:active, .actions label:active { 
-    transform: scale(0.95);
-    background: #3a3a3a;
-  }
-  
-  .actions button:disabled { 
-    opacity: 0.3; 
-    cursor: not-allowed; 
-  }
-  
-  .actions button.merge { 
-    background: #713f12;
-    border-color: #854d0e;
-  }
-  
-  .actions button.rec-mix { 
-    background: #7f1d1d;
-    border-color: #991b1b;
-  }
-  
-  .actions button.rec-mix.active { 
-    background: #dc2626;
-    animation: recPulse 1s infinite;
-  }
-  
+  .transport { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+  .transport button { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 16px 12px; color: #fff; font-size: 20px; cursor: pointer; transition: all 0.1s; min-height: 60px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+  .transport button:active { transform: scale(0.95); background: #3a3a3a; }
+  .transport button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .transport button.rec { background: #7f1d1d; border-color: #991b1b; }
+  .transport button.rec.active { background: #dc2626; border-color: #ef4444; animation: recPulse 1s infinite; }
+  @keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
+  .transport button.play { background: #14532d; border-color: #166534; }
+  .transport button.loop { background: #713f12; border-color: #854d0e; font-size: 13px; letter-spacing: 0.5px; }
+  .transport button.loop.active { background: #ca8a04; border-color: #eab308; color: #000; }
+  .transport button.stop { background: #450a0a; border-color: #7f1d1d; }
+  .actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .actions button, .actions label { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 12px 10px; color: #fff; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.1s; min-height: 48px; display: flex; align-items: center; justify-content: center; text-align: center; }
+  .actions button:active, .actions label:active { transform: scale(0.95); background: #3a3a3a; }
+  .actions button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .actions button.merge { background: #713f12; border-color: #854d0e; }
+  .actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
+  .actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
   input[type=file] { display: none; }
-  
-  .status { 
-    text-align: center; 
-    color: #888;
-    font-size: 12px; 
-    margin-top: 12px; 
-    min-height: 18px; 
-    overflow: hidden; 
-    text-overflow: ellipsis; 
-    white-space: nowrap;
-  }
-  
-  .effects { 
-    display: grid; 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 12px; 
-  }
-  
-  .effect { 
-    background: #141414;
-    border-radius: 6px; 
-    padding: 12px;
-    border: 1px solid #2a2a2a;
-  }
-  
-  .effect-label { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    margin-bottom: 8px; 
-    font-size: 11px; 
-    font-weight: 600; 
-    color: #888;
-    text-transform: uppercase; 
-    letter-spacing: 0.5px;
-  }
-  
-  .effect-value { 
-    color: #fff;
-    font-size: 13px; 
-    font-weight: 600;
-  }
-  
-  .effect input[type=range] { 
-    width: 100%; 
-    height: 5px; 
-    border-radius: 3px; 
-    background: #333;
-    outline: none; 
-    -webkit-appearance: none;
-    appearance: none;
-    cursor: pointer;
-  }
-  
-  .effect input[type=range]::-webkit-slider-thumb { 
-    -webkit-appearance: none; 
-    appearance: none; 
-    width: 16px; 
-    height: 16px; 
-    border-radius: 50%; 
-    background: #fff;
-    cursor: pointer; 
-    border: 2px solid #000;
-  }
-  
-  .effect input[type=range]::-moz-range-thumb { 
-    width: 16px; 
-    height: 16px; 
-    border-radius: 50%; 
-    background: #fff;
-    cursor: pointer; 
-    border: 2px solid #000;
-  }
-  
-  .toggle { 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
-    margin-top: 8px; 
-    font-size: 11px;
-    color: #888;
-  }
-  
-  .toggle input { 
-    width: 16px; 
-    height: 16px; 
-    cursor: pointer;
-    accent-color: #fff;
-  }
-  
-  .selection-info { 
-    text-align: center; 
-    color: #666;
-    font-size: 11px; 
-    margin-top: 8px; 
-    min-height: 16px;
-  }
-  
-  .mode-indicator { 
-    text-align: center; 
-    color: #d97706;
-    font-size: 11px; 
-    margin-bottom: 8px; 
-    min-height: 16px; 
-    font-weight: 600;
-  }
-  
-  .rec-indicator { 
-    display: none; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 10px; 
-    padding: 10px; 
-    background: rgba(220, 38, 38, 0.1);
-    border: 1px solid #7f1d1d;
-    border-radius: 6px; 
-    margin-top: 10px; 
-    font-size: 12px; 
-    color: #f87171; 
-    font-weight: 600;
-  }
-  
+  .status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .effect { background: #141414; border-radius: 6px; padding: 12px; border: 1px solid #2a2a2a; }
+  .effect-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .effect-value { color: #fff; font-size: 13px; font-weight: 600; }
+  .effect input[type=range] { width: 100%; height: 5px; border-radius: 3px; background: #333; outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .effect input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
+  .effect input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
+  .toggle { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 11px; color: #888; }
+  .toggle input { width: 16px; height: 16px; cursor: pointer; accent-color: #fff; }
+  .selection-info { text-align: center; color: #666; font-size: 11px; margin-top: 8px; min-height: 16px; }
+  .mode-indicator { text-align: center; color: #d97706; font-size: 11px; margin-bottom: 8px; min-height: 16px; font-weight: 600; }
+  .rec-indicator { display: none; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: rgba(220, 38, 38, 0.1); border: 1px solid #7f1d1d; border-radius: 6px; margin-top: 10px; font-size: 12px; color: #f87171; font-weight: 600; }
   .rec-indicator.active { display: flex; }
+  .rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #dc2626; animation: recDotPulse 1s infinite; }
+  @keyframes recDotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+  .rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+  .rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
+  .slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; }
   
-  .rec-dot { 
-    width: 10px; 
-    height: 10px; 
-    border-radius: 50%; 
-    background: #dc2626; 
-    animation: recDotPulse 1s infinite;
-  }
-  
-  @keyframes recDotPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  
-  .rec-level { 
-    flex: 1; 
-    height: 6px; 
-    background: #333;
-    border-radius: 3px; 
-    overflow: hidden; 
-  }
-  
-  .rec-level-bar { 
-    height: 100%; 
-    background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
-    width: 0%; 
-    transition: width 0.05s;
-  }
-  
-  .quality-info {
-    background: rgba(34, 197, 94, 0.1);
-    border: 1px solid #166534;
-    border-radius: 6px;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 11px;
-    color: #86efac;
-    display: none;
-  }
-  
-  .quality-info.show { display: block; }
-  
+  /* Мобильная адаптация — только уменьшаем размеры, сетка остаётся 5x2 */
   @media (max-width: 500px) { 
-    .pads { grid-template-columns: repeat(2, 1fr); gap: 8px; } 
-    .pad { min-height: 75px; }
+    .pad-num { font-size: 16px; }
+    .pad-duration { font-size: 9px; }
     .header { font-size: 18px; }
+    .pads { gap: 6px; }
   }
   
   @media (max-width: 400px) { 
@@ -481,31 +97,30 @@
     .transport button.loop { font-size: 12px; }
     .actions button, .actions label { font-size: 11px; padding: 10px 8px; } 
     .effect { padding: 10px; }
+    .pad-num { font-size: 14px; }
+    .pad-duration { font-size: 8px; }
+    .pads { gap: 4px; }
+  }
+  
+  @media (max-width: 340px) {
+    .pad-num { font-size: 12px; }
+    .pad-duration { font-size: 7px; margin-top: 2px; }
+    .pads { gap: 3px; }
+    .pad { border-width: 1px; border-radius: 4px; }
   }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">SAMPLER HENDRIX 5.0</div>
-  
-  <div class="notification" id="micNotification">
-    <button class="notification-close" onclick="closeNotification()">×</button>
-    <div class="notification-title">️ Microphone Setup Required</div>
-    <div class="notification-text">How to enable the microphone on Android: Settings → Apps → Chrome → Permissions → Microphone → Enable permission</div>
-    <div class="notification-text">Как включить микрофон на Android: Настройки → Приложения → Chrome → Разрешения → Микрофон → Включить разрешение</div>
-  </div>
-  
   <div class="panel">
     <canvas id="wave"></canvas>
     <div class="selection-info" id="selInfo">Tap and drag to select</div>
-    <div class="quality-info" id="qualityInfo"></div>
   </div>
-  
   <div class="panel">
     <div class="mode-indicator" id="modeIndicator"></div>
     <div class="pads" id="pads"></div>
   </div>
-  
   <div class="panel">
     <div class="transport">
       <button id="recBtn" class="rec">●</button>
@@ -531,8 +146,8 @@
     </div>
     <div class="status" id="status">Load audio or record</div>
   </div>
-  
   <div class="panel">
+    <div class="slot-indicator" id="slotIndicator">Slot 1 Settings</div>
     <div class="effects">
       <div class="effect"><div class="effect-label"><span>Tempo</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
       <div class="effect"><div class="effect-label"><span>Pitch</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
@@ -543,6 +158,7 @@
       <div class="effect"><div class="effect-label"><span>Delay</span><span class="effect-value" id="delVal">0 ms</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
       <div class="effect"><div class="effect-label"><span>Reverb</span><span class="effect-value" id="revVal">0%</span></div><input type="range" id="rev" min="0" max="1" step="0.01" value="0"></div>
       <div class="effect"><div class="effect-label"><span>Tremolo</span><span class="effect-value" id="tremVal">0%</span></div><input type="range" id="trem" min="0" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span>Bitcrush</span><span class="effect-value" id="bitVal">0</span></div><input type="range" id="bit" min="0" max="16" step="1" value="0"></div>
     </div>
   </div>
 </div>
@@ -560,78 +176,62 @@ let selectedSlots = new Set();
 let currentSourceId = 0;
 let isLooping = false;
 
+let slotSettings = Array(10).fill(null).map(() => ({
+  tempo: 1, pitch: 0, vol: 1, pan: 0,
+  filt: 1000, filtOn: false, dist: 0, del: 0,
+  rev: 0, trem: 0, bit: 0
+}));
+
 let isRecording = false;
 let recStream = null, recMediaRecorder = null;
 let recChunks = [], recStartTime = 0, recTimerInterval = null;
-let recAudioContext = null, recScriptProcessor = null, recSourceNode = null;
 
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 
 const activeChains = new Map();
 let rafId = null;
 
-// === TELEGRAM WEB APP ===
-const tg = window.Telegram?.WebApp;
-if (tg) {
-  tg.ready();
-  tg.expand();
-  console.log('Telegram WebApp initialized');
-}
-
-function checkNotification() {
-  const dismissed = localStorage.getItem('micNotificationDismissed');
-  if (!dismissed) {
-    $('micNotification').classList.add('show');
-  }
-}
-
-function closeNotification() {
-  $('micNotification').classList.remove('show');
-  localStorage.setItem('micNotificationDismissed', 'true');
-}
-
 function init() {
-  checkNotification();
-  
   try {
     window.addEventListener('click', function firstClick() {
       if (!audioCtx) {
-        try {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)({
-            sampleRate: 44100,
-            latencyHint: 'interactive'
-          });
-        } catch (e) {
-          console.error('AudioContext error:', e);
-        }
+        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' }); } catch (e) { console.error('AudioContext error:', e); }
       }
       window.removeEventListener('click', firstClick);
     }, { once: false });
     
     initPads();
-    updateLabels();
+    loadSlotSettings(0);
     updateTransportButtons();
-    
-  } catch (err) {
-    console.error('Init error:', err);
-    setStatus('Init error: ' + err.message);
-  }
+  } catch (err) { console.error('Init error:', err); setStatus('Init error: ' + err.message); }
 }
 
 function ensureCtx() {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)({
-      sampleRate: 44100,
-      latencyHint: 'interactive'
-    });
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' });
   return audioCtx;
 }
 
-function showQualityInfo(text) {
-  $('qualityInfo').textContent = text;
-  $('qualityInfo').classList.add('show');
-  setTimeout(() => $('qualityInfo').classList.remove('show'), 5000);
+function loadSlotSettings(slotIndex) {
+  const s = slotSettings[slotIndex];
+  $('tempo').value = s.tempo; $('pitch').value = s.pitch;
+  $('vol').value = s.vol; $('pan').value = s.pan;
+  $('filt').value = s.filt; $('filtOn').checked = s.filtOn;
+  $('dist').value = s.dist; $('del').value = s.del;
+  $('rev').value = s.rev; $('trem').value = s.trem;
+  $('bit').value = s.bit;
+  updateLabels();
+  $('slotIndicator').textContent = `Slot ${slotIndex + 1} Settings`;
+}
+
+function saveCurrentSettings() {
+  slotSettings[activeSlot] = {
+    tempo: parseFloat($('tempo').value), pitch: parseInt($('pitch').value),
+    vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
+    filt: parseFloat($('filt').value), filtOn: $('filtOn').checked,
+    dist: parseInt($('dist').value), del: parseFloat($('del').value),
+    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value),
+    bit: parseInt($('bit').value)
+  };
 }
 
 function initPads() {
@@ -651,7 +251,9 @@ function handlePadClick(i) {
     if (selectedSlots.has(i)) selectedSlots.delete(i); else selectedSlots.add(i);
     updatePads(); updateMergeButton();
   } else {
+    saveCurrentSettings();
     activeSlot = i; selection = null;
+    loadSlotSettings(i);
     updatePads(); drawWave(); updateTransportButtons();
     $('selInfo').textContent = slots[i] ? 'Tap and drag to select' : 'Empty slot';
   }
@@ -694,132 +296,40 @@ $('fileInput').onchange = async e => {
   } catch (err) { setStatus('Error: ' + err.message); }
 };
 
-// === ЗАПИСЬ С ВЫСОКИМ КАЧЕСТВОМ ===
 $('recBtn').addEventListener('click', async function(e) {
   try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setStatus('Microphone not supported');
-      return;
-    }
-    
-    if (isRecording) {
-      stopRecording();
-      return;
-    }
-    
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus('Microphone not supported'); return; }
+    if (isRecording) { stopRecording(); return; }
     ensureCtx();
-    if (audioCtx.state === 'suspended') {
-      await audioCtx.resume();
-    }
-    
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
     setStatus('Requesting mic...');
-    
-    // Запрашиваем микрофон с максимальным качеством
-    const stream = await navigator.mediaDevices.getUserMedia({ 
-      audio: {
-        echoCancellation: false,
-        noiseSuppression: false,
-        autoGainControl: false,
-        channelCount: 1,
-        sampleRate: 44100
-      }
-    }).catch(err => {
-      console.warn('High quality failed, trying basic:', err);
-      return navigator.mediaDevices.getUserMedia({ audio: true });
-    });
-    
-    const audioTrack = stream.getAudioTracks()[0];
-    const settings = audioTrack.getSettings();
-    console.log('Audio settings:', settings);
-    showQualityInfo(`Sample Rate: ${settings.sampleRate || 'unknown'} Hz | Channels: ${settings.channelCount || 1}`);
-    
-    recStream = stream;
-    recChunks = [];
-    
-    // Проверяем поддержку MediaRecorder с высоким битрейтом
-    const mimeTypes = [
-      'audio/webm;codecs=opus;bitrate=128000',
-      'audio/webm;codecs=opus',
-      'audio/webm',
-      'audio/mp4'
-    ];
-    
-    let selectedMime = '';
-    for (const mime of mimeTypes) {
-      if (MediaRecorder.isTypeSupported(mime)) {
-        selectedMime = mime;
-        break;
-      }
-    }
-    
-    console.log('Using MIME type:', selectedMime);
-    
-    recMediaRecorder = new MediaRecorder(stream, {
-      mimeType: selectedMime,
-      audioBitsPerSecond: 128000
-    });
-    
-    recMediaRecorder.ondataavailable = (e) => {
-      if (e.data && e.data.size > 0) recChunks.push(e.data);
-    };
-    
-    recMediaRecorder.onerror = (e) => {
-      console.error('MediaRecorder error:', e);
-      setStatus('Recording error');
-      stopRecording();
-    };
-    
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).catch(() => navigator.mediaDevices.getUserMedia({ audio: true }));
+    recStream = stream; recChunks = [];
+    recMediaRecorder = new MediaRecorder(stream);
+    recMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+    recMediaRecorder.onerror = (e) => { setStatus('Recording error'); stopRecording(); };
     recMediaRecorder.onstop = async () => {
-      if (recStream) { 
-        recStream.getTracks().forEach(t => t.stop()); 
-        recStream = null; 
-      }
-      
-      if (recChunks.length === 0) {
-        setStatus('No audio recorded');
-        resetRecordingUI();
-        return;
-      }
-      
+      if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+      if (recChunks.length === 0) { setStatus('No audio recorded'); resetRecordingUI(); return; }
       setStatus('Processing...');
-      
       try {
-        const blob = new Blob(recChunks, { type: selectedMime || 'audio/webm' });
+        const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
         const arr = await blob.arrayBuffer();
         const buffer = await audioCtx.decodeAudioData(arr);
-        
-        slots[activeSlot] = buffer;
-        selection = null;
+        slots[activeSlot] = buffer; selection = null;
         drawWave(); updatePads(); updateTransportButtons();
-        setStatus(`Recorded ${buffer.duration.toFixed(1)}s @ ${buffer.sampleRate}Hz`);
-      } catch (err) {
-        console.error('Processing error:', err);
-        setStatus('Error: ' + err.message);
-      }
+        setStatus(`Recorded ${buffer.duration.toFixed(1)}s`);
+      } catch (err) { setStatus('Error: ' + err.message); }
       resetRecordingUI();
     };
-    
-    recMediaRecorder.start(100);
-    isRecording = true;
-    recStartTime = Date.now();
-    
-    $('recBtn').classList.add('active');
-    $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active');
-    setStatus('Recording...');
-    
+    recMediaRecorder.start();
+    isRecording = true; recStartTime = Date.now();
+    $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
+    $('recIndicator').classList.add('active'); setStatus('Recording...');
     recTimerInterval = setInterval(updateRecTimer, 100);
-    
   } catch (err) {
-    console.error('Recording error:', err);
-    if (err.name === 'NotAllowedError') {
-      setStatus('Permission denied - enable mic in settings');
-    } else if (err.name === 'NotFoundError') {
-      setStatus('No microphone found');
-    } else {
-      setStatus('Error: ' + err.message);
-    }
-    
+    if (err.name === 'NotAllowedError') setStatus('Permission denied');
+    else setStatus('Error: ' + err.message);
     if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
     resetRecordingUI();
   }
@@ -827,23 +337,16 @@ $('recBtn').addEventListener('click', async function(e) {
 
 function stopRecording() {
   if (!isRecording) return;
-  
   if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
-  
-  if (recMediaRecorder && recMediaRecorder.state !== 'inactive') {
-    try { recMediaRecorder.stop(); } catch(e) {}
-  }
+  if (recMediaRecorder && recMediaRecorder.state !== 'inactive') { try { recMediaRecorder.stop(); } catch(e) {} }
 }
 
 function resetRecordingUI() {
   isRecording = false;
-  $('recBtn').classList.remove('active');
-  $('recBtn').textContent = '●';
+  $('recBtn').classList.remove('active'); $('recBtn').textContent = '●';
   $('recIndicator').classList.remove('active');
-  $('recTime').textContent = '0:00';
-  $('recLevel').style.width = '0%';
-  recChunks = [];
-  recMediaRecorder = null;
+  $('recTime').textContent = '0:00'; $('recLevel').style.width = '0%';
+  recChunks = []; recMediaRecorder = null;
 }
 
 function updateRecTimer() {
@@ -851,7 +354,6 @@ function updateRecTimer() {
   $('recTime').textContent = `${Math.floor(e/60)}:${(e%60).toString().padStart(2,'0')}`;
 }
 
-// === MIX RECORDING ===
 $('recMixBtn').onclick = async () => {
   ensureCtx(); await audioCtx.resume();
   if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
@@ -862,13 +364,8 @@ async function startRecordingMix() {
     mixStreamDest = audioCtx.createMediaStreamDestination();
     mixChunks = [];
     activeChains.forEach(d => d.chain.outputGain.connect(mixStreamDest));
-    const mt = MediaRecorder.isTypeSupported('audio/webm;codecs=opus;bitrate=192000') 
-      ? 'audio/webm;codecs=opus;bitrate=192000' 
-      : 'audio/webm;codecs=opus';
-    mixRecorder = new MediaRecorder(mixStreamDest.stream, { 
-      mimeType: mt,
-      audioBitsPerSecond: 192000
-    });
+    const mt = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
+    mixRecorder = new MediaRecorder(mixStreamDest.stream, { mimeType: mt });
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
     mixRecorder.start(100);
     isRecordingMix = true; mixStartTime = Date.now();
@@ -930,6 +427,18 @@ function f32ToI16(f) {
   return i;
 }
 
+function makeBitcrushCurve(bits) {
+  if (bits <= 0) return null;
+  const n = 44100;
+  const curve = new Float32Array(n);
+  const steps = Math.pow(2, bits - 1);
+  for (let i = 0; i < n; i++) {
+    const x = i * 2 / n - 1;
+    curve[i] = Math.round(x * steps) / steps;
+  }
+  return curve;
+}
+
 function createChain(ac, buffer, opts) {
   const source = ac.createBufferSource();
   source.buffer = buffer;
@@ -937,16 +446,23 @@ function createChain(ac, buffer, opts) {
   source.playbackRate.value = opts.playbackRate;
   source.detune.value = opts.detune;
   
-  if (opts.loop) {
-    source.loopStart = opts.loopStart;
-    source.loopEnd = opts.loopEnd;
-  }
+  if (opts.loop) { source.loopStart = opts.loopStart; source.loopEnd = opts.loopEnd; }
   
   const filter = ac.createBiquadFilter();
   filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
   
   const shaper = ac.createWaveShaper();
   shaper.curve = makeDistortionCurve(opts.dist); shaper.oversample = '4x';
+  
+  const bitcrusher = ac.createWaveShaper();
+  if (opts.bit > 0) {
+    bitcrusher.curve = makeBitcrushCurve(opts.bit);
+    bitcrusher.oversample = 'none';
+  } else {
+    const neutral = new Float32Array(44100);
+    for (let i = 0; i < 44100; i++) neutral[i] = i * 2 / 44100 - 1;
+    bitcrusher.curve = neutral;
+  }
   
   const delay = ac.createDelay(2);
   delay.delayTime.value = Math.max(0.001, opts.del / 1000);
@@ -968,10 +484,10 @@ function createChain(ac, buffer, opts) {
   const panner = ac.createStereoPanner(); panner.pan.value = opts.pan;
   const outputGain = ac.createGain(); outputGain.gain.value = opts.vol;
   
-  source.connect(filter); filter.connect(shaper);
-  shaper.connect(delay); delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
+  source.connect(filter); filter.connect(shaper); shaper.connect(bitcrusher);
+  bitcrusher.connect(delay); delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
   const afterDelay = ac.createGain();
-  shaper.connect(afterDelay); delayWet.connect(afterDelay);
+  bitcrusher.connect(afterDelay); delayWet.connect(afterDelay);
   afterDelay.connect(convolver); convolver.connect(revWet); afterDelay.connect(revDry);
   const afterRev = ac.createGain();
   revWet.connect(afterRev); revDry.connect(afterRev);
@@ -986,12 +502,10 @@ function createChain(ac, buffer, opts) {
     else source.start(now);
   } else if (opts.offset > 0 || opts.duration) {
     source.start(now, opts.offset, opts.duration);
-  } else {
-    source.start(now);
-  }
+  } else { source.start(now); }
   
   return {
-    source, filter, shaper, delay, delayFb, delayWet,
+    source, filter, shaper, bitcrusher, delay, delayFb, delayWet,
     convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth,
     panner, outputGain,
     startTime: now,
@@ -1015,6 +529,7 @@ function updateAllChains() {
   const del = parseFloat($('del').value);
   const rev = parseFloat($('rev').value);
   const trem = parseFloat($('trem').value);
+  const bit = parseInt($('bit').value);
   
   activeChains.forEach(d => {
     const c = d.chain;
@@ -1023,6 +538,7 @@ function updateAllChains() {
     c.playbackRate = tempo;
     c.filter.frequency.value = filtOn ? filt : 20000;
     c.shaper.curve = makeDistortionCurve(dist);
+    c.bitcrusher.curve = bit > 0 ? makeBitcrushCurve(bit) : null;
     c.delay.delayTime.value = Math.max(0.001, del / 1000);
     c.delayWet.gain.value = del > 0 ? 0.5 : 0;
     c.revWet.gain.value = rev;
@@ -1040,18 +556,21 @@ function play(loop) {
   stopSlot(activeSlot);
   const myId = ++currentSourceId;
   
+  const settings = slotSettings[activeSlot];
+  
   const opts = {
     loop,
-    playbackRate: parseFloat($('tempo').value),
-    detune: parseFloat($('pitch').value),
-    vol: parseFloat($('vol').value),
-    pan: parseFloat($('pan').value),
-    filtOn: $('filtOn').checked,
-    filt: parseFloat($('filt').value),
-    dist: parseInt($('dist').value),
-    del: parseFloat($('del').value),
-    rev: parseFloat($('rev').value),
-    trem: parseFloat($('trem').value),
+    playbackRate: settings.tempo,
+    detune: settings.pitch,
+    vol: settings.vol,
+    pan: settings.pan,
+    filtOn: settings.filtOn,
+    filt: settings.filt,
+    dist: settings.dist,
+    del: settings.del,
+    rev: settings.rev,
+    trem: settings.trem,
+    bit: settings.bit,
     offset: 0,
     duration: buffer.duration,
     loopStart: 0,
@@ -1085,10 +604,7 @@ function play(loop) {
       updatePads();
       if (activeChains.size === 0) {
         stopRenderLoop();
-        if (isLooping) {
-          isLooping = false;
-          $('loopBtn').classList.remove('active');
-        }
+        if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); }
       }
     }
   };
@@ -1144,9 +660,7 @@ function getCurrentPosition(chain) {
   if (chain.loop) {
     const ll = chain.loopEnd - chain.loopStart;
     if (ll > 0 && pos >= chain.loopEnd) pos = chain.loopStart + ((pos - chain.loopStart) % ll);
-  } else {
-    if (pos > dur) pos = dur;
-  }
+  } else { if (pos > dur) pos = dur; }
   return Math.max(0, Math.min(dur, pos));
 }
 
@@ -1156,11 +670,8 @@ function drawPlayhead() {
   activeChains.forEach((d, si) => {
     const pos = getCurrentPosition(d.chain);
     const x = (pos / d.chain.bufferDuration) * canvas.width;
-    if (si === activeSlot) {
-      ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2;
-    } else {
-      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
-    }
+    if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; }
+    else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
   });
 }
@@ -1299,16 +810,17 @@ $('mergeBtn').onclick = () => {
 $('exportBtn').onclick = async () => {
   const b = slots[activeSlot]; if (!b) return;
   setStatus('Rendering...');
-  const tempo = parseFloat($('tempo').value);
+  const settings = slotSettings[activeSlot];
+  const tempo = settings.tempo;
   const dur = b.duration / tempo;
   const sc = Math.ceil(dur * b.sampleRate) + b.sampleRate;
   const oc = new OfflineAudioContext(b.numberOfChannels, Math.max(1, sc), b.sampleRate);
   const opts = {
-    loop: false, playbackRate: tempo, detune: parseFloat($('pitch').value),
-    vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
-    filtOn: $('filtOn').checked, filt: parseFloat($('filt').value),
-    dist: parseInt($('dist').value), del: parseFloat($('del').value),
-    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value),
+    loop: false, playbackRate: tempo, detune: settings.pitch,
+    vol: settings.vol, pan: settings.pan,
+    filtOn: settings.filtOn, filt: settings.filt,
+    dist: settings.dist, del: settings.del,
+    rev: settings.rev, trem: settings.trem, bit: settings.bit,
     offset: 0, duration: b.duration
   };
   const chain = createChain(oc, b, opts);
@@ -1373,10 +885,13 @@ function updateLabels() {
   $('distVal').textContent = $('dist').value;
   $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Hz' : 'Off';
   $('tremVal').textContent = Math.round($('trem').value * 100) + '%';
+  $('bitVal').textContent = $('bit').value > 0 ? $('bit').value + '-bit' : 'Off';
+  
+  saveCurrentSettings();
   updateAllChains();
 }
 
-['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id => $(id).addEventListener('input', updateLabels));
+['tempo','pitch','vol','pan','rev','del','dist','filt','trem','bit'].forEach(id => $(id).addEventListener('input', updateLabels));
 $('filtOn').addEventListener('change', updateLabels);
 
 function setStatus(t) { $('status').textContent = t; }
