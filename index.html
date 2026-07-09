@@ -356,7 +356,11 @@ function updateRecTimer() {
 
 $('recMixBtn').onclick = async () => {
   ensureCtx(); await audioCtx.resume();
-  if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
+  if (!isRecordingMix) {
+    await startRecordingMix();
+  } else {
+    await stopRecordingMix();
+  }
 };
 
 async function startRecordingMix() {
@@ -392,9 +396,9 @@ async function stopRecordingMix() {
       const ab = await audioCtx.decodeAudioData(arr);
       const mp3 = await convertToMP3(ab);
       const url = URL.createObjectURL(mp3);
-      const a = document.createElement('a'); a.href = url; a.download = `mix_${Date.now()}.mp3`; a.click();
+      const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus('Mix saved!');
+      setStatus('Mix saved as smplrbot.mp3!');
     } catch (err) { setStatus('Error: ' + err.message); }
     resetMixRecordingUI();
   };
@@ -536,11 +540,11 @@ function updateAllChains() {
     c.source.playbackRate.value = tempo;
     c.source.detune.value = detune;
     c.playbackRate = tempo;
-    c.filter.frequency.value = filtOn ? filt : 20000;
+    c.filter.frequency.value = filtOn ? filt :20000;
     c.shaper.curve = makeDistortionCurve(dist);
     c.bitcrusher.curve = bit > 0 ? makeBitcrushCurve(bit) : null;
-    c.delay.delayTime.value = Math.max(0.001, del / 1000);
-    c.delayWet.gain.value = del > 0 ? 0.5 : 0;
+    c.delay.delayTime.value = Math.max(0.001, del /1000);
+    c.delayWet.gain.value = del > 0 ? 0.5 :0;
     c.revWet.gain.value = rev;
     c.revDry.gain.value = 1 - rev * 0.5;
     c.tremoloDepth.gain.value = trem * 0.5;
@@ -670,9 +674,17 @@ function drawPlayhead() {
   activeChains.forEach((d, si) => {
     const pos = getCurrentPosition(d.chain);
     const x = (pos / d.chain.bufferDuration) * canvas.width;
-    if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; }
-    else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    if (si === activeSlot) { 
+      ctx.strokeStyle = '#dc2626'; 
+      ctx.lineWidth = 2; 
+    } else {
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; 
+      ctx.lineWidth = 1; 
+    }
+    ctx.beginPath(); 
+    ctx.moveTo(x, 0); 
+    ctx.lineTo(x, H); 
+    ctx.stroke();
   });
 }
 
@@ -808,33 +820,48 @@ $('mergeBtn').onclick = () => {
 };
 
 $('exportBtn').onclick = async () => {
-  const b = slots[activeSlot]; if (!b) return;
-  setStatus('Rendering...');
-  const settings = slotSettings[activeSlot];
-  const tempo = settings.tempo;
-  const dur = b.duration / tempo;
-  const sc = Math.ceil(dur * b.sampleRate) + b.sampleRate;
-  const oc = new OfflineAudioContext(b.numberOfChannels, Math.max(1, sc), b.sampleRate);
-  const opts = {
-    loop: false, playbackRate: tempo, detune: settings.pitch,
-    vol: settings.vol, pan: settings.pan,
-    filtOn: settings.filtOn, filt: settings.filt,
-    dist: settings.dist, del: settings.del,
-    rev: settings.rev, trem: settings.trem, bit: settings.bit,
-    offset: 0, duration: b.duration
-  };
-  const chain = createChain(oc, b, opts);
-  chain.outputGain.disconnect(); chain.outputGain.connect(oc.destination);
+  // Объединяем все слоты в один
+  const validSlots = slots.filter(slot => slot !== null);
+  if (validSlots.length === 0) {
+    setStatus('No valid slots to export');
+    return;
+  }
+  
+  // Объединяем все слоты в один буфер
+  const sr = validSlots[0].sampleRate;
+  const nc = validSlots[0].numberOfChannels;
+  const totalLength = validSlots.reduce((sum, slot) => sum + slot.length, 0);
+  const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr);
+  let offset = 0;
+  for (const slot of validSlots) {
+    for (let c = 0; c < nc; c++) {
+      mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset);
+    }
+    offset += slot.length;
+  }
+  
+  // Экспортируем объединенный буфер как MP3
+  setStatus('Exporting all slots...');
   try {
+    // Создаем временный аудио-контекст для обработки
+    const oc = new OfflineAudioContext(nc, totalLength, sr);
+    const source = oc.createBufferSource();
+    source.buffer = mergedBuffer;
+    source.connect(oc.destination);
+    source.start(0);
+
     const r = await oc.startRendering();
-    try { chain.tremoloLfo.stop(); } catch(e){}
-    const w = bufferToWav(r);
-    const blob = new Blob([w], { type: 'audio/wav' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `sample_slot${activeSlot + 1}.wav`; a.click();
+    const mp3 = await convertToMP3(r);
+    const url = URL.createObjectURL(mp3);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'smplrbot.mp3';
+    a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setStatus('Saved');
-  } catch (err) { setStatus('Export error: ' + err.message); }
+    setStatus('All slots exported as smplrbot.mp3');
+  } catch (err) {
+    setStatus('Export error: ' + err.message);
+  }
 };
 
 function makeDistortionCurve(a) {
