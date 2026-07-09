@@ -133,9 +133,9 @@ let currentSourceId = 0;
 let isLooping = false;
 
 let isRecording = false;
-let recStream = null, recMediaRecorder = null;
-let recChunks = [], recStartTime = 0, recTimerInterval = null;
-let recMimeType = '';
+let recStream = null, recMediaRecorder = null, recSource = null, recProcessor = null, recAnalyser = null;
+let recChunks = [], recStartTime = 0, recTimerInterval = null, recLevelRaf = null;
+let recUseMediaRecorder = false, recMimeType = '';
 
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 
@@ -143,13 +143,7 @@ const activeChains = new Map();
 let rafId = null;
 
 function ensureCtx() {
-  if (!audioCtx) {
-    try {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    } catch (e) {
-      alert('AudioContext error: ' + e.message);
-    }
-  }
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   return audioCtx;
 }
 
@@ -213,138 +207,104 @@ $('fileInput').onchange = async e => {
   } catch (err) { setStatus('Error: ' + err.message); }
 };
 
-// === ЗАПИСЬ МИКРОФОНА (МАКСИМАЛЬНО УПРОЩЕНО ДЛЯ ANDROID) ===
-$('recBtn').onclick = function() {
-  try {
-    // 1. Создаём AudioContext СИНХРОННО в user gesture
-    ensureCtx();
-    
-    // 2. Проверяем поддержку
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      alert('Microphone API not supported in this browser');
-      return;
-    }
-    
-    if (!window.MediaRecorder) {
-      alert('MediaRecorder not supported in this browser');
-      return;
-    }
-    
-    // 3. Если уже записываемся - останавливаем
-    if (isRecording) {
-      stopRecording();
-      return;
-    }
-    
-    // 4. Запускаем запись
-    startRecording();
-    
-  } catch (err) {
-    alert('REC button error: ' + err.message);
-  }
+$('recBtn').onclick = () => {
+  ensureCtx(); audioCtx.resume();
+  if (!isRecording) startRecording(); else stopRecording();
 };
 
 async function startRecording() {
   try {
-    setStatus('Requesting microphone...');
-    
-    // Запрашиваем микрофон
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus('Mic not supported'); return; }
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    if (audioCtx.state !== 'running') await audioCtx.resume();
     
-    setStatus('Microphone obtained');
+    recStream = stream; recChunks = []; recUseMediaRecorder = false;
     
-    // Резюмируем AudioContext
-    if (audioCtx.state === 'suspended') {
-      await audioCtx.resume();
-    }
-    
-    if (audioCtx.state !== 'running') {
-      alert('AudioContext state: ' + audioCtx.state);
-      stream.getTracks().forEach(t => t.stop());
-      return;
-    }
-    
-    recStream = stream;
-    recChunks = [];
-    
-    // Создаём MediaRecorder
-    recMediaRecorder = new MediaRecorder(stream);
-    recMimeType = recMediaRecorder.mimeType || 'audio/webm';
-    
-    recMediaRecorder.ondataavailable = e => {
-      if (e.data && e.data.size > 0) recChunks.push(e.data);
-    };
-    
-    recMediaRecorder.onerror = e => {
-      alert('MediaRecorder error: ' + e.error);
-      stopRecording();
-    };
-    
-    recMediaRecorder.onstop = async () => {
+    if (typeof MediaRecorder !== 'undefined') {
       try {
-        if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+        recMediaRecorder = new MediaRecorder(stream);
+        recUseMediaRecorder = true;
+        recMimeType = recMediaRecorder.mimeType || 'audio/webm';
         
-        if (recChunks.length === 0) {
-          setStatus('No audio recorded');
+        recMediaRecorder.ondataavailable = e => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
+        recMediaRecorder.onerror = () => { setStatus('Recording error'); stopRecording(); };
+        recMediaRecorder.onstop = async () => {
+          if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+          if (recChunks.length === 0) { setStatus('No audio recorded'); resetRecordingUI(); return; }
+          setStatus('Processing...');
+          try {
+            const blob = new Blob(recChunks, { type: recMimeType });
+            const arr = await blob.arrayBuffer();
+            const buffer = await audioCtx.decodeAudioData(arr);
+            slots[activeSlot] = buffer; selection = null;
+            drawWave(); updatePads(); updateTransportButtons();
+            setStatus(`Recorded ${buffer.duration.toFixed(1)}s to slot ${activeSlot + 1}`);
+          } catch (err) { setStatus('Decode error: ' + err.message); }
           resetRecordingUI();
-          return;
-        }
+        };
         
-        setStatus('Processing...');
-        
-        const blob = new Blob(recChunks, { type: recMimeType });
-        const arr = await blob.arrayBuffer();
-        const buffer = await audioCtx.decodeAudioData(arr);
-        
-        slots[activeSlot] = buffer;
-        selection = null;
-        drawWave(); updatePads(); updateTransportButtons();
-        setStatus(`Recorded ${buffer.duration.toFixed(1)}s to slot ${activeSlot + 1}`);
-      } catch (err) {
-        alert('Processing error: ' + err.message);
-      }
-      resetRecordingUI();
+        recMediaRecorder.start(100);
+        isRecording = true; recStartTime = Date.now();
+        $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
+        $('recIndicator').classList.add('active'); setStatus('Recording...');
+        recTimerInterval = setInterval(updateRecTimer, 100);
+        setupRecordingVisualizer(stream);
+        return;
+      } catch (err) { recMediaRecorder = null; recUseMediaRecorder = false; recChunks = []; }
+    }
+    
+    recSource = audioCtx.createMediaStreamSource(stream);
+    recProcessor = audioCtx.createScriptProcessor(0, 1, 1);
+    recProcessor.onaudioprocess = e => {
+      const d = e.inputBuffer.getChannelData(0);
+      const c = new Float32Array(d.length); c.set(d); recChunks.push(c);
     };
+    const sg = audioCtx.createGain(); sg.gain.value = 0;
+    recSource.connect(recProcessor); recProcessor.connect(sg); sg.connect(audioCtx.destination);
     
-    // Стартуем запись
-    recMediaRecorder.start();
-    
-    isRecording = true;
-    recStartTime = Date.now();
-    
-    $('recBtn').classList.add('active');
-    $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active');
-    setStatus('Recording...');
-    
+    isRecording = true; recStartTime = Date.now();
+    $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
+    $('recIndicator').classList.add('active'); setStatus('Recording...');
     recTimerInterval = setInterval(updateRecTimer, 100);
-    
+    setupRecordingVisualizer(stream);
   } catch (err) {
-    alert('startRecording error: ' + err.message + '\n\nName: ' + err.name);
-    if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-    resetRecordingUI();
+    if (err.name === 'NotAllowedError') setStatus('Mic access denied');
+    else setStatus('Error: ' + err.message);
   }
 }
 
 function stopRecording() {
   if (!isRecording) return;
-  
   if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
+  if (recLevelRaf) { cancelAnimationFrame(recLevelRaf); recLevelRaf = null; }
+  recAnalyser = null;
   
-  if (recMediaRecorder && recMediaRecorder.state !== 'inactive') {
-    try { recMediaRecorder.stop(); } catch(e) {}
+  if (recUseMediaRecorder && recMediaRecorder) {
+    if (recMediaRecorder.state !== 'inactive') recMediaRecorder.stop();
+  } else {
+    if (recProcessor) { recProcessor.onaudioprocess = null; recProcessor.disconnect(); recProcessor = null; }
+    if (recSource) { recSource.disconnect(); recSource = null; }
+    if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
+    if (recChunks.length > 0) {
+      const len = recChunks.reduce((s, c) => s + c.length, 0);
+      const buf = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+      const ch = buf.getChannelData(0);
+      let off = 0;
+      for (const c of recChunks) { ch.set(c, off); off += c.length; }
+      slots[activeSlot] = buf; selection = null;
+      drawWave(); updatePads(); updateTransportButtons();
+      setStatus(`Recorded ${buf.duration.toFixed(1)}s to slot ${activeSlot + 1}`);
+    } else setStatus('No audio recorded');
+    resetRecordingUI();
   }
 }
 
 function resetRecordingUI() {
   isRecording = false;
-  $('recBtn').classList.remove('active');
-  $('recBtn').textContent = '●';
+  $('recBtn').classList.remove('active'); $('recBtn').textContent = '●';
   $('recIndicator').classList.remove('active');
-  $('recTime').textContent = '0:00';
-  $('recLevel').style.width = '0%';
-  recChunks = [];
-  recMediaRecorder = null;
+  $('recTime').textContent = '0:00'; $('recLevel').style.width = '0%';
+  recChunks = []; recMediaRecorder = null; recUseMediaRecorder = false;
 }
 
 function updateRecTimer() {
@@ -352,7 +312,23 @@ function updateRecTimer() {
   $('recTime').textContent = `${Math.floor(e/60)}:${(e%60).toString().padStart(2,'0')}`;
 }
 
-// === ЗАПИСЬ МИКСА ===
+function setupRecordingVisualizer(stream) {
+  try {
+    const s = audioCtx.createMediaStreamSource(stream);
+    recAnalyser = audioCtx.createAnalyser(); recAnalyser.fftSize = 256;
+    s.connect(recAnalyser); updateRecLevel();
+  } catch (e) {}
+}
+
+function updateRecLevel() {
+  if (!isRecording || !recAnalyser) { $('recLevel').style.width = '0%'; if (isRecording) recLevelRaf = requestAnimationFrame(updateRecLevel); return; }
+  const d = new Uint8Array(recAnalyser.frequencyBinCount);
+  recAnalyser.getByteFrequencyData(d);
+  let s = 0; for (let i = 0; i < d.length; i++) s += d[i];
+  $('recLevel').style.width = Math.min(100, (s / d.length / 255) * 200) + '%';
+  if (isRecording) recLevelRaf = requestAnimationFrame(updateRecLevel);
+}
+
 $('recMixBtn').onclick = async () => {
   ensureCtx(); await audioCtx.resume();
   if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
@@ -755,13 +731,8 @@ $('resetBtn').onclick = () => {
 };
 
 $('clearBtn').onclick = () => {
-  stopSlot(activeSlot);
-  slots[activeSlot] = null;
-  selection = null;
-  drawWave();
-  updatePads();
-  updateTransportButtons();
-  setStatus(`Slot ${activeSlot + 1} cleared`);
+  stopAll(); slots = Array(10).fill(null); selection = null;
+  drawWave(); updatePads(); updateTransportButtons(); setStatus('All slots cleared');
 };
 
 $('selectModeBtn').onclick = () => {
