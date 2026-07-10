@@ -99,8 +99,44 @@
   .rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
   .slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; }
   @media (max-width: 500px) { .pad-num { font-size: 16px; } .pad-duration { font-size: 9px; } .header { font-size: 16px; } .pads { gap: 6px; } .modal { max-height: 90vh; } .modal-content { padding: 16px; font-size: 13px; } .modal-content h1 { font-size: 20px; } .modal-content h2 { font-size: 16px; } .modal-content h3 { font-size: 14px; } }
-  @media (max-width: 400px) { .transport button { padding: 14px 10px; font-size: 18px; } .transport button.loop { font-size: 12px; } .actions button, .actions label { font-size: 11px; padding: 10px 8px; } .effect { padding: 10px; } .pad-num { font-size: 14px; } .pad-duration { font-size: 8px; } .pads { gap: 4px; } .about-btn { padding: 6px 10px; font-size: 10px; } .header { font-size: 14px; } }
-  @media (max-width: 340px) { .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; } .header { font-size: 12px; letter-spacing: 0.5px; } .about-btn { padding: 5px 8px; font-size: 9px; } }
+  @media (max-width: 400px) { 
+    .transport button { padding: 14px 10px; font-size: 18px; } 
+    .transport button.loop { font-size: 12px; }
+    .actions button, .actions label { font-size: 11px; padding: 10px 8px; } 
+    .effect { padding: 10px; }
+    .pad-num { font-size: 14px; }
+    .pad-duration { font-size: 8px; }
+    .pads { gap: 4px; }
+    .header { font-size: 14px; }
+    /* Кнопка "О программе" уменьшается в 2 раза по X и Y за счёт левой стороны */
+    .about-btn {
+      padding: 4px 6px;
+      font-size: 9px;
+      transform: translateY(-50%) scale(0.5);
+      transform-origin: right center;
+    }
+    .about-btn:active {
+      transform: translateY(-50%) scale(0.475);
+      transform-origin: right center;
+    }
+  }
+  @media (max-width: 340px) { 
+    .pad-num { font-size: 12px; } 
+    .pad-duration { font-size: 7px; margin-top: 2px; } 
+    .pads { gap: 3px; } 
+    .pad { border-width: 1px; border-radius: 4px; }
+    .header { font-size: 12px; letter-spacing: 0.5px; }
+    .about-btn {
+      padding: 3px 5px;
+      font-size: 8px;
+      transform: translateY(-50%) scale(0.5);
+      transform-origin: right center;
+    }
+    .about-btn:active {
+      transform: translateY(-50%) scale(0.475);
+      transform-origin: right center;
+    }
+  }
 </style>
 </head>
 <body>
@@ -120,7 +156,6 @@
       <div class="modal-content" id="modalContent">
         <h1>🎛️ Руководство пользователя SAMPLER HENDRIX 5.0</h1>
         <p>Полное руководство по использованию веб-сэмплера для создания музыки.</p>
-        
         <h2>📱 Начало работы</h2>
         <h3>Интерфейс</h3>
         <ul>
@@ -130,9 +165,7 @@
           <li><strong>Actions</strong> — функции редактирования</li>
           <li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li>
         </ul>
-        
         <h2>🎯 Основные функции</h2>
-        
         <h3>1. Загрузка семплов</h3>
         <p><strong>Кнопка 📂 Загрузить:</strong></p>
         <ul>
@@ -140,7 +173,6 @@
           <li>Выберите аудиофайл (WAV, MP3, OGG)</li>
           <li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li>
         </ul>
-        
         <h3>2. Запись с микрофона</h3>
         <p><strong>Красная кнопка ● REC:</strong></p>
         <ul>
@@ -148,7 +180,6 @@
           <li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li>
         </ul>
         <div class="highlight">💡 <strong>Совет:</strong> В Telegram качество записи ограничено. Для лучшего качества открывайте приложение в Chrome.</div>
-        
         <h3>3. Воспроизведение</h3>
         <ul>
           <li><strong>▶️ PLAY</strong> — играет семпл один раз</li>
@@ -160,10 +191,8 @@
           </li>
           <li><strong>■ STOP</strong> — останавливает все играющие семплы</li>
         </ul>
-        
         <h2>🎚 Эффекты (индивидуальные для каждого слота!)</h2>
         <p>Каждый из 10 слотов хранит свои настройки. Переключаясь между слотами, вы переключаете их пресеты.</p>
-        
         <table>
           <tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr>
           <tr><td>Tempo</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr>
@@ -177,16 +206,13 @@
           <tr><td>Tremolo</td><td>0 — 100%</td><td>Пульсация громкости (6 Hz)</td></tr>
           <tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi эффект (старые семплеры)</td></tr>
         </table>
-        
         <h3>Как менять эффекты:</h3>
         <ul>
           <li>Выберите нужный слот (тап на пад)</li>
           <li>Двигайте ручки</li>
           <li>Изменения применяются мгновенно во время воспроизведения</li>
         </ul>
-        
         <h2>✂️ Продвинутые функции</h2>
-        
         <h3>Обрезка</h3>
         <ul>
           <li>Выделите фрагмент на волне: тапните и тяните пальцем</li>
@@ -194,7 +220,6 @@
           <li>Нажмите ✂️ Обрезать</li>
           <li>Семпл обрежется до выделенного фрагмента</li>
         </ul>
-        
         <h3>Объединение</h3>
         <ul>
           <li>Нажмите ✓ Выбрать — включится режим выбора</li>
@@ -202,7 +227,6 @@
           <li>Нажмите 🔗 Объединить</li>
           <li>Семплы объединятся в один, запишутся в свободный слот</li>
         </ul>
-        
         <h3>Запись живого микса</h3>
         <p><strong>⏺️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p>
         <ul>
@@ -211,25 +235,20 @@
           <li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li>
         </ul>
         <div class="highlight">💡 Идеально для записи джемов и живых выступлений!</div>
-        
         <h3>Сохранить (Экспорт)</h3>
         <p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code> в том порядке, в котором они расположены.</p>
-        
         <h3>Сброс / Очистить</h3>
         <ul>
-          <li><strong>↺ Сброс</strong> — очищает активный слот</li>
+          <li><strong> Сброс</strong> — очищает активный слот</li>
           <li><strong>🗑 Очистить</strong> — то же самое (очищает только активный слот, не все)</li>
         </ul>
-        
         <h2>🔴 Индикаторы</h2>
-        
         <h3>На волне (canvas):</h3>
         <ul>
           <li><strong>Красная линия</strong> — текущая позиция воспроизведения активного слота</li>
           <li><strong>Серая линия</strong> — позиция воспроизведения других слотов</li>
           <li><strong>Белая рамка</strong> — выделенный фрагмент</li>
         </ul>
-        
         <h3>На падах:</h3>
         <ul>
           <li><strong>Зелёный фон</strong> — слот содержит семпл</li>
@@ -237,16 +256,13 @@
           <li><strong>Оранжевая рамка</strong> — выбран для объединения</li>
           <li><strong>Пульсация</strong> — семпл играет</li>
         </ul>
-        
         <h3>Индикатор записи:</h3>
         <ul>
           <li><strong>Красная точка</strong> — идёт запись</li>
           <li><strong>Таймер</strong> — длительность записи</li>
           <li><strong>VU-метр</strong> — уровень сигнала (зелёный→жёлтый→красный)</li>
         </ul>
-        
         <h2>🎵 Практические советы</h2>
-        
         <h3>Создание лупов</h3>
         <ul>
           <li>Запишите ритмический паттерн</li>
@@ -254,28 +270,24 @@
           <li>Нажмите LOOP — получите идеальный цикл</li>
           <li>Меняйте Pitch для тональных вариаций</li>
         </ul>
-        
         <h3>Lo-Fi звук</h3>
         <ul>
           <li>Bitcrush: 8-12 (эффект старых семплеров MPC)</li>
           <li>Filter: 3000-5000 Hz (приглушённый звук)</li>
           <li>Reverb: 20-40%</li>
         </ul>
-        
         <h3>Агрессивный звук</h3>
         <ul>
           <li>Distortion: 30-60</li>
           <li>Bitcrush: 4-8</li>
           <li>Filter: включить, 8000 Hz</li>
         </ul>
-        
         <h3>Пространственный микс</h3>
         <ul>
           <li>Используйте Pan для расстановки слотов (L30, C, R30)</li>
           <li>Добавьте немного Reverb на ведущие семплы</li>
           <li>Delay 300-500ms для эхо-эффекта</li>
         </ul>
-        
         <h3>DJ-стиль</h3>
         <ul>
           <li>Загрузите два разных лупа в слоты 1 и 2</li>
@@ -283,9 +295,7 @@
           <li>Переключайтесь между ними через пады</li>
           <li>Используйте Filter для плавных переходов</li>
         </ul>
-        
         <h2>⚠️ Устранение неполадок</h2>
-        
         <h3>Запись не работает</h3>
         <p><strong>В Telegram:</strong></p>
         <ul>
@@ -297,31 +307,26 @@
           <li>Проверьте HTTPS (должен быть замок в адресной строке)</li>
           <li>Разрешите доступ к микрофону в настройках браузера</li>
         </ul>
-        
         <h3>Звук не играет</h3>
         <ul>
           <li>Проверьте что звук не на нуле (Volume)</li>
           <li>Убедитесь что слот содержит семпл (зелёный фон)</li>
           <li>Обновите страницу</li>
         </ul>
-        
         <h3>Медленная работа</h3>
         <ul>
           <li>Закройте лишние вкладки</li>
           <li>Используйте Chrome или Safari</li>
           <li>Очистите неиспользуемые слоты</li>
         </ul>
-        
         <h3>Эффекты не применяются</h3>
         <ul>
           <li>Убедитесь что Filter включён (чекбокс)</li>
           <li>Проверьте что значения не на нуле</li>
           <li>Изменения применяются мгновенно</li>
         </ul>
-        
         <h2>📐 Горячие клавиши (на ПК)</h2>
         <p>На мобильном используйте тапы по интерфейсу.</p>
-        
         <h2>🎨 Идеи для творчества</h2>
         <ul>
           <li><strong>Сэмплирование окружения:</strong> запишите звуки улицы, голоса, бытовые шумы → превратите в бит</li>
@@ -330,7 +335,6 @@
           <li><strong>Live remix:</strong> используйте Запись микса для записи импровизации</li>
           <li><strong>Beat battle:</strong> за 5 минут сделайте бит из случайных звуков вокруг</li>
         </ul>
-        
         <h2>🆘 Поддержка</h2>
         <p>Если что-то не работает:</p>
         <ul>
@@ -339,7 +343,6 @@
           <li>Обновите страницу</li>
           <li>Очистите кэш браузера</li>
         </ul>
-        
         <p><strong>Удачного творчества! 🎸</strong></p>
       </div>
     </div>
@@ -368,7 +371,7 @@
       <label for="fileInput">📂 Загрузить</label>
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Обрезать</button>
-      <button id="resetBtn" disabled>↺ Сброс</button>
+      <button id="resetBtn" disabled> Сброс</button>
       <button id="exportBtn" disabled>💾 Сохранить</button>
       <button id="recMixBtn" class="rec-mix">⏺ Запись</button>
       <button id="mergeBtn" class="merge" disabled>🔗 Слияние</button>
@@ -394,7 +397,6 @@
   </div>
 </div>
 <script>
-// === VK BRIDGE ===
 let vkBridgeReady = false;
 async function initVKBridge() {
   try {
@@ -402,34 +404,23 @@ async function initVKBridge() {
       await vkBridge.send('VKWebAppInit');
       vkBridgeReady = true;
       console.log('VK Bridge инициализирован');
-      // Устанавливаем тёмную тему статус-бара
       try {
-        await vkBridge.send('VKWebAppSetViewSettings', {
-          status_bar_style: 'light',
-          action_bar_color: '#1a1a1a'
-        });
+        await vkBridge.send('VKWebAppSetViewSettings', { status_bar_style: 'light', action_bar_color: '#1a1a1a' });
       } catch(e) {}
     }
-  } catch (e) {
-    console.log('VK Bridge недоступен (не в ВК)');
-  }
+  } catch (e) { console.log('VK Bridge недоступен'); }
 }
 
 function vkHaptic(type = 'light') {
   if (!vkBridgeReady) return;
-  try {
-    vkBridge.send('VKWebAppTapticImpactOccurred', { style: type });
-  } catch(e) {}
+  try { vkBridge.send('VKWebAppTapticImpactOccurred', { style: type }); } catch(e) {}
 }
 
 function vkNotify() {
   if (!vkBridgeReady) return;
-  try {
-    vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' });
-  } catch(e) {}
+  try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {}
 }
 
-// === МОДАЛЬНОЕ ОКНО ===
 function openAbout() {
   document.getElementById('aboutModal').classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -450,7 +441,6 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout();
 });
 
-// === ОСНОВНОЙ КОД ===
 const $ = id => document.getElementById(id);
 const canvas = $('wave'), ctx = canvas.getContext('2d');
 
@@ -695,7 +685,7 @@ async function stopRecordingMix() {
 
 function resetMixRecordingUI() {
   isRecordingMix = false;
-  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = '⏺ Запись';
+  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = ' Запись';
   mixChunks = []; mixStreamDest = null; mixRecorder = null;
 }
 
@@ -1128,7 +1118,6 @@ $('filtOn').addEventListener('change', updateLabels);
 
 function setStatus(t) { $('status').textContent = t; }
 
-// Запуск
 init();
 initVKBridge();
 </script>
