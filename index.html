@@ -8,6 +8,7 @@
 <meta name="theme-color" content="#1a1a1a">
 <title>SAMPLER HENDRIX 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
+<script src="https://yandex.ru/games/sdk/v2"></script>
 <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -41,7 +42,6 @@
   .modal-content strong { color: #fff; font-weight: 600; }
   .modal-content code { background: #0f0f0f; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 13px; color: #4ade80; }
   .modal-content .highlight { background: rgba(74, 222, 128, 0.1); padding: 12px; border-left: 3px solid #4ade80; border-radius: 6px; margin: 12px 0; }
-  .modal-content .warning { background: rgba(251, 191, 36, 0.1); padding: 12px; border-left: 3px solid #fbbf24; border-radius: 6px; margin: 12px 0; }
   .modal-content table { width: 100%; border-collapse: collapse; margin: 12px 0; }
   .modal-content th, .modal-content td { padding: 8px; text-align: left; border: 1px solid #333; font-size: 13px; }
   .modal-content th { background: #0f0f0f; color: #fff; font-weight: 600; }
@@ -108,34 +108,13 @@
     .pad-duration { font-size: 8px; }
     .pads { gap: 4px; }
     .header { font-size: 14px; }
-    /* Кнопка "О программе" уменьшается в 2 раза по X и Y за счёт левой стороны */
-    .about-btn {
-      padding: 4px 6px;
-      font-size: 9px;
-      transform: translateY(-50%) scale(0.5);
-      transform-origin: right center;
-    }
-    .about-btn:active {
-      transform: translateY(-50%) scale(0.475);
-      transform-origin: right center;
-    }
+    .about-btn { padding: 4px 6px; font-size: 9px; transform: translateY(-50%) scale(0.5); transform-origin: right center; }
+    .about-btn:active { transform: translateY(-50%) scale(0.475); transform-origin: right center; }
   }
   @media (max-width: 340px) { 
-    .pad-num { font-size: 12px; } 
-    .pad-duration { font-size: 7px; margin-top: 2px; } 
-    .pads { gap: 3px; } 
-    .pad { border-width: 1px; border-radius: 4px; }
+    .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; }
     .header { font-size: 12px; letter-spacing: 0.5px; }
-    .about-btn {
-      padding: 3px 5px;
-      font-size: 8px;
-      transform: translateY(-50%) scale(0.5);
-      transform-origin: right center;
-    }
-    .about-btn:active {
-      transform: translateY(-50%) scale(0.475);
-      transform-origin: right center;
-    }
+    .about-btn { padding: 3px 5px; font-size: 8px; transform: translateY(-50%) scale(0.5); transform-origin: right center; }
   }
 </style>
 </head>
@@ -145,16 +124,15 @@
     <span class="header-title">SAMPLER HENDRIX 5.0</span>
     <button class="about-btn" onclick="openAbout()">О ПРОГРАММЕ</button>
   </div>
+  
   <div class="modal-overlay" id="aboutModal">
     <div class="modal">
       <div class="modal-header">
         <div class="modal-title">О программе SAMPLER HENDRIX 5.0</div>
-        <div class="modal-controls">
-          <button class="close-btn" onclick="closeAbout()">×</button>
-        </div>
+        <div class="modal-controls"><button class="close-btn" onclick="closeAbout()">×</button></div>
       </div>
       <div class="modal-content" id="modalContent">
-        <h1>🎛️ Руководство пользователя SAMPLER HENDRIX 5.0</h1>
+        <h1>🎛️ Руководство пользователя</h1>
         <p>Полное руководство по использованию веб-сэмплера для создания музыки.</p>
         <h2>📱 Начало работы</h2>
         <h3>Интерфейс</h3>
@@ -179,174 +157,59 @@
           <li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li>
           <li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li>
         </ul>
-        <div class="highlight">💡 <strong>Совет:</strong> В Telegram качество записи ограничено. Для лучшего качества открывайте приложение в Chrome.</div>
+        <div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div>
         <h3>3. Воспроизведение</h3>
         <ul>
           <li><strong>▶️ PLAY</strong> — играет семпл один раз</li>
-          <li><strong>LOOP</strong> (жёлтая кнопка) — бесконечный цикл:
-            <ul>
-              <li>Первое нажатие → включается loop (жёлтый цвет, свечение)</li>
-              <li>Второе нажатие → выключается</li>
-            </ul>
-          </li>
+          <li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li>
           <li><strong>■ STOP</strong> — останавливает все играющие семплы</li>
         </ul>
-        <h2>🎚 Эффекты (индивидуальные для каждого слота!)</h2>
-        <p>Каждый из 10 слотов хранит свои настройки. Переключаясь между слотами, вы переключаете их пресеты.</p>
+        <h2> Эффекты (индивидуальные для каждого слота!)</h2>
+        <p>Каждый из 10 слотов хранит свои настройки.</p>
         <table>
           <tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr>
-          <tr><td>Tempo</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr>
-          <tr><td>Pitch</td><td>±1200 ct</td><td>Высота тона (100 ct = 1 полутон)</td></tr>
-          <tr><td>Volume</td><td>0 — 100%</td><td>Громкость слота</td></tr>
-          <tr><td>Pan</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr>
-          <tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass фильтр (срезает высокие)</td></tr>
-          <tr><td>Distortion</td><td>0 — 100</td><td>Искажение звука (овердрайв)</td></tr>
-          <tr><td>Delay</td><td>0 — 1000 ms</td><td>Эхо с обратной связью</td></tr>
-          <tr><td>Reverb</td><td>0 — 100%</td><td>Пространственность (холл)</td></tr>
-          <tr><td>Tremolo</td><td>0 — 100%</td><td>Пульсация громкости (6 Hz)</td></tr>
-          <tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi эффект (старые семплеры)</td></tr>
+          <tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr>
+          <tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr>
+          <tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr>
+          <tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr>
+          <tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr>
+          <tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr>
+          <tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr>
+          <tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr>
+          <tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr>
+          <tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr>
         </table>
-        <h3>Как менять эффекты:</h3>
-        <ul>
-          <li>Выберите нужный слот (тап на пад)</li>
-          <li>Двигайте ручки</li>
-          <li>Изменения применяются мгновенно во время воспроизведения</li>
-        </ul>
         <h2>✂️ Продвинутые функции</h2>
         <h3>Обрезка</h3>
         <ul>
-          <li>Выделите фрагмент на волне: тапните и тяните пальцем</li>
-          <li>Появится белая область выделения</li>
+          <li>Выделите фрагмент на волне: тапните и тяните</li>
           <li>Нажмите ✂️ Обрезать</li>
-          <li>Семпл обрежется до выделенного фрагмента</li>
         </ul>
         <h3>Объединение</h3>
         <ul>
-          <li>Нажмите ✓ Выбрать — включится режим выбора</li>
-          <li>Тапните на несколько падов (станут оранжевыми)</li>
-          <li>Нажмите 🔗 Объединить</li>
-          <li>Семплы объединятся в один, запишутся в свободный слот</li>
+          <li>Нажмите ✓ Выбрать</li>
+          <li>Тапните на несколько падов</li>
+          <li>Нажмите 🔗 Слияние</li>
         </ul>
         <h3>Запись живого микса</h3>
         <p><strong>⏺️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p>
         <ul>
-          <li>Первый тап → начинает запись (кнопка пульсирует)</li>
-          <li>Играйте на падах, меняйте эффекты</li>
+          <li>Первый тап → начинает запись</li>
           <li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li>
         </ul>
-        <div class="highlight">💡 Идеально для записи джемов и живых выступлений!</div>
+        <div class="highlight">💡 Идеально для записи джемов!</div>
         <h3>Сохранить (Экспорт)</h3>
-        <p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code> в том порядке, в котором они расположены.</p>
-        <h3>Сброс / Очистить</h3>
-        <ul>
-          <li><strong> Сброс</strong> — очищает активный слот</li>
-          <li><strong>🗑 Очистить</strong> — то же самое (очищает только активный слот, не все)</li>
-        </ul>
+        <p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p>
         <h2>🔴 Индикаторы</h2>
-        <h3>На волне (canvas):</h3>
         <ul>
-          <li><strong>Красная линия</strong> — текущая позиция воспроизведения активного слота</li>
-          <li><strong>Серая линия</strong> — позиция воспроизведения других слотов</li>
-          <li><strong>Белая рамка</strong> — выделенный фрагмент</li>
-        </ul>
-        <h3>На падах:</h3>
-        <ul>
+          <li><strong>Красная линия</strong> — позиция воспроизведения</li>
           <li><strong>Зелёный фон</strong> — слот содержит семпл</li>
-          <li><strong>Белая рамка</strong> — активный слот</li>
-          <li><strong>Оранжевая рамка</strong> — выбран для объединения</li>
-          <li><strong>Пульсация</strong> — семпл играет</li>
-        </ul>
-        <h3>Индикатор записи:</h3>
-        <ul>
-          <li><strong>Красная точка</strong> — идёт запись</li>
-          <li><strong>Таймер</strong> — длительность записи</li>
-          <li><strong>VU-метр</strong> — уровень сигнала (зелёный→жёлтый→красный)</li>
-        </ul>
-        <h2>🎵 Практические советы</h2>
-        <h3>Создание лупов</h3>
-        <ul>
-          <li>Запишите ритмический паттерн</li>
-          <li>Выделите ровно один такт на волне</li>
-          <li>Нажмите LOOP — получите идеальный цикл</li>
-          <li>Меняйте Pitch для тональных вариаций</li>
-        </ul>
-        <h3>Lo-Fi звук</h3>
-        <ul>
-          <li>Bitcrush: 8-12 (эффект старых семплеров MPC)</li>
-          <li>Filter: 3000-5000 Hz (приглушённый звук)</li>
-          <li>Reverb: 20-40%</li>
-        </ul>
-        <h3>Агрессивный звук</h3>
-        <ul>
-          <li>Distortion: 30-60</li>
-          <li>Bitcrush: 4-8</li>
-          <li>Filter: включить, 8000 Hz</li>
-        </ul>
-        <h3>Пространственный микс</h3>
-        <ul>
-          <li>Используйте Pan для расстановки слотов (L30, C, R30)</li>
-          <li>Добавьте немного Reverb на ведущие семплы</li>
-          <li>Delay 300-500ms для эхо-эффекта</li>
-        </ul>
-        <h3>DJ-стиль</h3>
-        <ul>
-          <li>Загрузите два разных лупа в слоты 1 и 2</li>
-          <li>Настройте одинаковый Tempo</li>
-          <li>Переключайтесь между ними через пады</li>
-          <li>Используйте Filter для плавных переходов</li>
-        </ul>
-        <h2>⚠️ Устранение неполадок</h2>
-        <h3>Запись не работает</h3>
-        <p><strong>В Telegram:</strong></p>
-        <ul>
-          <li>Откройте в обычном Chrome</li>
-          <li>Или проверьте разрешения: Настройки → Приложения → Telegram → Разрешения → Микрофон</li>
-        </ul>
-        <p><strong>В браузере:</strong></p>
-        <ul>
-          <li>Проверьте HTTPS (должен быть замок в адресной строке)</li>
-          <li>Разрешите доступ к микрофону в настройках браузера</li>
-        </ul>
-        <h3>Звук не играет</h3>
-        <ul>
-          <li>Проверьте что звук не на нуле (Volume)</li>
-          <li>Убедитесь что слот содержит семпл (зелёный фон)</li>
-          <li>Обновите страницу</li>
-        </ul>
-        <h3>Медленная работа</h3>
-        <ul>
-          <li>Закройте лишние вкладки</li>
-          <li>Используйте Chrome или Safari</li>
-          <li>Очистите неиспользуемые слоты</li>
-        </ul>
-        <h3>Эффекты не применяются</h3>
-        <ul>
-          <li>Убедитесь что Filter включён (чекбокс)</li>
-          <li>Проверьте что значения не на нуле</li>
-          <li>Изменения применяются мгновенно</li>
-        </ul>
-        <h2>📐 Горячие клавиши (на ПК)</h2>
-        <p>На мобильном используйте тапы по интерфейсу.</p>
-        <h2>🎨 Идеи для творчества</h2>
-        <ul>
-          <li><strong>Сэмплирование окружения:</strong> запишите звуки улицы, голоса, бытовые шумы → превратите в бит</li>
-          <li><strong>Voice chops:</strong> запишите голос → нарежьте на слоги → разложите по падам</li>
-          <li><strong>Layering:</strong> загрузите один звук в несколько слотов с разными эффектами</li>
-          <li><strong>Live remix:</strong> используйте Запись микса для записи импровизации</li>
-          <li><strong>Beat battle:</strong> за 5 минут сделайте бит из случайных звуков вокруг</li>
-        </ul>
-        <h2>🆘 Поддержка</h2>
-        <p>Если что-то не работает:</p>
-        <ul>
-          <li>Попробуйте открыть в Chrome напрямую</li>
-          <li>Проверьте разрешения микрофона</li>
-          <li>Обновите страницу</li>
-          <li>Очистите кэш браузера</li>
         </ul>
         <p><strong>Удачного творчества! 🎸</strong></p>
       </div>
     </div>
   </div>
+
   <div class="panel">
     <canvas id="wave"></canvas>
     <div class="selection-info" id="selInfo">Нажмите и тяните для выделения</div>
@@ -359,7 +222,7 @@
     <div class="transport">
       <button id="recBtn" class="rec">●</button>
       <button id="playBtn" class="play" disabled>▶</button>
-      <button id="loopBtn" class="loop" disabled>LOOP</button>
+      <button id="loopBtn" class="loop" disabled>ПЕТЛЯ</button>
       <button id="stopBtn" class="stop" disabled>■</button>
     </div>
     <div class="rec-indicator" id="recIndicator">
@@ -371,7 +234,7 @@
       <label for="fileInput">📂 Загрузить</label>
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Обрезать</button>
-      <button id="resetBtn" disabled> Сброс</button>
+      <button id="resetBtn" disabled>↺ Сброс</button>
       <button id="exportBtn" disabled>💾 Сохранить</button>
       <button id="recMixBtn" class="rec-mix">⏺ Запись</button>
       <button id="mergeBtn" class="merge" disabled>🔗 Слияние</button>
@@ -383,10 +246,10 @@
   <div class="panel">
     <div class="slot-indicator" id="slotIndicator">Слот 1</div>
     <div class="effects">
-      <div class="effect"><div class="effect-label"><span>Tempo</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span>Pitch</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span>Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
+      <div class="effect"><div class="effect-label"><span>Высота</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
       <div class="effect"><div class="effect-label"><span>Громкость</span><span class="effect-value" id="volVal">100%</span></div><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span>Pan</span><span class="effect-value" id="panVal">C</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span>Панорама</span><span class="effect-value" id="panVal">Ц</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
       <div class="effect"><div class="effect-label"><span>Фильтр</span><span class="effect-value" id="filtVal">Выкл</span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn">ФНЧ</label></div></div>
       <div class="effect"><div class="effect-label"><span>Дисторшн</span><span class="effect-value" id="distVal">0</span></div><input type="range" id="dist" min="0" max="100" step="1" value="0"></div>
       <div class="effect"><div class="effect-label"><span>Дилей</span><span class="effect-value" id="delVal">0 мс</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
@@ -396,8 +259,35 @@
     </div>
   </div>
 </div>
+
 <script>
+// === YANDEX GAMES SDK ===
+let ysdk = null;
+let isYandexEnv = false;
+
+async function initYandexSDK() {
+  if (typeof YaGames === 'undefined') return;
+  try {
+    ysdk = await YaGames.init();
+    isYandexEnv = true;
+    if (ysdk.features && ysdk.features.LoadingAPI) ysdk.features.LoadingAPI.ready();
+    console.log('Yandex SDK инициализирован');
+
+    // Обработка сворачивания/разворачивания игры
+    ysdk.on('game_api_pause', () => {
+      if (audioCtx && audioCtx.state === 'running') audioCtx.suspend();
+    });
+    ysdk.on('game_api_resume', () => {
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    });
+  } catch(e) {
+    console.log('Yandex SDK недоступен');
+  }
+}
+
+// === VK BRIDGE ===
 let vkBridgeReady = false;
+
 async function initVKBridge() {
   try {
     if (window.vkBridge) {
@@ -405,42 +295,49 @@ async function initVKBridge() {
       vkBridgeReady = true;
       console.log('VK Bridge инициализирован');
       try {
-        await vkBridge.send('VKWebAppSetViewSettings', { status_bar_style: 'light', action_bar_color: '#1a1a1a' });
+        await vkBridge.send('VKWebAppSetViewSettings', { 
+          status_bar_style: 'light', 
+          action_bar_color: '#1a1a1a' 
+        });
       } catch(e) {}
     }
-  } catch (e) { console.log('VK Bridge недоступен'); }
+  } catch (e) {
+    console.log('VK Bridge недоступен');
+  }
 }
 
-function vkHaptic(type = 'light') {
-  if (!vkBridgeReady) return;
-  try { vkBridge.send('VKWebAppTapticImpactOccurred', { style: type }); } catch(e) {}
+function vkHaptic(type = 'light') { 
+  if (!vkBridgeReady) return; 
+  try { vkBridge.send('VKWebAppTapticImpactOccurred', { style: type }); } catch(e) {} 
 }
 
-function vkNotify() {
-  if (!vkBridgeReady) return;
-  try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {}
+function vkNotify() { 
+  if (!vkBridgeReady) return; 
+  try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {} 
 }
 
-function openAbout() {
-  document.getElementById('aboutModal').classList.add('active');
-  document.body.style.overflow = 'hidden';
-  vkHaptic('light');
+// === МОДАЛЬНОЕ ОКНО ===
+function openAbout() { 
+  document.getElementById('aboutModal').classList.add('active'); 
+  document.body.style.overflow = 'hidden'; 
+  vkHaptic('light'); 
 }
 
-function closeAbout() {
-  document.getElementById('aboutModal').classList.remove('active');
-  document.body.style.overflow = '';
-  vkHaptic('light');
+function closeAbout() { 
+  document.getElementById('aboutModal').classList.remove('active'); 
+  document.body.style.overflow = ''; 
+  vkHaptic('light'); 
 }
 
-document.getElementById('aboutModal').addEventListener('click', (e) => {
-  if (e.target.id === 'aboutModal') closeAbout();
+document.getElementById('aboutModal').addEventListener('click', (e) => { 
+  if (e.target.id === 'aboutModal') closeAbout(); 
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout();
+document.addEventListener('keydown', (e) => { 
+  if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout(); 
 });
 
+// === ОСНОВНОЙ КОД ===
 const $ = id => document.getElementById(id);
 const canvas = $('wave'), ctx = canvas.getContext('2d');
 
@@ -454,17 +351,12 @@ let currentSourceId = 0;
 let isLooping = false;
 
 let slotSettings = Array(10).fill(null).map(() => ({
-  tempo: 1, pitch: 0, vol: 1, pan: 0,
-  filt: 1000, filtOn: false, dist: 0, del: 0,
-  rev: 0, trem: 0, bit: 0
+  tempo: 1, pitch: 0, vol: 1, pan: 0, filt: 1000, filtOn: false, dist: 0, del: 0, rev: 0, trem: 0, bit: 0
 }));
 
-let isRecording = false;
-let recStream = null, recMediaRecorder = null;
+let isRecording = false, recStream = null, recMediaRecorder = null;
 let recChunks = [], recStartTime = 0, recTimerInterval = null;
-
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
-
 const activeChains = new Map();
 let rafId = null;
 
@@ -489,24 +381,18 @@ function ensureCtx() {
 
 function loadSlotSettings(slotIndex) {
   const s = slotSettings[slotIndex];
-  $('tempo').value = s.tempo; $('pitch').value = s.pitch;
-  $('vol').value = s.vol; $('pan').value = s.pan;
-  $('filt').value = s.filt; $('filtOn').checked = s.filtOn;
-  $('dist').value = s.dist; $('del').value = s.del;
-  $('rev').value = s.rev; $('trem').value = s.trem;
-  $('bit').value = s.bit;
+  $('tempo').value = s.tempo; $('pitch').value = s.pitch; $('vol').value = s.vol; $('pan').value = s.pan;
+  $('filt').value = s.filt; $('filtOn').checked = s.filtOn; $('dist').value = s.dist; $('del').value = s.del;
+  $('rev').value = s.rev; $('trem').value = s.trem; $('bit').value = s.bit;
   updateLabelsUI();
   $('slotIndicator').textContent = `Слот ${slotIndex + 1}`;
 }
 
 function saveCurrentSettings() {
   slotSettings[activeSlot] = {
-    tempo: parseFloat($('tempo').value), pitch: parseInt($('pitch').value),
-    vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
-    filt: parseFloat($('filt').value), filtOn: $('filtOn').checked,
-    dist: parseInt($('dist').value), del: parseFloat($('del').value),
-    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value),
-    bit: parseInt($('bit').value)
+    tempo: parseFloat($('tempo').value), pitch: parseInt($('pitch').value), vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
+    filt: parseFloat($('filt').value), filtOn: $('filtOn').checked, dist: parseInt($('dist').value), del: parseFloat($('del').value),
+    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value), bit: parseInt($('bit').value)
   };
 }
 
@@ -715,19 +601,14 @@ function makeBitcrushCurve(bits) {
   const n = 44100;
   const curve = new Float32Array(n);
   const steps = Math.pow(2, bits - 1);
-  for (let i = 0; i < n; i++) {
-    const x = i * 2 / n - 1;
-    curve[i] = Math.round(x * steps) / steps;
-  }
+  for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; curve[i] = Math.round(x * steps) / steps; }
   return curve;
 }
 
 function createChain(ac, buffer, opts, slotIdx) {
   const source = ac.createBufferSource();
-  source.buffer = buffer;
-  source.loop = opts.loop;
-  source.playbackRate.value = opts.playbackRate;
-  source.detune.value = opts.detune;
+  source.buffer = buffer; source.loop = opts.loop;
+  source.playbackRate.value = opts.playbackRate; source.detune.value = opts.detune;
   if (opts.loop) { source.loopStart = opts.loopStart; source.loopEnd = opts.loopEnd; }
   const filter = ac.createBiquadFilter();
   filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
@@ -736,29 +617,23 @@ function createChain(ac, buffer, opts, slotIdx) {
   const bitcrusher = ac.createWaveShaper();
   if (opts.bit > 0) { bitcrusher.curve = makeBitcrushCurve(opts.bit); bitcrusher.oversample = 'none'; }
   else { const neutral = new Float32Array(44100); for (let i = 0; i < 44100; i++) neutral[i] = i * 2 / 44100 - 1; bitcrusher.curve = neutral; }
-  const delay = ac.createDelay(2);
-  delay.delayTime.value = Math.max(0.001, opts.del / 1000);
+  const delay = ac.createDelay(2); delay.delayTime.value = Math.max(0.001, opts.del / 1000);
   const delayFb = ac.createGain(); delayFb.gain.value = 0.4;
   const delayWet = ac.createGain(); delayWet.gain.value = opts.del > 0 ? 0.5 : 0;
-  const convolver = ac.createConvolver();
-  convolver.buffer = makeImpulse(ac, 2, 2);
+  const convolver = ac.createConvolver(); convolver.buffer = makeImpulse(ac, 2, 2);
   const revWet = ac.createGain(); revWet.gain.value = opts.rev;
   const revDry = ac.createGain(); revDry.gain.value = 1 - opts.rev * 0.5;
   const tremoloGain = ac.createGain(); tremoloGain.gain.value = 1;
-  const tremoloLfo = ac.createOscillator();
-  tremoloLfo.frequency.value = 6; tremoloLfo.type = 'sine';
+  const tremoloLfo = ac.createOscillator(); tremoloLfo.frequency.value = 6; tremoloLfo.type = 'sine';
   const tremoloDepth = ac.createGain(); tremoloDepth.gain.value = opts.trem * 0.5;
-  tremoloLfo.connect(tremoloDepth); tremoloDepth.connect(tremoloGain.gain);
-  tremoloLfo.start();
+  tremoloLfo.connect(tremoloDepth); tremoloDepth.connect(tremoloGain.gain); tremoloLfo.start();
   const panner = ac.createStereoPanner(); panner.pan.value = opts.pan;
   const outputGain = ac.createGain(); outputGain.gain.value = opts.vol;
   source.connect(filter); filter.connect(shaper); shaper.connect(bitcrusher);
   bitcrusher.connect(delay); delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
-  const afterDelay = ac.createGain();
-  bitcrusher.connect(afterDelay); delayWet.connect(afterDelay);
+  const afterDelay = ac.createGain(); bitcrusher.connect(afterDelay); delayWet.connect(afterDelay);
   afterDelay.connect(convolver); convolver.connect(revWet); afterDelay.connect(revDry);
-  const afterRev = ac.createGain();
-  revWet.connect(afterRev); revDry.connect(afterRev);
+  const afterRev = ac.createGain(); revWet.connect(afterRev); revDry.connect(afterRev);
   afterRev.connect(tremoloGain); tremoloGain.connect(panner); panner.connect(outputGain);
   outputGain.connect(ac.destination);
   if (isRecordingMix && mixStreamDest) outputGain.connect(mixStreamDest);
@@ -766,119 +641,60 @@ function createChain(ac, buffer, opts, slotIdx) {
   if (opts.loop) { if (opts.offset > 0) source.start(now, opts.offset); else source.start(now); }
   else if (opts.offset > 0 || opts.duration) { source.start(now, opts.offset, opts.duration); }
   else { source.start(now); }
-  return {
-    source, filter, shaper, bitcrusher, delay, delayFb, delayWet,
-    convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth,
-    panner, outputGain,
-    slotIndex: slotIdx, startTime: now, offset: opts.offset || 0,
-    bufferDuration: buffer.duration, playbackRate: opts.playbackRate,
-    loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration
-  };
+  return { source, filter, shaper, bitcrusher, delay, delayFb, delayWet, convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth, panner, outputGain, slotIndex: slotIdx, startTime: now, offset: opts.offset || 0, bufferDuration: buffer.duration, playbackRate: opts.playbackRate, loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration };
 }
 
 function updateAllChains() {
   activeChains.forEach((data, slotIdx) => {
-    const c = data.chain;
-    const s = slotSettings[slotIdx];
-    c.source.playbackRate.value = s.tempo;
-    c.source.detune.value = s.pitch;
-    c.playbackRate = s.tempo;
+    const c = data.chain; const s = slotSettings[slotIdx];
+    c.source.playbackRate.value = s.tempo; c.source.detune.value = s.pitch; c.playbackRate = s.tempo;
     c.filter.frequency.value = s.filtOn ? s.filt : 20000;
     c.shaper.curve = makeDistortionCurve(s.dist);
     c.bitcrusher.curve = s.bit > 0 ? makeBitcrushCurve(s.bit) : null;
-    c.delay.delayTime.value = Math.max(0.001, s.del / 1000);
-    c.delayWet.gain.value = s.del > 0 ? 0.5 : 0;
-    c.revWet.gain.value = s.rev;
-    c.revDry.gain.value = 1 - s.rev * 0.5;
-    c.tremoloDepth.gain.value = s.trem * 0.5;
-    c.panner.pan.value = s.pan;
-    c.outputGain.gain.value = s.vol;
+    c.delay.delayTime.value = Math.max(0.001, s.del / 1000); c.delayWet.gain.value = s.del > 0 ? 0.5 : 0;
+    c.revWet.gain.value = s.rev; c.revDry.gain.value = 1 - s.rev * 0.5;
+    c.tremoloDepth.gain.value = s.trem * 0.5; c.panner.pan.value = s.pan; c.outputGain.gain.value = s.vol;
   });
 }
 
 function play(loop) {
-  const buffer = slots[activeSlot];
-  if (!buffer) return;
+  const buffer = slots[activeSlot]; if (!buffer) return;
   vkHaptic('light');
   stopSlot(activeSlot);
   const myId = ++currentSourceId;
   const settings = slotSettings[activeSlot];
-  const opts = {
-    loop, playbackRate: settings.tempo, detune: settings.pitch,
-    vol: settings.vol, pan: settings.pan,
-    filtOn: settings.filtOn, filt: settings.filt,
-    dist: settings.dist, del: settings.del,
-    rev: settings.rev, trem: settings.trem, bit: settings.bit,
-    offset: 0, duration: buffer.duration,
-    loopStart: 0, loopEnd: buffer.duration
-  };
+  const opts = { loop, playbackRate: settings.tempo, detune: settings.pitch, vol: settings.vol, pan: settings.pan, filtOn: settings.filtOn, filt: settings.filt, dist: settings.dist, del: settings.del, rev: settings.rev, trem: settings.trem, bit: settings.bit, offset: 0, duration: buffer.duration, loopStart: 0, loopEnd: buffer.duration };
   if (selection && selection.end - selection.start > 2) {
-    const dur = buffer.duration;
-    const offSec = selection.start / canvas.width * dur;
-    const lenSec = (selection.end - selection.start) / canvas.width * dur;
+    const dur = buffer.duration; const offSec = selection.start / canvas.width * dur; const lenSec = (selection.end - selection.start) / canvas.width * dur;
     if (loop) { opts.offset = offSec; opts.loopStart = offSec; opts.loopEnd = offSec + lenSec; }
     else { opts.offset = offSec; opts.duration = Math.min(lenSec, dur - offSec); }
   }
   const chain = createChain(audioCtx, buffer, opts, activeSlot);
-  activeChains.set(activeSlot, { chain, id: myId });
-  updatePads();
-  startRenderLoop();
+  activeChains.set(activeSlot, { chain, id: myId }); updatePads(); startRenderLoop();
   chain.source.onended = () => {
     const data = activeChains.get(activeSlot);
     if (data && data.id === myId) {
       try { chain.tremoloLfo.stop(); } catch(e){}
-      activeChains.delete(activeSlot);
-      updatePads();
-      if (activeChains.size === 0) {
-        stopRenderLoop();
-        if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); }
-      }
+      activeChains.delete(activeSlot); updatePads();
+      if (activeChains.size === 0) { stopRenderLoop(); if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); } }
     }
   };
 }
 
 function stopSlot(slotIndex) {
   const data = activeChains.get(slotIndex);
-  if (data) {
-    try { data.chain.source.stop(); } catch(e){}
-    try { data.chain.tremoloLfo.stop(); } catch(e){}
-    activeChains.delete(slotIndex);
-  }
-  updatePads();
-  if (activeChains.size === 0) stopRenderLoop();
+  if (data) { try { data.chain.source.stop(); } catch(e){} try { data.chain.tremoloLfo.stop(); } catch(e){} activeChains.delete(slotIndex); }
+  updatePads(); if (activeChains.size === 0) stopRenderLoop();
 }
 
 function stopAll() {
   vkHaptic('medium');
-  activeChains.forEach(d => {
-    try { d.chain.source.stop(); } catch(e){}
-    try { d.chain.tremoloLfo.stop(); } catch(e){}
-  });
-  activeChains.clear();
-  updatePads();
-  stopRenderLoop();
-  isLooping = false;
-  $('loopBtn').classList.remove('active');
+  activeChains.forEach(d => { try { d.chain.source.stop(); } catch(e){} try { d.chain.tremoloLfo.stop(); } catch(e){} });
+  activeChains.clear(); updatePads(); stopRenderLoop(); isLooping = false; $('loopBtn').classList.remove('active');
 }
 
-$('playBtn').onclick = () => {
-  if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); }
-  play(false);
-};
-
-$('loopBtn').onclick = () => {
-  vkHaptic('light');
-  if (isLooping) {
-    isLooping = false;
-    $('loopBtn').classList.remove('active');
-    stopSlot(activeSlot);
-  } else {
-    isLooping = true;
-    $('loopBtn').classList.add('active');
-    play(true);
-  }
-};
-
+$('playBtn').onclick = () => { if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); } play(false); };
+$('loopBtn').onclick = () => { vkHaptic('light'); if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); stopSlot(activeSlot); } else { isLooping = true; $('loopBtn').classList.add('active'); play(true); } };
 $('stopBtn').onclick = stopAll;
 
 function getCurrentPosition(chain) {
@@ -886,10 +702,8 @@ function getCurrentPosition(chain) {
   const elapsed = audioCtx.currentTime - chain.startTime;
   let pos = chain.offset + elapsed * chain.playbackRate;
   const dur = chain.bufferDuration;
-  if (chain.loop) {
-    const ll = chain.loopEnd - chain.loopStart;
-    if (ll > 0 && pos >= chain.loopEnd) pos = chain.loopStart + ((pos - chain.loopStart) % ll);
-  } else { if (pos > dur) pos = dur; }
+  if (chain.loop) { const ll = chain.loopEnd - chain.loopStart; if (ll > 0 && pos >= chain.loopEnd) pos = chain.loopStart + ((pos - chain.loopStart) % ll); }
+  else { if (pos > dur) pos = dur; }
   return Math.max(0, Math.min(dur, pos));
 }
 
@@ -897,118 +711,66 @@ function drawPlayhead() {
   if (canvas.width === 0 || canvas.height === 0) return;
   const H = canvas.height;
   activeChains.forEach((d, si) => {
-    const pos = getCurrentPosition(d.chain);
-    const x = (pos / d.chain.bufferDuration) * canvas.width;
-    if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; }
-    else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
+    const pos = getCurrentPosition(d.chain); const x = (pos / d.chain.bufferDuration) * canvas.width;
+    if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; } else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
   });
 }
 
-function renderLoop() {
-  drawWave();
-  if (activeChains.size > 0) rafId = requestAnimationFrame(renderLoop);
-  else rafId = null;
-}
-
+function renderLoop() { drawWave(); if (activeChains.size > 0) rafId = requestAnimationFrame(renderLoop); else rafId = null; }
 function startRenderLoop() { if (!rafId) rafId = requestAnimationFrame(renderLoop); }
 function stopRenderLoop() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } drawWave(); }
 
 function drawWave() {
-  const W = canvas.width, H = canvas.height;
-  if (W === 0 || H === 0) return;
+  const W = canvas.width, H = canvas.height; if (W === 0 || H === 0) return;
   ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
-  const buffer = slots[activeSlot];
-  if (!buffer) return;
-  const data = buffer.getChannelData(0);
-  const step = Math.ceil(data.length / W);
-  const amp = H / 2;
+  const buffer = slots[activeSlot]; if (!buffer) return;
+  const data = buffer.getChannelData(0); const step = Math.ceil(data.length / W); const amp = H / 2;
   if (selection && selection.end - selection.start > 1) {
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
+    ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
     ctx.fillRect(selection.start, 0, selection.end - selection.start, H);
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = '#00ff00';
+    ctx.lineWidth = 2;
     ctx.strokeRect(selection.start, 0, selection.end - selection.start, H);
   }
   ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath();
   for (let i = 0; i < W; i++) {
     let min = 1, max = -1;
-    for (let j = 0; j < step; j++) {
-      const v = data[i * step + j] || 0;
-      if (v < min) min = v; if (v > max) max = v;
-    }
+    for (let j = 0; j < step; j++) { const v = data[i * step + j] || 0; if (v < min) min = v; if (v > max) max = v; }
     if (i === 0) ctx.moveTo(i, (1 + min) * amp);
     ctx.lineTo(i, (1 + min) * amp); ctx.lineTo(i, (1 + max) * amp);
   }
-  ctx.stroke();
-  drawPlayhead();
+  ctx.stroke(); drawPlayhead();
 }
 
-function getPos(e) {
-  const r = canvas.getBoundingClientRect();
-  const cx = e.touches ? e.touches[0].clientX : e.clientX;
-  return (cx - r.left) * (canvas.width / r.width);
-}
+function getPos(e) { const r = canvas.getBoundingClientRect(); const cx = e.touches ? e.touches[0].clientX : e.clientX; return (cx - r.left) * (canvas.width / r.width); }
 
-canvas.addEventListener('mousedown', startDrag);
-canvas.addEventListener('touchstart', startDrag, { passive: false });
-function startDrag(e) {
-  if (!slots[activeSlot]) return;
-  e.preventDefault(); isDragging = true;
-  dragStart = getPos(e); selection = { start: dragStart, end: dragStart };
-}
-canvas.addEventListener('mousemove', moveDrag);
-canvas.addEventListener('touchmove', moveDrag, { passive: false });
+canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('touchstart', startDrag, { passive: false });
+function startDrag(e) { if (!slots[activeSlot]) return; e.preventDefault(); isDragging = true; dragStart = getPos(e); selection = { start: dragStart, end: dragStart }; }
+canvas.addEventListener('mousemove', moveDrag); canvas.addEventListener('touchmove', moveDrag, { passive: false });
 function moveDrag(e) {
-  if (!isDragging) return;
-  e.preventDefault();
+  if (!isDragging) return; e.preventDefault();
   const x = Math.max(0, Math.min(canvas.width, getPos(e)));
-  selection.start = Math.min(dragStart, x); selection.end = Math.max(dragStart, x);
-  drawWave();
-  const b = slots[activeSlot];
-  if (b) {
-    const d = b.duration;
-    $('selInfo').textContent = `${(selection.start / canvas.width * d).toFixed(2)}с — ${(selection.end / canvas.width * d).toFixed(2)}с`;
-  }
+  selection.start = Math.min(dragStart, x); selection.end = Math.max(dragStart, x); drawWave();
+  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = `${(selection.start / canvas.width * d).toFixed(2)}с — ${(selection.end / canvas.width * d).toFixed(2)}с`; }
 }
-canvas.addEventListener('mouseup', endDrag);
-canvas.addEventListener('mouseleave', endDrag);
-canvas.addEventListener('touchend', endDrag);
-canvas.addEventListener('touchcancel', endDrag);
+canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
 function endDrag() { isDragging = false; }
 
 $('trimBtn').onclick = () => {
   vkHaptic('light');
   const b = slots[activeSlot]; if (!b) return;
   if (!selection || selection.end - selection.start < 2) { setStatus('Сначала выделите фрагмент'); return; }
-  const s = Math.floor(selection.start / canvas.width * b.length);
-  const e = Math.floor(selection.end / canvas.width * b.length);
+  const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
   const nl = Math.max(1, e - s); if (nl <= 0) { setStatus('Неверное выделение'); return; }
   const nb = audioCtx.createBuffer(b.numberOfChannels, nl, b.sampleRate);
-  for (let c = 0; c < b.numberOfChannels; c++) {
-    const src = b.getChannelData(c), dst = nb.getChannelData(c);
-    for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0;
-  }
-  slots[activeSlot] = nb; selection = null;
-  drawWave(); updatePads(); setStatus('Обрезано');
+  for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
+  slots[activeSlot] = nb; selection = null; drawWave(); updatePads(); setStatus('Обрезано');
   vkNotify();
 };
 
-$('resetBtn').onclick = () => {
-  vkHaptic('light');
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null;
-  drawWave(); updatePads(); updateTransportButtons(); setStatus('Слот очищен');
-};
-
-$('clearBtn').onclick = () => {
-  vkHaptic('light');
-  stopSlot(activeSlot);
-  slots[activeSlot] = null;
-  selection = null;
-  drawWave();
-  updatePads();
-  updateTransportButtons();
-  setStatus(`Слот ${activeSlot + 1} очищен`);
-};
+$('resetBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus('Слот очищен'); };
+$('clearBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(`Слот ${activeSlot + 1} очищен`); };
 
 $('selectModeBtn').onclick = () => {
   vkHaptic('light');
@@ -1025,18 +787,11 @@ $('mergeBtn').onclick = () => {
   const idx = Array.from(selectedSlots).sort((a, b) => a - b);
   const bufs = idx.map(i => slots[i]).filter(b => b !== null);
   if (bufs.length < 2) { setStatus('Недостаточно слотов'); return; }
-  let ts = activeSlot;
-  if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus('Нет свободных слотов'); return; } }
-  const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels;
-  const tl = bufs.reduce((s, b) => s + b.length, 0);
-  const m = audioCtx.createBuffer(nc, tl, sr);
-  let off = 0;
-  for (const b of bufs) {
-    for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); }
-    off += b.length;
-  }
-  slots[ts] = m; activeSlot = ts; selection = null;
-  selectMode = false; selectedSlots.clear();
+  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus('Нет свободных слотов'); return; } }
+  const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels; const tl = bufs.reduce((s, b) => s + b.length, 0);
+  const m = audioCtx.createBuffer(nc, tl, sr); let off = 0;
+  for (const b of bufs) { for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); } off += b.length; }
+  slots[ts] = m; activeSlot = ts; selection = null; selectMode = false; selectedSlots.clear();
   $('selectModeBtn').textContent = '✓ Выбрать'; $('modeIndicator').textContent = '';
   drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
   setStatus(`Объединено ${bufs.length} семплов в слот ${ts + 1}`);
@@ -1047,58 +802,33 @@ $('exportBtn').onclick = async () => {
   vkHaptic('medium');
   const validSlots = slots.filter(slot => slot !== null);
   if (validSlots.length === 0) { setStatus('Нет слотов для экспорта'); return; }
-  const sr = validSlots[0].sampleRate;
-  const nc = validSlots[0].numberOfChannels;
+  const sr = validSlots[0].sampleRate; const nc = validSlots[0].numberOfChannels;
   const totalLength = validSlots.reduce((sum, slot) => sum + slot.length, 0);
-  const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr);
-  let offset = 0;
-  for (const slot of validSlots) {
-    for (let c = 0; c < nc; c++) {
-      mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset);
-    }
-    offset += slot.length;
-  }
+  const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr); let offset = 0;
+  for (const slot of validSlots) { for (let c = 0; c < nc; c++) { mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset); } offset += slot.length; }
   setStatus('Экспорт всех слотов...');
   try {
     const oc = new OfflineAudioContext(nc, totalLength, sr);
-    const source = oc.createBufferSource();
-    source.buffer = mergedBuffer;
-    source.connect(oc.destination);
-    source.start(0);
+    const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
     const r = await oc.startRendering();
     const mp3 = await convertToMP3(r);
     const url = URL.createObjectURL(mp3);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'smplrbot.mp3';
-    a.click();
+    const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setStatus('Все слоты сохранены как smplrbot.mp3');
     vkNotify();
   } catch (err) { setStatus('Ошибка экспорта: ' + err.message); }
 };
 
-function makeDistortionCurve(a) {
-  const k = a, n = 44100, c = new Float32Array(n), d = Math.PI / 180;
-  for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * d / (Math.PI + k * Math.abs(x)); }
-  return c;
-}
-
-function makeImpulse(ac, dur, dec) {
-  const r = ac.sampleRate, l = Math.max(1, Math.floor(r * dur));
-  const i = ac.createBuffer(2, l, r);
-  for (let c = 0; c < 2; c++) { const ch = i.getChannelData(c); for (let x = 0; x < l; x++) ch[x] = (Math.random() * 2 - 1) * Math.pow(1 - x / l, dec); }
-  return i;
-}
+function makeDistortionCurve(a) { const k = a, n = 44100, c = new Float32Array(n), d = Math.PI / 180; for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * d / (Math.PI + k * Math.abs(x)); } return c; }
+function makeImpulse(ac, dur, dec) { const r = ac.sampleRate, l = Math.max(1, Math.floor(r * dur)); const i = ac.createBuffer(2, l, r); for (let c = 0; c < 2; c++) { const ch = i.getChannelData(c); for (let x = 0; x < l; x++) ch[x] = (Math.random() * 2 - 1) * Math.pow(1 - x / l, dec); } return i; }
 
 function updateLabelsUI() {
   $('tempoVal').textContent = parseFloat($('tempo').value).toFixed(2) + 'x';
   $('pitchVal').textContent = $('pitch').value + ' ct';
   $('volVal').textContent = Math.round($('vol').value * 100) + '%';
   const p = parseFloat($('pan').value);
-  if (Math.abs(p) < 0.02) $('panVal').textContent = 'C';
-  else if (p < 0) $('panVal').textContent = 'L' + Math.round(-p * 100);
-  else $('panVal').textContent = 'R' + Math.round(p * 100);
+  if (Math.abs(p) < 0.02) $('panVal').textContent = 'Ц'; else if (p < 0) $('panVal').textContent = 'Л' + Math.round(-p * 100); else $('panVal').textContent = 'П' + Math.round(p * 100);
   $('revVal').textContent = Math.round($('rev').value * 100) + '%';
   $('delVal').textContent = $('del').value + ' мс';
   $('distVal').textContent = $('dist').value;
@@ -1107,19 +837,15 @@ function updateLabelsUI() {
   $('bitVal').textContent = $('bit').value > 0 ? $('bit').value + '-бит' : '0';
 }
 
-function updateLabels() {
-  updateLabelsUI();
-  saveCurrentSettings();
-  updateAllChains();
-}
-
+function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
 ['tempo','pitch','vol','pan','rev','del','dist','filt','trem','bit'].forEach(id => $(id).addEventListener('input', updateLabels));
 $('filtOn').addEventListener('change', updateLabels);
-
 function setStatus(t) { $('status').textContent = t; }
 
+// Запуск
 init();
 initVKBridge();
+initYandexSDK();
 </script>
 </body>
 </html>
