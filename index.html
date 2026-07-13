@@ -44,6 +44,7 @@ html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 .modal-content strong { color: #fff; font-weight: 600; }
 .modal-content code { background: #0f0f0f; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 13px; color: #4ade80; }
 .modal-content .highlight { background: rgba(74, 222, 128, 0.1); padding: 12px; border-left: 3px solid #4ade80; border-radius: 6px; margin: 12px 0; }
+.modal-content .warning { background: rgba(251, 191, 36, 0.1); padding: 12px; border-left: 3px solid #fbbf24; border-radius: 6px; margin: 12px 0; }
 .modal-content table { width: 100%; border-collapse: collapse; margin: 12px 0; }
 .modal-content th, .modal-content td { padding: 8px; text-align: left; border: 1px solid #333; font-size: 13px; }
 .modal-content th { background: #0f0f0f; color: #fff; font-weight: 600; }
@@ -165,9 +166,9 @@ input[type=file] { display: none; }
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Обрезать</button>
       <button id="resetBtn" disabled>↺ Сброс</button>
-      <button id="exportBtn" disabled>💾 Сохранить</button>
-      <button id="recMixBtn" class="rec-mix">⏺ Запись</button>
-      <button id="mergeBtn" class="merge" disabled>🔗 Слияние</button>
+      <button id="exportBtn" disabled> Сохранить</button>
+      <button id="recMixBtn" class="rec-mix"> Запись</button>
+      <button id="mergeBtn" class="merge" disabled> Слияние</button>
       <button id="clearBtn" disabled>🗑 Очистить</button>
       <button id="selectModeBtn">✓ Выбрать</button>
     </div>
@@ -259,7 +260,7 @@ const translations = {
     recBtn: '⏺ Запись',
     initError: 'Ошибка инициализации:',
     chopped: 'Обрезано',
-    modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — волна активного семпла с индикатором позиции</li><li><strong>Pads (пады)</strong> — 10 ячеек 5×2 для хранения семплов</li><li><strong>Transport</strong> — кнопки записи/воспроизведения</li><li><strong>Actions</strong> — функции редактирования</li><li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка семплов</h3><p><strong>Кнопка 📂 Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li><li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li></ul><div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — играет семпл один раз</li><li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все играющие семплы</li></ul><h2> Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr></table><h2>✂️ Продвинутые функции</h2><h3>Обрезка</h3><ul><li>Выделите фрагмент на волне: тапните и тяните</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Тапните на несколько падов</li><li>Нажмите 🔗 Слияние</li></ul><h3>Запись живого микса</h3><p><strong>️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p><ul><li>Первый тап → начинает запись</li><li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зелёный фон</strong> — слот содержит семпл</li></ul><p><strong>Удачного творчества! 🎸</strong></p>`
+    modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить микрофон в VK Mini Apps</h2><p>Если кнопка записи не работает, нужно разрешить доступ к микрофону:</p><h3>📱 На телефоне (Android/iOS):</h3><ol><li>Откройте <strong>настройки телефона</strong></li><li>Найдите раздел <strong>"Приложения"</strong> или <strong>"Apps"</strong></li><li>Найдите в списке <strong>VK (ВКонтакте)</strong></li><li>Нажмите <strong>"Разрешения"</strong> или <strong>"Permissions"</strong></li><li>Найдите <strong>"Микрофон"</strong> или <strong>"Microphone"</strong></li><li>Включите переключатель (разрешите доступ)</li><li>Вернитесь в VK и перезапустите приложение</li></ol><h3>💻 На компьютере (браузер):</h3><ol><li>Нажмите на <strong>иконку замка 🔒</strong> слева от адреса в браузере</li><li>Найдите <strong>"Микрофон"</strong> или <strong>"Microphone"</strong></li><li>Выберите <strong>"Разрешить"</strong> или <strong>"Allow"</strong></li><li>Обновите страницу (F5)</li></ol><div class="highlight">💡 <strong>Важно:</strong> После включения разрешения перезапустите VK Mini Apps полностью (закройте и откройте заново)!</div></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — волна активного семпла с индикатором позиции</li><li><strong>Pads (пады)</strong> — 10 ячеек 5×2 для хранения семплов</li><li><strong>Transport</strong> — кнопки записи/воспроизведения</li><li><strong>Actions</strong> — функции редактирования</li><li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка семплов</h3><p><strong>Кнопка 📂 Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li><li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li></ul><div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — играет семпл один раз</li><li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все играющие семплы</li></ul><h2>🎚 Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr></table><h2>✂️ Продвинутые функции</h2><h3>Обрезка</h3><ul><li>Выделите фрагмент на волне: тапните и тяните</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Тапните на несколько падов</li><li>Нажмите 🔗 Слияние</li></ul><h3>Запись живого микса</h3><p><strong>️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p><ul><li>Первый тап → начинает запись</li><li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зелёный фон</strong> — слот содержит семпл</li></ul><p><strong>Удачного творчества! 🎸</strong></p>`
   },
   en: {
     aboutBtn: 'ABOUT',
@@ -325,10 +326,10 @@ const translations = {
     converting: 'Converting to MP3...',
     mixSaved: 'Mix saved as smplrbot.mp3!',
     stopBtn: '■ Stop',
-    recBtn: '⏺ Rec Mix',
+    recBtn: ' Rec Mix',
     initError: 'Init error:',
     chopped: 'Chopped',
-    modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><div class="highlight">💡 <strong>Tip:</strong> For best quality, open the app in Chrome.</div><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Pitch</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi effect</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
+    modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone in VK Mini Apps</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>📱 On Phone (Android/iOS):</h3><ol><li>Open your <strong>phone settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find <strong>VK (VKontakte)</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to VK and restart the app</li></ol><h3>💻 On Computer (Browser):</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address in browser</li><li>Find <strong>"Microphone"</strong></li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><div class="highlight">💡 <strong>Important:</strong> After enabling permission, completely restart VK Mini Apps (close and reopen)!</div></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><div class="highlight">💡 <strong>Tip:</strong> For best quality, open the app in Chrome.</div><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Pitch</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi effect</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
   }
 };
 
@@ -344,16 +345,9 @@ function toggleLanguage() {
 function applyTranslations() {
   const t = translations[currentLang];
   
-  // Кнопка "О программе"
   document.getElementById('aboutBtn').textContent = t.aboutBtn;
-  
-  // Заголовок модального окна
   document.getElementById('modalTitle').textContent = t.modalTitle;
-  
-  // Содержимое модального окна
   document.getElementById('modalContent').innerHTML = t.modalContent;
-  
-  // Основная информация
   document.getElementById('selInfo').textContent = t.selInfo;
   document.getElementById('loopBtn').textContent = t.loopBtn;
   document.getElementById('loadBtn').textContent = t.loadBtn;
@@ -365,7 +359,6 @@ function applyTranslations() {
   document.getElementById('clearBtn').textContent = t.clearBtn;
   document.getElementById('selectModeBtn').textContent = t.selectModeBtn;
   
-  // Эффекты
   document.getElementById('tempoLabel').textContent = t.tempoLabel;
   document.getElementById('pitchLabel').textContent = t.pitchLabel;
   document.getElementById('volLabel').textContent = t.volLabel;
@@ -378,17 +371,14 @@ function applyTranslations() {
   document.getElementById('bitLabel').textContent = t.bitLabel;
   document.getElementById('filtOnLabel').textContent = t.filtOnLabel;
   
-  // Индикатор слота
   const slotNum = parseInt(document.getElementById('slotIndicator').textContent.replace(/\D/g, '')) || 1;
   document.getElementById('slotIndicator').textContent = t.slotIndicator + ' ' + slotNum;
   
-  // Статус по умолчанию
   const status = document.getElementById('status').textContent;
   if (status === translations.ru.statusDefault || status === translations.en.statusDefault) {
     document.getElementById('status').textContent = t.statusDefault;
   }
   
-  // Режим выбора
   if (selectMode) {
     document.getElementById('modeIndicator').textContent = t.modeSelect;
   }
@@ -396,7 +386,6 @@ function applyTranslations() {
   updateLabelsUI();
 }
 
-// VK Bridge
 let vkBridgeReady = false;
 
 async function initVKBridge() {
@@ -427,7 +416,6 @@ function vkNotify() {
   try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {} 
 }
 
-// Модальное окно
 function openAbout() { 
   document.getElementById('aboutModal').classList.add('active'); 
   document.body.style.overflow = 'hidden'; 
@@ -448,7 +436,6 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout(); 
 });
 
-// Основной код
 const $ = id => document.getElementById(id);
 const canvas = $('wave'), ctx = canvas.getContext('2d');
 
