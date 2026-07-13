@@ -13,17 +13,19 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
 .container { max-width: 650px; margin: 0 auto; }
-.header { position: relative; display: flex; align-items: center; justify-content: space-between; padding: 16px 0 8px 0; border-bottom: 1px solid #333; margin-bottom: 16px; gap: 8px; }
-.header-left, .header-right { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-.header-center { flex: 1; text-align: center; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.header-title { font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; white-space: nowrap; }
+.header { position: relative; display: flex; align-items: center; justify-content: center; padding: 16px 0 8px 0; border-bottom: 1px solid #333; margin-bottom: 16px; gap: 8px; }
+.header-center { display: flex; flex-direction: column; align-items: center; }
+.header-title { font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
 .icon-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; width: 32px; height: 32px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .icon-btn:hover:not(:disabled) { background: #3a3a3a; border-color: #4a4a4a; }
 .icon-btn:active:not(:disabled) { transform: scale(0.95); }
 .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.about-btn, .lang-btn { display: inline-block; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; height: 32px; display: flex; align-items: center; }
-.about-btn:hover, .lang-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
-.about-btn:active, .lang-btn:active { transform: scale(0.95); }
+.lang-btn { position: absolute; left: 0; top: 16px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.lang-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
+.lang-btn:active { transform: scale(0.95); }
+.about-btn { display: inline-block; margin-top: 8px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.about-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
+.about-btn:active { transform: scale(0.95); }
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; animation: fadeIn 0.3s ease; }
 .modal-overlay.active { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -104,7 +106,7 @@ input[type=file] { display: none; }
 .rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
 .rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
 .slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; }
-@media (max-width: 500px) { .pad-num { font-size: 16px; } .pad-duration { font-size: 9px; } .header-title { font-size: 16px; } .pads { gap: 6px; } .modal { max-height: 90vh; } .modal-content { padding: 16px; font-size: 13px; } .modal-content h1 { font-size: 20px; } .modal-content h2 { font-size: 16px; } .modal-content h3 { font-size: 14px; } .icon-btn { width: 28px; height: 28px; font-size: 14px; } .about-btn, .lang-btn { font-size: 7px; padding: 4px 6px; height: 28px; } }
+@media (max-width: 500px) { .pad-num { font-size: 16px; } .pad-duration { font-size: 9px; } .header-title { font-size: 16px; } .pads { gap: 6px; } .modal { max-height: 90vh; } .modal-content { padding: 16px; font-size: 13px; } .modal-content h1 { font-size: 20px; } .modal-content h2 { font-size: 16px; } .modal-content h3 { font-size: 14px; } .icon-btn { width: 28px; height: 28px; font-size: 14px; } }
 @media (max-width: 400px) { 
   .transport button { padding: 14px 10px; font-size: 18px; } 
   .transport button.loop { font-size: 12px; }
@@ -114,13 +116,13 @@ input[type=file] { display: none; }
   .pad-duration { font-size: 8px; }
   .pads { gap: 4px; }
   .header-title { font-size: 14px; }
-  .about-btn, .lang-btn { padding: 3px 5px; font-size: 7px; height: 26px; }
+  .about-btn, .lang-btn { padding: 4px 6px; font-size: 7px; }
   .icon-btn { width: 26px; height: 26px; font-size: 13px; }
 }
 @media (max-width: 340px) { 
   .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; }
   .header-title { font-size: 12px; letter-spacing: 0.5px; }
-  .about-btn, .lang-btn { padding: 2px 4px; font-size: 6px; height: 24px; }
+  .about-btn, .lang-btn { padding: 3px 5px; font-size: 6px; }
   .icon-btn { width: 24px; height: 24px; font-size: 12px; }
 }
 </style>
@@ -128,17 +130,13 @@ input[type=file] { display: none; }
 <body>
 <div class="container">
   <div class="header">
-    <div class="header-left">
-      <button class="icon-btn" id="undoBtn" onclick="undo()" disabled title="Undo">←</button>
-    </div>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">RU</button>
+    <button class="icon-btn" id="undoBtn" onclick="undo()" disabled title="Undo">←</button>
     <div class="header-center">
       <span class="header-title">SAMPLER HENDRIX 5.0</span>
-    </div>
-    <div class="header-right">
-      <button class="icon-btn" id="redoBtn" onclick="redo()" disabled title="Redo">→</button>
-      <button class="lang-btn" id="langBtn" onclick="toggleLang()">RU</button>
       <button class="about-btn" id="aboutBtn" onclick="openAbout()"><span data-i18n="about">О ПРОГРАММЕ</span></button>
     </div>
+    <button class="icon-btn" id="redoBtn" onclick="redo()" disabled title="Redo">→</button>
   </div>
   
   <div class="modal-overlay" id="aboutModal">
@@ -379,10 +377,9 @@ let selectedSlots = new Set();
 let currentSourceId = 0;
 let isLooping = false;
 
-// История действий (Undo/Redo) - до 5 шагов для каждого слота
 const MAX_HISTORY = 5;
-let history = Array(10).fill(null).map(() => []); // history[slotIndex] = [buffer1, buffer2, ...]
-let redoHistory = Array(10).fill(null).map(() => []); // redoHistory[slotIndex] = [buffer1, buffer2, ...]
+let history = Array(10).fill(null).map(() => []);
+let redoHistory = Array(10).fill(null).map(() => []);
 
 function cloneBuffer(buf) {
   if (!buf) return null;
@@ -396,19 +393,12 @@ function cloneBuffer(buf) {
 function pushHistory(slotIndex) {
   const currentBuf = slots[slotIndex];
   if (!currentBuf) return;
-  
-  // Сохраняем копию текущего буфера в историю
   const copy = cloneBuffer(currentBuf);
   history[slotIndex].push(copy);
-  
-  // Ограничиваем историю до MAX_HISTORY
   if (history[slotIndex].length > MAX_HISTORY) {
     history[slotIndex].shift();
   }
-  
-  // Очищаем redo историю при новом действии
   redoHistory[slotIndex] = [];
-  
   updateUndoRedoButtons();
 }
 
@@ -418,14 +408,11 @@ function undo() {
     setStatus(t('nothingToUndo'));
     return;
   }
-  
   const currentBuf = slots[slotIdx];
   if (currentBuf) {
     redoHistory[slotIdx].push(cloneBuffer(currentBuf));
   }
-  
   slots[slotIdx] = history[slotIdx].pop();
-  
   updateUndoRedoButtons();
   drawWave();
   updatePads();
@@ -438,7 +425,6 @@ function redo() {
     setStatus(t('nothingToRedo'));
     return;
   }
-  
   const currentBuf = slots[slotIdx];
   if (currentBuf) {
     history[slotIdx].push(cloneBuffer(currentBuf));
@@ -446,9 +432,7 @@ function redo() {
       history[slotIdx].shift();
     }
   }
-  
   slots[slotIdx] = redoHistory[slotIdx].pop();
-  
   updateUndoRedoButtons();
   drawWave();
   updatePads();
@@ -720,48 +704,35 @@ function createChain(ac, buffer, opts, slotIdx) {
   source.buffer = buffer; source.loop = opts.loop;
   source.playbackRate.value = opts.playbackRate; 
   source.detune.value = opts.detune;
-  
   if (opts.loop) { source.loopStart = opts.loopStart; source.loopEnd = opts.loopEnd; }
-  
   const filter = ac.createBiquadFilter();
   filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
-  
   const shaper = ac.createWaveShaper();
   shaper.curve = makeDistortionCurve(opts.dist); shaper.oversample = '4x';
-  
   const delay = ac.createDelay(2); delay.delayTime.value = Math.max(0.001, opts.del / 1000);
   const delayFb = ac.createGain(); delayFb.gain.value = 0.4;
   const delayWet = ac.createGain(); delayWet.gain.value = opts.del > 0 ? 0.5 : 0;
-  
   const convolver = ac.createConvolver(); convolver.buffer = makeImpulse(ac, 2, 2);
   const revWet = ac.createGain(); revWet.gain.value = opts.rev;
   const revDry = ac.createGain(); revDry.gain.value = 1 - opts.rev * 0.5;
-  
   const tremoloGain = ac.createGain(); tremoloGain.gain.value = 1;
   const tremoloLfo = ac.createOscillator(); tremoloLfo.frequency.value = 6; tremoloLfo.type = 'sine';
   const tremoloDepth = ac.createGain(); tremoloDepth.gain.value = opts.trem * 0.5;
   tremoloLfo.connect(tremoloDepth); tremoloDepth.connect(tremoloGain.gain); tremoloLfo.start();
-  
   const panner = ac.createStereoPanner(); panner.pan.value = opts.pan;
   const outputGain = ac.createGain(); outputGain.gain.value = opts.vol;
-  
   source.connect(filter); filter.connect(shaper); shaper.connect(delay); 
   delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
-  
   const afterDelay = ac.createGain(); shaper.connect(afterDelay); delayWet.connect(afterDelay);
   afterDelay.connect(convolver); convolver.connect(revWet); afterDelay.connect(revDry);
-  
   const afterRev = ac.createGain(); revWet.connect(afterRev); revDry.connect(afterRev);
   afterRev.connect(tremoloGain); tremoloGain.connect(panner); panner.connect(outputGain);
   outputGain.connect(ac.destination);
-  
   if (isRecordingMix && mixStreamDest) outputGain.connect(mixStreamDest);
-  
   const now = ac.currentTime;
   if (opts.loop) { if (opts.offset > 0) source.start(now, opts.offset); else source.start(now); }
   else if (opts.offset > 0 || opts.duration) { source.start(now, opts.offset, opts.duration); }
   else { source.start(now); }
-  
   return { source, filter, shaper, delay, delayFb, delayWet, convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth, panner, outputGain, slotIndex: slotIdx, startTime: now, offset: opts.offset || 0, bufferDuration: buffer.duration, playbackRate: opts.playbackRate, loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration };
 }
 
@@ -878,9 +849,7 @@ $('trimBtn').onclick = () => {
   if (!selection || selection.end - selection.start < 2) { setStatus(t('selectSliceFirst')); return; }
   const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
   const nl = Math.max(1, e - s); if (nl <= 0) { setStatus(t('invalidSelection')); return; }
-  
   pushHistory(activeSlot);
-  
   const nb = audioCtx.createBuffer(b.numberOfChannels, nl, b.sampleRate);
   for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
   slots[activeSlot] = nb; 
@@ -912,9 +881,7 @@ $('mergeBtn').onclick = () => {
   if (bufs.length < 2) { setStatus(t('notEnoughSlots')); return; }
   let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus(t('noFreeSlots')); return; } }
   const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels; const tl = bufs.reduce((s, b) => s + b.length, 0);
-  
   if (slots[ts]) pushHistory(ts);
-  
   const m = audioCtx.createBuffer(nc, tl, sr); let off = 0;
   for (const b of bufs) { for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); } off += b.length; }
   slots[ts] = m; activeSlot = ts; selection = null; selectMode = false; selectedSlots.clear();
@@ -972,9 +939,7 @@ $('invertOn').addEventListener('change', (e) => {
     $('invertVal').innerHTML = t('off');
     return;
   }
-  
   pushHistory(activeSlot);
-  
   for (let c = 0; c < buf.numberOfChannels; c++) {
     buf.getChannelData(c).reverse();
   }
