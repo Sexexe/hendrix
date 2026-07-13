@@ -8,17 +8,17 @@
 <meta name="theme-color" content="#1a1a1a">
 <title>SAMPLER HENDRIX 5.0</title>
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
-<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
 .container { max-width: 650px; margin: 0 auto; }
-.header { position: relative; text-align: center; padding: 16px 0 8px 0; font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #333; margin-bottom: 16px; }
-.header-title { display: block; text-align: center; }
-.lang-switch { position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-.lang-switch:hover { background: #3a3a3a; border-color: #4a4a4a; }
-.lang-switch:active { transform: translateY(-50%) scale(0.95); }
-.about-btn { display: inline-block; margin-top: 8px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+.header { position: relative; text-align: center; padding: 16px 0 12px 0; border-bottom: 1px solid #333; margin-bottom: 16px; }
+.header-center { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.header-title { font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+.lang-btn { position: absolute; left: 0; top: 50%; transform: translateY(-50%); background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+.lang-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
+.lang-btn:active { transform: translateY(-50%) scale(0.95); }
+.about-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 14px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .about-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
 .about-btn:active { transform: scale(0.95); }
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; animation: fadeIn 0.3s ease; }
@@ -101,7 +101,17 @@ input[type=file] { display: none; }
 .rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
 .rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
 .slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; }
-@media (max-width: 500px) { .pad-num { font-size: 16px; } .pad-duration { font-size: 9px; } .header { font-size: 16px; } .pads { gap: 6px; } .modal { max-height: 90vh; } .modal-content { padding: 16px; font-size: 13px; } .modal-content h1 { font-size: 20px; } .modal-content h2 { font-size: 16px; } .modal-content h3 { font-size: 14px; } }
+@media (max-width: 500px) { 
+  .pad-num { font-size: 16px; } 
+  .pad-duration { font-size: 9px; } 
+  .header-title { font-size: 16px; } 
+  .pads { gap: 6px; } 
+  .modal { max-height: 90vh; } 
+  .modal-content { padding: 16px; font-size: 13px; } 
+  .modal-content h1 { font-size: 20px; } 
+  .modal-content h2 { font-size: 16px; } 
+  .modal-content h3 { font-size: 14px; } 
+}
 @media (max-width: 400px) { 
   .transport button { padding: 14px 10px; font-size: 18px; } 
   .transport button.loop { font-size: 12px; }
@@ -110,30 +120,35 @@ input[type=file] { display: none; }
   .pad-num { font-size: 14px; }
   .pad-duration { font-size: 8px; }
   .pads { gap: 4px; }
-  .header { font-size: 14px; }
-  .lang-switch { padding: 5px 8px; font-size: 10px; }
-  .about-btn { padding: 4px 6px; font-size: 7px; }
+  .header-title { font-size: 14px; }
+  .about-btn { padding: 5px 10px; font-size: 10px; }
+  .lang-btn { padding: 4px 8px; font-size: 11px; }
 }
 @media (max-width: 340px) { 
-  .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; }
-  .header { font-size: 12px; letter-spacing: 0.5px; }
-  .lang-switch { padding: 4px 6px; font-size: 9px; }
-  .about-btn { padding: 3px 5px; font-size: 6px; }
+  .pad-num { font-size: 12px; } 
+  .pad-duration { font-size: 7px; margin-top: 2px; } 
+  .pads { gap: 3px; } 
+  .pad { border-width: 1px; border-radius: 4px; }
+  .header-title { font-size: 12px; letter-spacing: 0.5px; }
+  .about-btn { padding: 4px 8px; font-size: 9px; }
+  .lang-btn { padding: 3px 6px; font-size: 10px; }
 }
 </style>
 </head>
 <body>
 <div class="container">
   <div class="header">
-    <button class="lang-switch" id="langSwitch" onclick="toggleLanguage()">RU</button>
-    <span class="header-title">SAMPLER HENDRIX 5.0</span>
-    <button class="about-btn" id="aboutBtn" onclick="openAbout()">О ПРОГРАММЕ</button>
+    <button class="lang-btn" id="langBtn" onclick="toggleLang()">RU</button>
+    <div class="header-center">
+      <span class="header-title">SAMPLER HENDRIX 5.0</span>
+      <button class="about-btn" id="aboutBtn" onclick="openAbout()">О ПРОГРАММЕ</button>
+    </div>
   </div>
   
   <div class="modal-overlay" id="aboutModal">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title" id="modalTitle">О программе SAMPLER HENDRIX 5.0</div>
+        <div class="modal-title" id="modalTitle">О ПРОГРАММЕ</div>
         <div class="modal-controls"><button class="close-btn" onclick="closeAbout()">×</button></div>
       </div>
       <div class="modal-content" id="modalContent"></div>
@@ -142,7 +157,7 @@ input[type=file] { display: none; }
 
   <div class="panel">
     <canvas id="wave"></canvas>
-    <div class="selection-info" id="selInfo">Нажмите и тяните для выделения</div>
+    <div class="selection-info" id="selInfo">Нажмите и перетащите для выделения</div>
   </div>
   <div class="panel">
     <div class="mode-indicator" id="modeIndicator"></div>
@@ -152,7 +167,7 @@ input[type=file] { display: none; }
     <div class="transport">
       <button id="recBtn" class="rec">●</button>
       <button id="playBtn" class="play" disabled>▶</button>
-      <button id="loopBtn" class="loop" disabled>ПЕТЛЯ</button>
+      <button id="loopBtn" class="loop" disabled>LOOP</button>
       <button id="stopBtn" class="stop" disabled>■</button>
     </div>
     <div class="rec-indicator" id="recIndicator">
@@ -163,11 +178,11 @@ input[type=file] { display: none; }
     <div class="actions">
       <label for="fileInput" id="loadBtn">📂 Загрузить</label>
       <input type="file" id="fileInput" accept="audio/*">
-      <button id="trimBtn" disabled>✂ Обрезать</button>
+      <button id="trimBtn" disabled>✂ Нарезать</button>
       <button id="resetBtn" disabled>↺ Сброс</button>
       <button id="exportBtn" disabled>💾 Сохранить</button>
-      <button id="recMixBtn" class="rec-mix">⏺ Запись</button>
-      <button id="mergeBtn" class="merge" disabled>🔗 Слияние</button>
+      <button id="recMixBtn" class="rec-mix">⏺ Запись микса</button>
+      <button id="mergeBtn" class="merge" disabled>🔗 Объединить</button>
       <button id="clearBtn" disabled>🗑 Очистить</button>
       <button id="selectModeBtn">✓ Выбрать</button>
     </div>
@@ -177,254 +192,408 @@ input[type=file] { display: none; }
     <div class="slot-indicator" id="slotIndicator">Слот 1</div>
     <div class="effects">
       <div class="effect"><div class="effect-label"><span id="tempoLabel">Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span id="pitchLabel">Высота</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="pitchLabel">Тембр</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
       <div class="effect"><div class="effect-label"><span id="volLabel">Громкость</span><span class="effect-value" id="volVal">100%</span></div><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span id="panLabel">Панорама</span><span class="effect-value" id="panVal">Ц</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span id="filtLabel">Фильтр</span><span class="effect-value" id="filtVal">Выкл</span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn" id="filtOnLabel">ФНЧ</label></div></div>
+      <div class="effect"><div class="effect-label"><span id="panLabel">Панорама</span><span class="effect-value" id="panVal">C</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="filtLabel">Фильтр</span><span class="effect-value" id="filtVal">Выкл</span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn" id="filtOnLabel">LPF</label></div></div>
       <div class="effect"><div class="effect-label"><span id="distLabel">Дисторшн</span><span class="effect-value" id="distVal">0</span></div><input type="range" id="dist" min="0" max="100" step="1" value="0"></div>
-      <div class="effect"><div class="effect-label"><span id="delLabel">Дилей</span><span class="effect-value" id="delVal">0 мс</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="delLabel">Дилей</span><span class="effect-value" id="delVal">0 ms</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
       <div class="effect"><div class="effect-label"><span id="revLabel">Реверб</span><span class="effect-value" id="revVal">0%</span></div><input type="range" id="rev" min="0" max="1" step="0.01" value="0"></div>
       <div class="effect"><div class="effect-label"><span id="tremLabel">Тремоло</span><span class="effect-value" id="tremVal">0%</span></div><input type="range" id="trem" min="0" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span id="bitLabel">Биткраш</span><span class="effect-value" id="bitVal">0</span></div><input type="range" id="bit" min="0" max="16" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="invLabel">Реверс</span></div><div class="toggle"><input type="checkbox" id="invert"><label for="invert" id="invertOnLabel">Разворот справа налево</label></div></div>
     </div>
   </div>
 </div>
 
 <script>
+let currentLang = 'ru';
+
 const translations = {
   ru: {
-    aboutBtn: 'О ПРОГРАММЕ',
-    modalTitle: 'О программе SAMPLER HENDRIX 5.0',
-    selInfo: 'Нажмите и тяните для выделения',
-    loopBtn: 'ПЕТЛЯ',
-    loadBtn: '📂 Загрузить',
-    trimBtn: '✂ Обрезать',
-    resetBtn: '↺ Сброс',
-    exportBtn: '💾 Сохранить',
-    recMixBtn: '⏺ Запись',
-    mergeBtn: '🔗 Слияние',
-    clearBtn: '🗑 Очистить',
-    selectModeBtn: '✓ Выбрать',
-    selectModeCancel: '✕ Отмена',
-    statusDefault: 'Загрузите аудио или запишите',
-    slotIndicator: 'Слот',
-    tempoLabel: 'Темп',
-    pitchLabel: 'Высота',
-    volLabel: 'Громкость',
-    panLabel: 'Панорама',
-    filtLabel: 'Фильтр',
-    distLabel: 'Дисторшн',
-    delLabel: 'Дилей',
-    revLabel: 'Реверб',
-    tremLabel: 'Тремоло',
-    bitLabel: 'Биткраш',
-    filtOnLabel: 'ФНЧ',
-    filtOff: 'Выкл',
-    panCenter: 'Ц',
-    panLeft: 'Л',
-    panRight: 'П',
-    ms: 'мс',
-    percent: '%',
-    bit: '-бит',
-    modeSelect: 'РЕЖИМ ВЫБОРА: Нажмите на пады для объединения',
+    about: 'О ПРОГРАММЕ',
+    selectDrag: 'Нажмите и перетащите для выделения',
+    load: '📂 Загрузить',
+    chop: '✂ Нарезать',
+    reset: '↺ Сброс',
+    save: '💾 Сохранить',
+    recMix: '⏺ Запись микса',
+    merge: '🔗 Объединить',
+    clear: '🗑 Очистить',
+    select: '✓ Выбрать',
+    cancel: '✕ Отмена',
+    status: 'Загрузите аудио или запишите',
+    slot: 'Слот',
+    tempo: 'Темп',
+    pitch: 'Тембр',
+    volume: 'Громкость',
+    pan: 'Панорама',
+    filter: 'Фильтр',
+    distortion: 'Дисторшн',
+    delay: 'Дилей',
+    reverb: 'Реверб',
+    tremolo: 'Тремоло',
+    reverse: 'Реверс',
+    reverseDesc: 'Разворот справа налево',
+    off: 'Выкл',
+    selectMode: 'РЕЖИМ ВЫБОРА: Нажмите на пэды для объединения',
     emptySlot: 'Пустой слот',
-    selectToChop: 'Сначала выделите фрагмент',
-    invalidSelection: 'Неверное выделение',
-    slotCleared: 'Слот очищен',
-    slotClearedNum: 'Слот',
-    cleared: 'очищен',
-    notEnoughSlots: 'Недостаточно слотов',
-    noFreeSlots: 'Нет свободных слотов',
-    merged: 'Объединено',
-    samplesToSlot: 'семплов в слот',
-    noSlotsExport: 'Нет слотов для экспорта',
-    exporting: 'Экспорт всех слотов...',
-    saved: 'Все слоты сохранены как smplrbot.mp3',
-    exportError: 'Ошибка экспорта:',
     loading: 'Загрузка...',
-    loadedToSlot: 'Загружено в слот',
-    error: 'Ошибка:',
-    micNotSupported: 'Микрофон не поддерживается',
-    micRequest: 'Запрос микрофона...',
-    recording: 'Запись...',
-    recorded: 'Записано',
-    noAudio: 'Ничего не записано',
+    loaded: 'Загружено в слот ',
+    recorded: 'Записано ',
     processing: 'Обработка...',
-    accessDenied: 'Доступ запрещён',
+    noAudio: 'Аудио не записано',
+    recording: 'Запись...',
+    requestingMic: 'Запрос микрофона...',
+    micError: 'Микрофон не поддерживается',
+    permissionDenied: 'Доступ запрещен',
+    error: 'Ошибка: ',
+    initError: 'Ошибка инициализации: ',
+    chopFirst: 'Сначала выделите фрагмент',
+    invalidSelection: 'Неверное выделение',
+    chopped: 'Нарезано',
+    slotCleared: 'Слот очищен',
+    notEnoughSlots: 'Недостаточно валидных слотов',
+    noFreeSlots: 'Нет свободных слотов',
+    merged: 'Объединено ',
+    samplesToSlot: ' семплов в слот ',
+    noValidSlots: 'Нет валидных слотов для экспорта',
+    exporting: 'Экспорт всех слотов...',
+    exported: 'Все слоты экспортированы как smplrbot.mp3',
+    exportError: 'Ошибка экспорта: ',
     recordingMix: 'Запись микса...',
-    recordingMixTime: 'Запись микса:',
+    mixSaved: 'Микс сохранен как smplrbot.mp3!',
     converting: 'Конвертация в MP3...',
-    mixSaved: 'Микс сохранён как smplrbot.mp3!',
-    stopBtn: '■ Стоп',
-    recBtn: '⏺ Запись',
-    initError: 'Ошибка инициализации:',
-    chopped: 'Обрезано',
-    modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить микрофон в VK Mini Apps</h2><p>Если кнопка записи не работает, нужно разрешить доступ к микрофону:</p><h3>📱 На телефоне (Android/iOS):</h3><ol><li>Откройте <strong>настройки телефона</strong></li><li>Найдите раздел <strong>"Приложения"</strong> или <strong>"Apps"</strong></li><li>Найдите в списке <strong>VK (ВКонтакте)</strong></li><li>Нажмите <strong>"Разрешения"</strong> или <strong>"Permissions"</strong></li><li>Найдите <strong>"Микрофон"</strong> или <strong>"Microphone"</strong></li><li>Включите переключатель (разрешите доступ)</li><li>Вернитесь в VK и перезапустите приложение</li></ol><h3>💻 На компьютере (браузер):</h3><ol><li>Нажмите на <strong>иконку замка 🔒</strong> слева от адреса в браузере</li><li>Найдите <strong>"Микрофон"</strong> или <strong>"Microphone"</strong></li><li>Выберите <strong>"Разрешить"</strong> или <strong>"Allow"</strong></li><li>Обновите страницу (F5)</li></ol><div class="highlight">💡 <strong>Важно:</strong> После включения разрешения перезапустите VK Mini Apps полностью (закройте и откройте заново)!</div></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — волна активного семпла с индикатором позиции</li><li><strong>Pads (пады)</strong> — 10 ячеек 5×2 для хранения семплов</li><li><strong>Transport</strong> — кнопки записи/воспроизведения</li><li><strong>Actions</strong> — функции редактирования</li><li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка семплов</h3><p><strong>Кнопка 📂 Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li><li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li></ul><div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — играет семпл один раз</li><li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все играющие семплы</li></ul><h2>🎚 Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr></table><h2>✂️ Продвинутые функции</h2><h3>Обрезка</h3><ul><li>Выделите фрагмент на волне: тапните и тяните</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Тапните на несколько падов</li><li>Нажмите 🔗 Слияние</li></ul><h3>Запись живого микса</h3><p><strong>⏺️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p><ul><li>Первый тап → начинает запись</li><li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight"> Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зелёный фон</strong> — слот содержит семпл</li></ul><p><strong>Удачного творчества! 🎸</strong></p>`
+    recMixStop: '■ Стоп',
+    loop: 'LOOP',
+    modalTitle: 'О ПРОГРАММЕ SAMPLER HENDRIX 5.0',
+    modalContent: `
+      <h1>🎛️ Руководство пользователя</h1>
+      <p>Полное руководство по использованию веб-сэмплера для создания музыки.</p>
+      
+      <div class="warning">
+        <h2>🎤 Как включить доступ к микрофону</h2>
+        <p>Если кнопка записи не работает, нужно разрешить доступ к микрофону:</p>
+        <h3>💻 В браузере:</h3>
+        <ol>
+          <li>Нажмите на <strong>значок замка 🔒</strong> слева от адресной строки</li>
+          <li>Найдите <strong>"Микрофон"</strong> в списке разрешений</li>
+          <li>Выберите <strong>"Разрешить"</strong></li>
+          <li>Обновите страницу (F5)</li>
+        </ol>
+        <h3>📱 На мобильных устройствах:</h3>
+        <ol>
+          <li>Откройте <strong>настройки устройства</strong></li>
+          <li>Найдите раздел <strong>"Приложения"</strong></li>
+          <li>Найдите ваш <strong>браузер</strong> в списке</li>
+          <li>Нажмите <strong>"Разрешения"</strong></li>
+          <li>Найдите <strong>"Микрофон"</strong></li>
+          <li>Включите переключатель (разрешить доступ)</li>
+          <li>Вернитесь в браузер и обновите страницу</li>
+        </ol>
+      </div>
+
+      <h2>📱 Начало работы</h2>
+      <h3>Интерфейс</h3>
+      <ul>
+        <li><strong>Верхняя панель</strong> — waveform активного сэмпла с индикатором позиции</li>
+        <li><strong>Pads (Пэды)</strong> — 10 ячеек (5×2) для хранения сэмплов</li>
+        <li><strong>Transport (Транспорт)</strong> — кнопки записи/воспроизведения</li>
+        <li><strong>Actions (Действия)</strong> — функции редактирования</li>
+        <li><strong>Effects (Эффекты)</strong> — 10 регуляторов эффектов для каждого слота</li>
+      </ul>
+
+      <h2>🎯 Основные функции</h2>
+      <h3>1. Загрузка сэмплов</h3>
+      <p><strong>📂 Кнопка Загрузить:</strong></p>
+      <ul>
+        <li>Нажмите на кнопку</li>
+        <li>Выберите аудиофайл (WAV, MP3, OGG)</li>
+        <li>Сэмпл загружается в активный слот (выделен белой рамкой)</li>
+      </ul>
+
+      <h3>2. Запись с микрофона</h3>
+      <p><strong>Красная кнопка ● REC:</strong></p>
+      <ul>
+        <li><strong>Первое нажатие:</strong> появляется запрос разрешения, разрешите доступ, кнопка становится ■ (красная, пульсирует), таймер показывает длительность</li>
+        <li><strong>Второе нажатие:</strong> запись останавливается, сэмпл загружается в активный слот</li>
+      </ul>
+
+      <h3>3. Воспроизведение</h3>
+      <ul>
+        <li><strong>▶️ PLAY</strong> — воспроизводит сэмпл один раз</li>
+        <li><strong>LOOP</strong> (желтая кнопка) — бесконечный цикл</li>
+        <li><strong>■ STOP</strong> — останавливает все воспроизводящиеся сэмплы</li>
+      </ul>
+
+      <h2>🎚️ Эффекты (Индивидуальные для каждого слота!)</h2>
+      <p>Каждый из 10 слотов хранит свои собственные настройки.</p>
+      <table>
+        <tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr>
+        <tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr>
+        <tr><td>Тембр</td><td>±1200 ct</td><td>Меняет высоту тона (тембр) без изменения скорости</td></tr>
+        <tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr>
+        <tr><td>Панорама</td><td>L100 — C — R100</td><td>Стереопанорама</td></tr>
+        <tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Низкочастотный фильтр</td></tr>
+        <tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr>
+        <tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr>
+        <tr><td>Реверб</td><td>0 — 100%</td><td>Пространство</td></tr>
+        <tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr>
+        <tr><td>Реверс</td><td>Вкл/Выкл</td><td>Разворот сэмпла справа налево</td></tr>
+      </table>
+
+      <h2>✂️ Продвинутые функции</h2>
+      <h3>Нарезка (Chop)</h3>
+      <ul>
+        <li>Выделите фрагмент на waveform: нажмите и перетащите</li>
+        <li>Нажмите ✂ Нарезать</li>
+      </ul>
+
+      <h3>Объединение (Merge)</h3>
+      <ul>
+        <li>Нажмите ✓ Выбрать</li>
+        <li>Нажмите на несколько пэдов</li>
+        <li>Нажмите 🔗 Объединить</li>
+      </ul>
+
+      <h3>Запись живого микса</h3>
+      <p><strong>⏺️ Запись микса</strong> записывает всё, что вы играете со всеми эффектами:</p>
+      <ul>
+        <li>Первое нажатие → начинает запись</li>
+        <li>Второе нажатие → сохраняет файл как <code>smplrbot.mp3</code></li>
+      </ul>
+      <div class="highlight">💡 Идеально для записи джемов!</div>
+
+      <h3>Сохранить (Экспорт)</h3>
+      <p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p>
+
+      <h2>🔴 Индикаторы</h2>
+      <ul>
+        <li><strong>Красная линия</strong> — позиция воспроизведения</li>
+        <li><strong>Зеленый фон</strong> — слот содержит сэмпл</li>
+      </ul>
+
+      <p><strong>Приятного творчества! 🎸</strong></p>
+    `
   },
   en: {
-    aboutBtn: 'ABOUT',
-    modalTitle: 'About SAMPLER HENDRIX 5.0',
-    selInfo: 'Tap and drag to select',
-    loopBtn: 'LOOP',
-    loadBtn: '📂 Load',
-    trimBtn: '✂ Chop',
-    resetBtn: '↺ Reset',
-    exportBtn: '💾 Save',
-    recMixBtn: '⏺ Rec Mix',
-    mergeBtn: '🔗 Merge',
-    clearBtn: '🗑 Clear',
-    selectModeBtn: '✓ Select',
-    selectModeCancel: '✕ Cancel',
-    statusDefault: 'Load audio or record',
-    slotIndicator: 'Slot',
-    tempoLabel: 'Tempo',
-    pitchLabel: 'Pitch',
-    volLabel: 'Volume',
-    panLabel: 'Pan',
-    filtLabel: 'Filter',
-    distLabel: 'Distortion',
-    delLabel: 'Delay',
-    revLabel: 'Reverb',
-    tremLabel: 'Tremolo',
-    bitLabel: 'Bitcrush',
-    filtOnLabel: 'LPF',
-    filtOff: 'Off',
-    panCenter: 'C',
-    panLeft: 'L',
-    panRight: 'R',
-    ms: 'ms',
-    percent: '%',
-    bit: '-bit',
-    modeSelect: 'SELECT MODE: Tap pads to merge',
+    about: 'ABOUT',
+    selectDrag: 'Tap and drag to select',
+    load: '📂 Load',
+    chop: '✂ Chop',
+    reset: '↺ Reset',
+    save: '💾 Save',
+    recMix: '⏺ Rec Mix',
+    merge: '🔗 Merge',
+    clear: '🗑 Clear',
+    select: '✓ Select',
+    cancel: '✕ Cancel',
+    status: 'Load audio or record',
+    slot: 'Slot',
+    tempo: 'Tempo',
+    pitch: 'Pitch',
+    volume: 'Volume',
+    pan: 'Pan',
+    filter: 'Filter',
+    distortion: 'Distortion',
+    delay: 'Delay',
+    reverb: 'Reverb',
+    tremolo: 'Tremolo',
+    reverse: 'Reverse',
+    reverseDesc: 'Flip right to left',
+    off: 'Off',
+    selectMode: 'SELECT MODE: Tap pads to merge',
     emptySlot: 'Empty slot',
-    selectToChop: 'Select a slice first',
+    loading: 'Loading...',
+    loaded: 'Loaded to slot ',
+    recorded: 'Recorded ',
+    processing: 'Processing...',
+    noAudio: 'No audio recorded',
+    recording: 'Recording...',
+    requestingMic: 'Requesting mic...',
+    micError: 'Microphone not supported',
+    permissionDenied: 'Permission denied',
+    error: 'Error: ',
+    initError: 'Init error: ',
+    chopFirst: 'Select a slice first',
     invalidSelection: 'Invalid selection',
+    chopped: 'Chopped',
     slotCleared: 'Slot cleared',
-    slotClearedNum: 'Slot',
-    cleared: 'cleared',
     notEnoughSlots: 'Not enough valid slots',
     noFreeSlots: 'No free slots',
-    merged: 'Merged',
-    samplesToSlot: 'samples to slot',
-    noSlotsExport: 'No valid slots to export',
+    merged: 'Merged ',
+    samplesToSlot: ' samples to slot ',
+    noValidSlots: 'No valid slots to export',
     exporting: 'Exporting all slots...',
-    saved: 'All slots exported as smplrbot.mp3',
-    exportError: 'Export error:',
-    loading: 'Loading...',
-    loadedToSlot: 'Loaded to slot',
-    error: 'Error:',
-    micNotSupported: 'Microphone not supported',
-    micRequest: 'Requesting mic...',
-    recording: 'Recording...',
-    recorded: 'Recorded',
-    noAudio: 'No audio recorded',
-    processing: 'Processing...',
-    accessDenied: 'Permission denied',
+    exported: 'All slots exported as smplrbot.mp3',
+    exportError: 'Export error: ',
     recordingMix: 'Recording mix...',
-    recordingMixTime: 'Recording mix:',
-    converting: 'Converting to MP3...',
     mixSaved: 'Mix saved as smplrbot.mp3!',
-    stopBtn: '■ Stop',
-    recBtn: '⏺ Rec Mix',
-    initError: 'Init error:',
-    chopped: 'Chopped',
-    modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone in VK Mini Apps</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>📱 On Phone (Android/iOS):</h3><ol><li>Open your <strong>phone settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find <strong>VK (VKontakte)</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to VK and restart the app</li></ol><h3>💻 On Computer (Browser):</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address in browser</li><li>Find <strong>"Microphone"</strong></li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><div class="highlight">💡 <strong>Important:</strong> After enabling permission, completely restart VK Mini Apps (close and reopen)!</div></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><div class="highlight">💡 <strong>Tip:</strong> For best quality, open the app in Chrome.</div><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Pitch</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi effect</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
+    converting: 'Converting to MP3...',
+    recMixStop: '■ Stop',
+    loop: 'LOOP',
+    modalTitle: 'About SAMPLER HENDRIX 5.0',
+    modalContent: `
+      <h1>🎛️ User Guide</h1>
+      <p>Complete guide to using the web sampler for music creation.</p>
+      
+      <div class="warning">
+        <h2>🎤 How to Enable Microphone Access</h2>
+        <p>If the record button doesn't work, you need to allow microphone access:</p>
+        <h3>💻 In Your Browser:</h3>
+        <ol>
+          <li>Click the <strong>lock icon 🔒</strong> left of the address bar</li>
+          <li>Find <strong>"Microphone"</strong> in the permissions list</li>
+          <li>Select <strong>"Allow"</strong></li>
+          <li>Refresh the page (F5)</li>
+        </ol>
+        <h3>📱 On Mobile Devices:</h3>
+        <ol>
+          <li>Open your <strong>device settings</strong></li>
+          <li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li>
+          <li>Find your <strong>browser app</strong> in the list</li>
+          <li>Tap <strong>"Permissions"</strong></li>
+          <li>Find <strong>"Microphone"</strong></li>
+          <li>Enable the toggle (allow access)</li>
+          <li>Return to the browser and refresh the page</li>
+        </ol>
+      </div>
+
+      <h2>📱 Getting Started</h2>
+      <h3>Interface</h3>
+      <ul>
+        <li><strong>Top panel</strong> — active sample waveform with position indicator</li>
+        <li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li>
+        <li><strong>Transport</strong> — record/playback buttons</li>
+        <li><strong>Actions</strong> — editing functions</li>
+        <li><strong>Effects</strong> — 10 effect knobs for each slot</li>
+      </ul>
+
+      <h2>🎯 Main Features</h2>
+      <h3>1. Loading Samples</h3>
+      <p><strong>📂 Load button:</strong></p>
+      <ul>
+        <li>Click the button</li>
+        <li>Select audio file (WAV, MP3, OGG)</li>
+        <li>Sample loads into active slot (highlighted with white border)</li>
+      </ul>
+
+      <h3>2. Microphone Recording</h3>
+      <p><strong>Red ● REC button:</strong></p>
+      <ul>
+        <li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li>
+        <li><strong>Second press:</strong> recording stops, sample loads into active slot</li>
+      </ul>
+
+      <h3>3. Playback</h3>
+      <ul>
+        <li><strong>▶️ PLAY</strong> — plays sample once</li>
+        <li><strong>LOOP</strong> (yellow button) — infinite loop</li>
+        <li><strong>■ STOP</strong> — stops all playing samples</li>
+      </ul>
+
+      <h2>🎚️ Effects (Individual for Each Slot!)</h2>
+      <p>Each of the 10 slots stores its own settings.</p>
+      <table>
+        <tr><th>Effect</th><th>Range</th><th>Description</th></tr>
+        <tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr>
+        <tr><td>Pitch</td><td>±1200 ct</td><td>Changes pitch/timbre without changing speed</td></tr>
+        <tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr>
+        <tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr>
+        <tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr>
+        <tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr>
+        <tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr>
+        <tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr>
+        <tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr>
+        <tr><td>Reverse</td><td>On/Off</td><td>Flip sample right to left</td></tr>
+      </table>
+
+      <h2>✂️ Advanced Features</h2>
+      <h3>Chop</h3>
+      <ul>
+        <li>Select fragment on waveform: tap and drag</li>
+        <li>Click ✂ Chop</li>
+      </ul>
+
+      <h3>Merge</h3>
+      <ul>
+        <li>Click ✓ Select</li>
+        <li>Tap multiple pads</li>
+        <li>Click 🔗 Merge</li>
+      </ul>
+
+      <h3>Live Mix Recording</h3>
+      <p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p>
+      <ul>
+        <li>First tap → starts recording</li>
+        <li>Second tap → saves file as <code>smplrbot.mp3</code></li>
+      </ul>
+      <div class="highlight">💡 Perfect for recording jams!</div>
+
+      <h3>Save (Export)</h3>
+      <p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p>
+
+      <h2>🔴 Indicators</h2>
+      <ul>
+        <li><strong>Red line</strong> — playback position</li>
+        <li><strong>Green background</strong> — slot contains sample</li>
+      </ul>
+
+      <p><strong>Happy creating! 🎸</strong></p>
+    `
   }
 };
 
-let currentLang = 'ru';
-
-function toggleLanguage() {
+function toggleLang() {
   currentLang = currentLang === 'ru' ? 'en' : 'ru';
-  document.getElementById('langSwitch').textContent = currentLang.toUpperCase();
+  $('langBtn').textContent = currentLang.toUpperCase();
   applyTranslations();
-  vkHaptic('light');
 }
 
 function applyTranslations() {
   const t = translations[currentLang];
   
-  document.getElementById('aboutBtn').textContent = t.aboutBtn;
-  document.getElementById('modalTitle').textContent = t.modalTitle;
-  document.getElementById('modalContent').innerHTML = t.modalContent;
-  document.getElementById('selInfo').textContent = t.selInfo;
-  document.getElementById('loopBtn').textContent = t.loopBtn;
-  document.getElementById('loadBtn').textContent = t.loadBtn;
-  document.getElementById('trimBtn').textContent = t.trimBtn;
-  document.getElementById('resetBtn').textContent = t.resetBtn;
-  document.getElementById('exportBtn').textContent = t.exportBtn;
-  document.getElementById('recMixBtn').textContent = t.recMixBtn;
-  document.getElementById('mergeBtn').textContent = t.mergeBtn;
-  document.getElementById('clearBtn').textContent = t.clearBtn;
-  document.getElementById('selectModeBtn').textContent = t.selectModeBtn;
+  $('aboutBtn').textContent = t.about;
+  $('modalTitle').textContent = t.modalTitle;
   
-  document.getElementById('tempoLabel').textContent = t.tempoLabel;
-  document.getElementById('pitchLabel').textContent = t.pitchLabel;
-  document.getElementById('volLabel').textContent = t.volLabel;
-  document.getElementById('panLabel').textContent = t.panLabel;
-  document.getElementById('filtLabel').textContent = t.filtLabel;
-  document.getElementById('distLabel').textContent = t.distLabel;
-  document.getElementById('delLabel').textContent = t.delLabel;
-  document.getElementById('revLabel').textContent = t.revLabel;
-  document.getElementById('tremLabel').textContent = t.tremLabel;
-  document.getElementById('bitLabel').textContent = t.bitLabel;
-  document.getElementById('filtOnLabel').textContent = t.filtOnLabel;
+  $('selInfo').textContent = t.selectDrag;
+  $('loadBtn').textContent = t.load;
+  $('trimBtn').textContent = t.chop;
+  $('resetBtn').textContent = t.reset;
+  $('exportBtn').textContent = t.save;
+  $('recMixBtn').textContent = isRecordingMix ? t.recMixStop : t.recMix;
+  $('mergeBtn').textContent = t.merge;
+  $('clearBtn').textContent = t.clear;
+  $('selectModeBtn').textContent = selectMode ? t.cancel : t.select;
+  $('status').textContent = t.status;
+  $('slotIndicator').textContent = t.slot + ' ' + (activeSlot + 1);
   
-  const slotNum = parseInt(document.getElementById('slotIndicator').textContent.replace(/\D/g, '')) || 1;
-  document.getElementById('slotIndicator').textContent = t.slotIndicator + ' ' + slotNum;
+  $('tempoLabel').textContent = t.tempo;
+  $('pitchLabel').textContent = t.pitch;
+  $('volLabel').textContent = t.volume;
+  $('panLabel').textContent = t.pan;
+  $('filtLabel').textContent = t.filter;
+  $('distLabel').textContent = t.distortion;
+  $('delLabel').textContent = t.delay;
+  $('revLabel').textContent = t.reverb;
+  $('tremLabel').textContent = t.tremolo;
+  $('invLabel').textContent = t.reverse;
+  $('invertOnLabel').textContent = t.reverseDesc;
+  $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Hz' : t.off;
   
-  const status = document.getElementById('status').textContent;
-  if (status === translations.ru.statusDefault || status === translations.en.statusDefault) {
-    document.getElementById('status').textContent = t.statusDefault;
-  }
+  $('modeIndicator').textContent = selectMode ? t.selectMode : '';
+  $('modalContent').innerHTML = t.modalContent;
   
-  if (selectMode) {
-    document.getElementById('modeIndicator').textContent = t.modeSelect;
-  }
-  
-  updateLabelsUI();
-}
-
-let vkBridgeReady = false;
-
-async function initVKBridge() {
-  try {
-    if (window.vkBridge) {
-      await vkBridge.send('VKWebAppInit');
-      vkBridgeReady = true;
-      console.log('✅ VK Bridge initialized');
-      try {
-        await vkBridge.send('VKWebAppSetViewSettings', { 
-          status_bar_style: 'light', 
-          action_bar_color: '#1a1a1a' 
-        });
-      } catch(e) {}
-    }
-  } catch (e) {
-    console.log('VK Bridge not available');
-  }
-}
-
-function vkHaptic(type = 'light') { 
-  if (!vkBridgeReady) return; 
-  try { vkBridge.send('VKWebAppTapticImpactOccurred', { style: type }); } catch(e) {} 
-}
-
-function vkNotify() { 
-  if (!vkBridgeReady) return; 
-  try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {} 
+  updatePads();
 }
 
 function openAbout() { 
   document.getElementById('aboutModal').classList.add('active'); 
   document.body.style.overflow = 'hidden'; 
-  vkHaptic('light'); 
 }
 
 function closeAbout() { 
   document.getElementById('aboutModal').classList.remove('active'); 
   document.body.style.overflow = ''; 
-  vkHaptic('light'); 
 }
 
 document.getElementById('aboutModal').addEventListener('click', (e) => { 
@@ -448,7 +617,7 @@ let currentSourceId = 0;
 let isLooping = false;
 
 let slotSettings = Array(10).fill(null).map(() => ({
-  tempo: 1, pitch: 0, vol: 1, pan: 0, filt: 1000, filtOn: false, dist: 0, del: 0, rev: 0, trem: 0, bit: 0
+  tempo: 1, pitch: 0, vol: 1, pan: 0, filt: 1000, filtOn: false, dist: 0, del: 0, rev: 0, trem: 0, reverse: false
 }));
 
 let isRecording = false, recStream = null, recMediaRecorder = null;
@@ -469,7 +638,7 @@ function init() {
     loadSlotSettings(0);
     updateTransportButtons();
     applyTranslations();
-  } catch (err) { console.error('Init error:', err); setStatus(translations[currentLang].initError + err.message); }
+  } catch (err) { console.error('Init error:', err); setStatus('Init error: ' + err.message); }
 }
 
 function ensureCtx() {
@@ -481,16 +650,16 @@ function loadSlotSettings(slotIndex) {
   const s = slotSettings[slotIndex];
   $('tempo').value = s.tempo; $('pitch').value = s.pitch; $('vol').value = s.vol; $('pan').value = s.pan;
   $('filt').value = s.filt; $('filtOn').checked = s.filtOn; $('dist').value = s.dist; $('del').value = s.del;
-  $('rev').value = s.rev; $('trem').value = s.trem; $('bit').value = s.bit;
+  $('rev').value = s.rev; $('trem').value = s.trem; $('invert').checked = s.reverse;
   updateLabelsUI();
-  $('slotIndicator').textContent = translations[currentLang].slotIndicator + ' ' + (slotIndex + 1);
+  $('slotIndicator').textContent = translations[currentLang].slot + ' ' + (slotIndex + 1);
 }
 
 function saveCurrentSettings() {
   slotSettings[activeSlot] = {
     tempo: parseFloat($('tempo').value), pitch: parseInt($('pitch').value), vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
     filt: parseFloat($('filt').value), filtOn: $('filtOn').checked, dist: parseInt($('dist').value), del: parseFloat($('del').value),
-    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value), bit: parseInt($('bit').value)
+    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value), reverse: $('invert').checked
   };
 }
 
@@ -507,7 +676,6 @@ function initPads() {
 }
 
 function handlePadClick(i) {
-  vkHaptic('light');
   if (selectMode) {
     if (selectedSlots.has(i)) selectedSlots.delete(i); else selectedSlots.add(i);
     updatePads(); updateMergeButton();
@@ -516,14 +684,15 @@ function handlePadClick(i) {
     activeSlot = i; selection = null;
     loadSlotSettings(i);
     updatePads(); drawWave(); updateTransportButtons();
-    $('selInfo').textContent = slots[i] ? translations[currentLang].selInfo : translations[currentLang].emptySlot;
+    const t = translations[currentLang];
+    $('selInfo').textContent = slots[i] ? t.selectDrag : t.emptySlot;
   }
 }
 
 function updatePads() {
   document.querySelectorAll('.pad').forEach((p, i) => {
     p.classList.remove('active', 'loaded', 'selected', 'playing');
-    if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = slots[i].duration.toFixed(1) + 'с'; }
+    if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = slots[i].duration.toFixed(1) + 's'; }
     else p.querySelector('.pad-duration').textContent = '';
     if (i === activeSlot) p.classList.add('active');
     if (selectedSlots.has(i)) p.classList.add('selected');
@@ -553,47 +722,45 @@ $('fileInput').onchange = async e => {
   try {
     slots[activeSlot] = await audioCtx.decodeAudioData(arr);
     selection = null; drawWave(); updatePads(); updateTransportButtons();
-    setStatus(translations[currentLang].loadedToSlot + ' ' + (activeSlot + 1));
-    vkNotify();
+    setStatus(translations[currentLang].loaded + (activeSlot + 1));
   } catch (err) { setStatus(translations[currentLang].error + err.message); }
 };
 
 $('recBtn').addEventListener('click', async function(e) {
-  vkHaptic('medium');
+  const t = translations[currentLang];
   try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus(translations[currentLang].micNotSupported); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus(t.micError); return; }
     if (isRecording) { stopRecording(); return; }
     ensureCtx();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
-    setStatus(translations[currentLang].micRequest);
+    setStatus(t.requestingMic);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).catch(() => navigator.mediaDevices.getUserMedia({ audio: true }));
     recStream = stream; recChunks = [];
     recMediaRecorder = new MediaRecorder(stream);
     recMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
-    recMediaRecorder.onerror = (e) => { setStatus(translations[currentLang].error); stopRecording(); };
+    recMediaRecorder.onerror = (e) => { setStatus(t.error); stopRecording(); };
     recMediaRecorder.onstop = async () => {
       if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-      if (recChunks.length === 0) { setStatus(translations[currentLang].noAudio); resetRecordingUI(); return; }
-      setStatus(translations[currentLang].processing);
+      if (recChunks.length === 0) { setStatus(t.noAudio); resetRecordingUI(); return; }
+      setStatus(t.processing);
       try {
         const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
         const arr = await blob.arrayBuffer();
         const buffer = await audioCtx.decodeAudioData(arr);
         slots[activeSlot] = buffer; selection = null;
         drawWave(); updatePads(); updateTransportButtons();
-        setStatus(translations[currentLang].recorded + ' ' + buffer.duration.toFixed(1) + 'с');
-        vkNotify();
-      } catch (err) { setStatus(translations[currentLang].error + err.message); }
+        setStatus(t.recorded + buffer.duration.toFixed(1) + 's');
+      } catch (err) { setStatus(t.error + err.message); }
       resetRecordingUI();
     };
     recMediaRecorder.start();
     isRecording = true; recStartTime = Date.now();
     $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active'); setStatus(translations[currentLang].recording);
+    $('recIndicator').classList.add('active'); setStatus(t.recording);
     recTimerInterval = setInterval(updateRecTimer, 100);
   } catch (err) {
-    if (err.name === 'NotAllowedError') setStatus(translations[currentLang].accessDenied);
-    else setStatus(translations[currentLang].error + err.message);
+    if (err.name === 'NotAllowedError') setStatus(t.permissionDenied);
+    else setStatus(t.error + err.message);
     if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
     resetRecordingUI();
   }
@@ -601,7 +768,6 @@ $('recBtn').addEventListener('click', async function(e) {
 
 function stopRecording() {
   if (!isRecording) return;
-  vkHaptic('light');
   if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
   if (recMediaRecorder && recMediaRecorder.state !== 'inactive') { try { recMediaRecorder.stop(); } catch(e) {} }
 }
@@ -620,7 +786,6 @@ function updateRecTimer() {
 }
 
 $('recMixBtn').onclick = async () => {
-  vkHaptic('medium');
   ensureCtx(); await audioCtx.resume();
   if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
 };
@@ -635,11 +800,11 @@ async function startRecordingMix() {
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
     mixRecorder.start(100);
     isRecordingMix = true; mixStartTime = Date.now();
-    $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = translations[currentLang].stopBtn;
+    $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = translations[currentLang].recMixStop;
     setStatus(translations[currentLang].recordingMix);
     mixTimerInterval = setInterval(() => {
       const e = Math.floor((Date.now() - mixStartTime) / 1000);
-      setStatus(translations[currentLang].recordingMixTime + ' ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
+      setStatus(translations[currentLang].recordingMix + ' ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
     }, 100);
   } catch (err) { setStatus(translations[currentLang].error + err.message); }
 }
@@ -661,7 +826,6 @@ async function stopRecordingMix() {
       const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus(translations[currentLang].mixSaved);
-      vkNotify();
     } catch (err) { setStatus(translations[currentLang].error + err.message); }
     resetMixRecordingUI();
   };
@@ -669,7 +833,7 @@ async function stopRecordingMix() {
 
 function resetMixRecordingUI() {
   isRecordingMix = false;
-  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = translations[currentLang].recBtn;
+  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = translations[currentLang].recMix;
   mixChunks = []; mixStreamDest = null; mixRecorder = null;
 }
 
@@ -694,13 +858,16 @@ function f32ToI16(f) {
   return i;
 }
 
-function makeBitcrushCurve(bits) {
-  if (bits <= 0) return null;
-  const n = 44100;
-  const curve = new Float32Array(n);
-  const steps = Math.pow(2, bits - 1);
-  for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; curve[i] = Math.round(x * steps) / steps; }
-  return curve;
+function reverseBuffer(buffer) {
+  const reversed = audioCtx.createBuffer(buffer.numberOfChannels, buffer.length, buffer.sampleRate);
+  for (let c = 0; c < buffer.numberOfChannels; c++) {
+    const src = buffer.getChannelData(c);
+    const dst = reversed.getChannelData(c);
+    for (let i = 0; i < buffer.length; i++) {
+      dst[i] = src[buffer.length - 1 - i];
+    }
+  }
+  return reversed;
 }
 
 function createChain(ac, buffer, opts, slotIdx) {
@@ -712,9 +879,6 @@ function createChain(ac, buffer, opts, slotIdx) {
   filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
   const shaper = ac.createWaveShaper();
   shaper.curve = makeDistortionCurve(opts.dist); shaper.oversample = '4x';
-  const bitcrusher = ac.createWaveShaper();
-  if (opts.bit > 0) { bitcrusher.curve = makeBitcrushCurve(opts.bit); bitcrusher.oversample = 'none'; }
-  else { const neutral = new Float32Array(44100); for (let i = 0; i < 44100; i++) neutral[i] = i * 2 / 44100 - 1; bitcrusher.curve = neutral; }
   const delay = ac.createDelay(2); delay.delayTime.value = Math.max(0.001, opts.del / 1000);
   const delayFb = ac.createGain(); delayFb.gain.value = 0.4;
   const delayWet = ac.createGain(); delayWet.gain.value = opts.del > 0 ? 0.5 : 0;
@@ -727,9 +891,9 @@ function createChain(ac, buffer, opts, slotIdx) {
   tremoloLfo.connect(tremoloDepth); tremoloDepth.connect(tremoloGain.gain); tremoloLfo.start();
   const panner = ac.createStereoPanner(); panner.pan.value = opts.pan;
   const outputGain = ac.createGain(); outputGain.gain.value = opts.vol;
-  source.connect(filter); filter.connect(shaper); shaper.connect(bitcrusher);
-  bitcrusher.connect(delay); delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
-  const afterDelay = ac.createGain(); bitcrusher.connect(afterDelay); delayWet.connect(afterDelay);
+  source.connect(filter); filter.connect(shaper); shaper.connect(delay);
+  delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
+  const afterDelay = ac.createGain(); shaper.connect(afterDelay); delayWet.connect(afterDelay);
   afterDelay.connect(convolver); convolver.connect(revWet); afterDelay.connect(revDry);
   const afterRev = ac.createGain(); revWet.connect(afterRev); revDry.connect(afterRev);
   afterRev.connect(tremoloGain); tremoloGain.connect(panner); panner.connect(outputGain);
@@ -739,7 +903,7 @@ function createChain(ac, buffer, opts, slotIdx) {
   if (opts.loop) { if (opts.offset > 0) source.start(now, opts.offset); else source.start(now); }
   else if (opts.offset > 0 || opts.duration) { source.start(now, opts.offset, opts.duration); }
   else { source.start(now); }
-  return { source, filter, shaper, bitcrusher, delay, delayFb, delayWet, convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth, panner, outputGain, slotIndex: slotIdx, startTime: now, offset: opts.offset || 0, bufferDuration: buffer.duration, playbackRate: opts.playbackRate, loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration };
+  return { source, filter, shaper, delay, delayFb, delayWet, convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth, panner, outputGain, slotIndex: slotIdx, startTime: now, offset: opts.offset || 0, bufferDuration: buffer.duration, playbackRate: opts.playbackRate, loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration, isReversed: opts.isReversed || false };
 }
 
 function updateAllChains() {
@@ -748,7 +912,6 @@ function updateAllChains() {
     c.source.playbackRate.value = s.tempo; c.source.detune.value = s.pitch; c.playbackRate = s.tempo;
     c.filter.frequency.value = s.filtOn ? s.filt : 20000;
     c.shaper.curve = makeDistortionCurve(s.dist);
-    c.bitcrusher.curve = s.bit > 0 ? makeBitcrushCurve(s.bit) : null;
     c.delay.delayTime.value = Math.max(0.001, s.del / 1000); c.delayWet.gain.value = s.del > 0 ? 0.5 : 0;
     c.revWet.gain.value = s.rev; c.revDry.gain.value = 1 - s.rev * 0.5;
     c.tremoloDepth.gain.value = s.trem * 0.5; c.panner.pan.value = s.pan; c.outputGain.gain.value = s.vol;
@@ -757,17 +920,60 @@ function updateAllChains() {
 
 function play(loop) {
   const buffer = slots[activeSlot]; if (!buffer) return;
-  vkHaptic('light');
   stopSlot(activeSlot);
   const myId = ++currentSourceId;
   const settings = slotSettings[activeSlot];
-  const opts = { loop, playbackRate: settings.tempo, detune: settings.pitch, vol: settings.vol, pan: settings.pan, filtOn: settings.filtOn, filt: settings.filt, dist: settings.dist, del: settings.del, rev: settings.rev, trem: settings.trem, bit: settings.bit, offset: 0, duration: buffer.duration, loopStart: 0, loopEnd: buffer.duration };
-  if (selection && selection.end - selection.start > 2) {
-    const dur = buffer.duration; const offSec = selection.start / canvas.width * dur; const lenSec = (selection.end - selection.start) / canvas.width * dur;
-    if (loop) { opts.offset = offSec; opts.loopStart = offSec; opts.loopEnd = offSec + lenSec; }
-    else { opts.offset = offSec; opts.duration = Math.min(lenSec, dur - offSec); }
+  
+  let playBuffer = buffer;
+  if (settings.reverse) {
+    playBuffer = reverseBuffer(buffer);
   }
-  const chain = createChain(audioCtx, buffer, opts, activeSlot);
+
+  const opts = { 
+    loop, 
+    playbackRate: settings.tempo, 
+    detune: settings.pitch, 
+    vol: settings.vol, 
+    pan: settings.pan, 
+    filtOn: settings.filtOn, 
+    filt: settings.filt, 
+    dist: settings.dist, 
+    del: settings.del, 
+    rev: settings.rev, 
+    trem: settings.trem, 
+    isReversed: settings.reverse,
+    offset: 0, 
+    duration: buffer.duration, 
+    loopStart: 0, 
+    loopEnd: buffer.duration 
+  };
+
+  if (selection && selection.end - selection.start > 2) {
+    const dur = buffer.duration; 
+    const offSec = selection.start / canvas.width * dur; 
+    const lenSec = (selection.end - selection.start) / canvas.width * dur;
+    if (loop) { 
+      opts.offset = offSec; 
+      opts.loopStart = offSec; 
+      opts.loopEnd = offSec + lenSec; 
+    } else { 
+      opts.offset = offSec; 
+      opts.duration = Math.min(lenSec, dur - offSec); 
+    }
+  }
+
+  if (settings.reverse) {
+    const origOff = opts.offset;
+    const origDur = opts.duration;
+    opts.offset = buffer.duration - (origOff + origDur);
+    if (loop) {
+       const origLoopLen = opts.loopEnd - opts.loopStart;
+       opts.loopStart = buffer.duration - (opts.loopStart + origLoopLen);
+       opts.loopEnd = opts.loopStart + origLoopLen;
+    }
+  }
+
+  const chain = createChain(audioCtx, playBuffer, opts, activeSlot);
   activeChains.set(activeSlot, { chain, id: myId }); updatePads(); startRenderLoop();
   chain.source.onended = () => {
     const data = activeChains.get(activeSlot);
@@ -786,13 +992,12 @@ function stopSlot(slotIndex) {
 }
 
 function stopAll() {
-  vkHaptic('medium');
   activeChains.forEach(d => { try { d.chain.source.stop(); } catch(e){} try { d.chain.tremoloLfo.stop(); } catch(e){} });
   activeChains.clear(); updatePads(); stopRenderLoop(); isLooping = false; $('loopBtn').classList.remove('active');
 }
 
 $('playBtn').onclick = () => { if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); } play(false); };
-$('loopBtn').onclick = () => { vkHaptic('light'); if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); stopSlot(activeSlot); } else { isLooping = true; $('loopBtn').classList.add('active'); play(true); } };
+$('loopBtn').onclick = () => { if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); stopSlot(activeSlot); } else { isLooping = true; $('loopBtn').classList.add('active'); play(true); } };
 $('stopBtn').onclick = stopAll;
 
 function getCurrentPosition(chain) {
@@ -809,7 +1014,11 @@ function drawPlayhead() {
   if (canvas.width === 0 || canvas.height === 0) return;
   const H = canvas.height;
   activeChains.forEach((d, si) => {
-    const pos = getCurrentPosition(d.chain); const x = (pos / d.chain.bufferDuration) * canvas.width;
+    let pos = getCurrentPosition(d.chain); 
+    if (d.chain.isReversed) {
+       pos = d.chain.bufferDuration - pos;
+    }
+    const x = (pos / d.chain.bufferDuration) * canvas.width;
     if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; } else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
     ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
   });
@@ -850,61 +1059,59 @@ function moveDrag(e) {
   if (!isDragging) return; e.preventDefault();
   const x = Math.max(0, Math.min(canvas.width, getPos(e)));
   selection.start = Math.min(dragStart, x); selection.end = Math.max(dragStart, x); drawWave();
-  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = (selection.start / canvas.width * d).toFixed(2) + 'с — ' + (selection.end / canvas.width * d).toFixed(2) + 'с'; }
+  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = (selection.start / canvas.width * d).toFixed(2) + 's — ' + (selection.end / canvas.width * d).toFixed(2) + 's'; }
 }
 canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
 function endDrag() { isDragging = false; }
 
 $('trimBtn').onclick = () => {
-  vkHaptic('light');
+  const t = translations[currentLang];
   const b = slots[activeSlot]; if (!b) return;
-  if (!selection || selection.end - selection.start < 2) { setStatus(translations[currentLang].selectToChop); return; }
+  if (!selection || selection.end - selection.start < 2) { setStatus(t.chopFirst); return; }
   const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
-  const nl = Math.max(1, e - s); if (nl <= 0) { setStatus(translations[currentLang].invalidSelection); return; }
+  const nl = Math.max(1, e - s); if (nl <= 0) { setStatus(t.invalidSelection); return; }
   const nb = audioCtx.createBuffer(b.numberOfChannels, nl, b.sampleRate);
   for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
-  slots[activeSlot] = nb; selection = null; drawWave(); updatePads(); setStatus(translations[currentLang].chopped);
-  vkNotify();
+  slots[activeSlot] = nb; selection = null; drawWave(); updatePads(); setStatus(t.chopped);
 };
 
-$('resetBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slotCleared); };
-$('clearBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slotClearedNum + ' ' + (activeSlot + 1) + ' ' + translations[currentLang].cleared); };
+$('resetBtn').onclick = () => { stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slotCleared); };
+$('clearBtn').onclick = () => { stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slot + ' ' + (activeSlot + 1) + ' ' + translations[currentLang].slotCleared); };
 
 $('selectModeBtn').onclick = () => {
-  vkHaptic('light');
+  const t = translations[currentLang];
   selectMode = !selectMode;
   if (!selectMode) { selectedSlots.clear(); updateMergeButton(); }
-  $('selectModeBtn').textContent = selectMode ? translations[currentLang].selectModeCancel : translations[currentLang].selectModeBtn;
-  $('modeIndicator').textContent = selectMode ? translations[currentLang].modeSelect : '';
+  $('selectModeBtn').textContent = selectMode ? t.cancel : t.select;
+  $('modeIndicator').textContent = selectMode ? t.selectMode : '';
   updatePads();
 };
 
 $('mergeBtn').onclick = () => {
-  vkHaptic('medium');
+  const t = translations[currentLang];
   if (selectedSlots.size < 2) return;
   const idx = Array.from(selectedSlots).sort((a, b) => a - b);
   const bufs = idx.map(i => slots[i]).filter(b => b !== null);
-  if (bufs.length < 2) { setStatus(translations[currentLang].notEnoughSlots); return; }
-  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus(translations[currentLang].noFreeSlots); return; } }
+  if (bufs.length < 2) { setStatus(t.notEnoughSlots); return; }
+  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus(t.noFreeSlots); return; } }
   const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels; const tl = bufs.reduce((s, b) => s + b.length, 0);
   const m = audioCtx.createBuffer(nc, tl, sr); let off = 0;
   for (const b of bufs) { for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); } off += b.length; }
   slots[ts] = m; activeSlot = ts; selection = null; selectMode = false; selectedSlots.clear();
-  $('selectModeBtn').textContent = translations[currentLang].selectModeBtn; $('modeIndicator').textContent = '';
+  $('selectModeBtn').textContent = t.select; $('modeIndicator').textContent = '';
   drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
-  setStatus(translations[currentLang].merged + ' ' + bufs.length + ' ' + translations[currentLang].samplesToSlot + ' ' + (ts + 1));
-  vkNotify();
+  setStatus(t.merged + bufs.length + t.samplesToSlot + (ts + 1));
 };
 
 $('exportBtn').onclick = async () => {
-  vkHaptic('medium');
+  const t = translations[currentLang];
   const validSlots = slots.filter(slot => slot !== null);
-  if (validSlots.length === 0) { setStatus(translations[currentLang].noSlotsExport); return; }
+  if (validSlots.length === 0) { setStatus(t.noValidSlots); return; }
   const sr = validSlots[0].sampleRate; const nc = validSlots[0].numberOfChannels;
   const totalLength = validSlots.reduce((sum, slot) => sum + slot.length, 0);
   const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr); let offset = 0;
   for (const slot of validSlots) { for (let c = 0; c < nc; c++) { mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset); } offset += slot.length; }
-  setStatus(translations[currentLang].exporting);
+  setStatus(t.exporting);
   try {
     const oc = new OfflineAudioContext(nc, totalLength, sr);
     const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
@@ -913,36 +1120,33 @@ $('exportBtn').onclick = async () => {
     const url = URL.createObjectURL(mp3);
     const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setStatus(translations[currentLang].saved);
-    vkNotify();
-  } catch (err) { setStatus(translations[currentLang].exportError + ' ' + err.message); }
+    setStatus(t.exported);
+  } catch (err) { setStatus(t.exportError + err.message); }
 };
 
 function makeDistortionCurve(a) { const k = a, n = 44100, c = new Float32Array(n), d = Math.PI / 180; for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * d / (Math.PI + k * Math.abs(x)); } return c; }
 function makeImpulse(ac, dur, dec) { const r = ac.sampleRate, l = Math.max(1, Math.floor(r * dur)); const i = ac.createBuffer(2, l, r); for (let c = 0; c < 2; c++) { const ch = i.getChannelData(c); for (let x = 0; x < l; x++) ch[x] = (Math.random() * 2 - 1) * Math.pow(1 - x / l, dec); } return i; }
 
 function updateLabelsUI() {
-  const t = translations[currentLang];
   $('tempoVal').textContent = parseFloat($('tempo').value).toFixed(2) + 'x';
   $('pitchVal').textContent = $('pitch').value + ' ct';
-  $('volVal').textContent = Math.round($('vol').value * 100) + t.percent;
+  $('volVal').textContent = Math.round($('vol').value * 100) + '%';
   const p = parseFloat($('pan').value);
-  if (Math.abs(p) < 0.02) $('panVal').textContent = t.panCenter; else if (p < 0) $('panVal').textContent = t.panLeft + Math.round(-p * 100); else $('panVal').textContent = t.panRight + Math.round(p * 100);
-  $('revVal').textContent = Math.round($('rev').value * 100) + t.percent;
-  $('delVal').textContent = $('del').value + ' ' + t.ms;
+  if (Math.abs(p) < 0.02) $('panVal').textContent = 'C'; else if (p < 0) $('panVal').textContent = 'L' + Math.round(-p * 100); else $('panVal').textContent = 'R' + Math.round(p * 100);
+  $('revVal').textContent = Math.round($('rev').value * 100) + '%';
+  $('delVal').textContent = $('del').value + ' ms';
   $('distVal').textContent = $('dist').value;
-  $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Hz' : t.filtOff;
-  $('tremVal').textContent = Math.round($('trem').value * 100) + t.percent;
-  $('bitVal').textContent = $('bit').value > 0 ? $('bit').value + t.bit : '0';
+  $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Hz' : translations[currentLang].off;
+  $('tremVal').textContent = Math.round($('trem').value * 100) + '%';
 }
 
 function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
-['tempo','pitch','vol','pan','rev','del','dist','filt','trem','bit'].forEach(id => $(id).addEventListener('input', updateLabels));
+['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id => $(id).addEventListener('input', updateLabels));
 $('filtOn').addEventListener('change', updateLabels);
+$('invert').addEventListener('change', updateLabels);
 function setStatus(t) { $('status').textContent = t; }
 
 init();
-initVKBridge();
 </script>
 </body>
 </html>
