@@ -15,6 +15,9 @@ html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
 .container { max-width: 650px; margin: 0 auto; }
 .header { position: relative; text-align: center; padding: 16px 0; font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid #333; margin-bottom: 16px; }
 .header-title { display: block; text-align: center; }
+.lang-switch { position: absolute; top: 50%; left: 0; transform: translateY(-50%); background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 10px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+.lang-switch:hover { background: #3a3a3a; border-color: #4a4a4a; }
+.lang-switch:active { transform: translateY(-50%) scale(0.95); }
 .about-btn { position: absolute; top: 50%; right: 0; transform: translateY(-50%); background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
 .about-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
 .about-btn:active { transform: translateY(-50%) scale(0.95); }
@@ -107,12 +110,14 @@ input[type=file] { display: none; }
   .pad-duration { font-size: 8px; }
   .pads { gap: 4px; }
   .header { font-size: 14px; }
+  .lang-switch { padding: 5px 8px; font-size: 10px; }
   .about-btn { padding: 4px 6px; font-size: 9px; transform: translateY(-50%) scale(0.5); transform-origin: right center; }
   .about-btn:active { transform: translateY(-50%) scale(0.475); transform-origin: right center; }
 }
 @media (max-width: 340px) { 
   .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; }
   .header { font-size: 12px; letter-spacing: 0.5px; }
+  .lang-switch { padding: 4px 6px; font-size: 9px; }
   .about-btn { padding: 3px 5px; font-size: 8px; transform: translateY(-50%) scale(0.5); transform-origin: right center; }
 }
 </style>
@@ -120,92 +125,18 @@ input[type=file] { display: none; }
 <body>
 <div class="container">
   <div class="header">
+    <button class="lang-switch" id="langSwitch" onclick="toggleLanguage()">RU</button>
     <span class="header-title">SAMPLER HENDRIX 5.0</span>
-    <button class="about-btn" onclick="openAbout()">О ПРОГРАММЕ</button>
+    <button class="about-btn" id="aboutBtn" onclick="openAbout()">О ПРОГРАММЕ</button>
   </div>
   
   <div class="modal-overlay" id="aboutModal">
     <div class="modal">
       <div class="modal-header">
-        <div class="modal-title">О программе SAMPLER HENDRIX 5.0</div>
+        <div class="modal-title" id="modalTitle">О программе SAMPLER HENDRIX 5.0</div>
         <div class="modal-controls"><button class="close-btn" onclick="closeAbout()">×</button></div>
       </div>
-      <div class="modal-content" id="modalContent">
-        <h1>🎛️ Руководство пользователя</h1>
-        <p>Полное руководство по использованию веб-сэмплера для создания музыки.</p>
-        <h2>📱 Начало работы</h2>
-        <h3>Интерфейс</h3>
-        <ul>
-          <li><strong>Верхняя панель</strong> — волна активного семпла с индикатором позиции</li>
-          <li><strong>Pads (пады)</strong> — 10 ячеек 5×2 для хранения семплов</li>
-          <li><strong>Transport</strong> — кнопки записи/воспроизведения</li>
-          <li><strong>Actions</strong> — функции редактирования</li>
-          <li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li>
-        </ul>
-        <h2>🎯 Основные функции</h2>
-        <h3>1. Загрузка семплов</h3>
-        <p><strong>Кнопка 📂 Загрузить:</strong></p>
-        <ul>
-          <li>Нажмите кнопку</li>
-          <li>Выберите аудиофайл (WAV, MP3, OGG)</li>
-          <li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li>
-        </ul>
-        <h3>2. Запись с микрофона</h3>
-        <p><strong>Красная кнопка ● REC:</strong></p>
-        <ul>
-          <li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li>
-          <li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li>
-        </ul>
-        <div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div>
-        <h3>3. Воспроизведение</h3>
-        <ul>
-          <li><strong>▶️ PLAY</strong> — играет семпл один раз</li>
-          <li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li>
-          <li><strong>■ STOP</strong> — останавливает все играющие семплы</li>
-        </ul>
-        <h2>🎚 Эффекты (индивидуальные для каждого слота!)</h2>
-        <p>Каждый из 10 слотов хранит свои настройки.</p>
-        <table>
-          <tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr>
-          <tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr>
-          <tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr>
-          <tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr>
-          <tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr>
-          <tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr>
-          <tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr>
-          <tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr>
-          <tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr>
-          <tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr>
-          <tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr>
-        </table>
-        <h2>✂️ Продвинутые функции</h2>
-        <h3>Обрезка</h3>
-        <ul>
-          <li>Выделите фрагмент на волне: тапните и тяните</li>
-          <li>Нажмите ✂️ Обрезать</li>
-        </ul>
-        <h3>Объединение</h3>
-        <ul>
-          <li>Нажмите ✓ Выбрать</li>
-          <li>Тапните на несколько падов</li>
-          <li>Нажмите 🔗 Слияние</li>
-        </ul>
-        <h3>Запись живого микса</h3>
-        <p><strong>⏺️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p>
-        <ul>
-          <li>Первый тап → начинает запись</li>
-          <li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li>
-        </ul>
-        <div class="highlight">💡 Идеально для записи джемов!</div>
-        <h3>Сохранить (Экспорт)</h3>
-        <p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p>
-        <h2>🔴 Индикаторы</h2>
-        <ul>
-          <li><strong>Красная линия</strong> — позиция воспроизведения</li>
-          <li><strong>Зелёный фон</strong> — слот содержит семпл</li>
-        </ul>
-        <p><strong>Удачного творчества! 🎸</strong></p>
-      </div>
+      <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
 
@@ -230,7 +161,7 @@ input[type=file] { display: none; }
       <div class="rec-level"><div class="rec-level-bar" id="recLevel"></div></div>
     </div>
     <div class="actions">
-      <label for="fileInput">📂 Загрузить</label>
+      <label for="fileInput" id="loadBtn">📂 Загрузить</label>
       <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" disabled>✂ Обрезать</button>
       <button id="resetBtn" disabled>↺ Сброс</button>
@@ -245,22 +176,227 @@ input[type=file] { display: none; }
   <div class="panel">
     <div class="slot-indicator" id="slotIndicator">Слот 1</div>
     <div class="effects">
-      <div class="effect"><div class="effect-label"><span>Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span>Высота</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Громкость</span><span class="effect-value" id="volVal">100%</span></div><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
-      <div class="effect"><div class="effect-label"><span>Панорама</span><span class="effect-value" id="panVal">Ц</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Фильтр</span><span class="effect-value" id="filtVal">Выкл</span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn">ФНЧ</label></div></div>
-      <div class="effect"><div class="effect-label"><span>Дисторшн</span><span class="effect-value" id="distVal">0</span></div><input type="range" id="dist" min="0" max="100" step="1" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Дилей</span><span class="effect-value" id="delVal">0 мс</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Реверб</span><span class="effect-value" id="revVal">0%</span></div><input type="range" id="rev" min="0" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Тремоло</span><span class="effect-value" id="tremVal">0%</span></div><input type="range" id="trem" min="0" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span>Биткраш</span><span class="effect-value" id="bitVal">0</span></div><input type="range" id="bit" min="0" max="16" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="tempoLabel">Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
+      <div class="effect"><div class="effect-label"><span id="pitchLabel">Высота</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="volLabel">Громкость</span><span class="effect-value" id="volVal">100%</span></div><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
+      <div class="effect"><div class="effect-label"><span id="panLabel">Панорама</span><span class="effect-value" id="panVal">Ц</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="filtLabel">Фильтр</span><span class="effect-value" id="filtVal">Выкл</span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn" id="filtOnLabel">ФНЧ</label></div></div>
+      <div class="effect"><div class="effect-label"><span id="distLabel">Дисторшн</span><span class="effect-value" id="distVal">0</span></div><input type="range" id="dist" min="0" max="100" step="1" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="delLabel">Дилей</span><span class="effect-value" id="delVal">0 мс</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="revLabel">Реверб</span><span class="effect-value" id="revVal">0%</span></div><input type="range" id="rev" min="0" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="tremLabel">Тремоло</span><span class="effect-value" id="tremVal">0%</span></div><input type="range" id="trem" min="0" max="1" step="0.01" value="0"></div>
+      <div class="effect"><div class="effect-label"><span id="bitLabel">Биткраш</span><span class="effect-value" id="bitVal">0</span></div><input type="range" id="bit" min="0" max="16" step="1" value="0"></div>
     </div>
   </div>
 </div>
 
 <script>
-// === VK BRIDGE ===
+const translations = {
+  ru: {
+    aboutBtn: 'О ПРОГРАММЕ',
+    modalTitle: 'О программе SAMPLER HENDRIX 5.0',
+    selInfo: 'Нажмите и тяните для выделения',
+    loopBtn: 'ПЕТЛЯ',
+    loadBtn: '📂 Загрузить',
+    trimBtn: '✂ Обрезать',
+    resetBtn: '↺ Сброс',
+    exportBtn: '💾 Сохранить',
+    recMixBtn: '⏺ Запись',
+    mergeBtn: '🔗 Слияние',
+    clearBtn: '🗑 Очистить',
+    selectModeBtn: '✓ Выбрать',
+    selectModeCancel: '✕ Отмена',
+    statusDefault: 'Загрузите аудио или запишите',
+    slotIndicator: 'Слот',
+    tempoLabel: 'Темп',
+    pitchLabel: 'Высота',
+    volLabel: 'Громкость',
+    panLabel: 'Панорама',
+    filtLabel: 'Фильтр',
+    distLabel: 'Дисторшн',
+    delLabel: 'Дилей',
+    revLabel: 'Реверб',
+    tremLabel: 'Тремоло',
+    bitLabel: 'Биткраш',
+    filtOnLabel: 'ФНЧ',
+    filtOff: 'Выкл',
+    panCenter: 'Ц',
+    panLeft: 'Л',
+    panRight: 'П',
+    ms: 'мс',
+    percent: '%',
+    bit: '-бит',
+    modeSelect: 'РЕЖИМ ВЫБОРА: Нажмите на пады для объединения',
+    emptySlot: 'Пустой слот',
+    selectToChop: 'Сначала выделите фрагмент',
+    invalidSelection: 'Неверное выделение',
+    slotCleared: 'Слот очищен',
+    slotClearedNum: 'Слот',
+    cleared: 'очищен',
+    notEnoughSlots: 'Недостаточно слотов',
+    noFreeSlots: 'Нет свободных слотов',
+    merged: 'Объединено',
+    samplesToSlot: 'семплов в слот',
+    noSlotsExport: 'Нет слотов для экспорта',
+    exporting: 'Экспорт всех слотов...',
+    saved: 'Все слоты сохранены как smplrbot.mp3',
+    exportError: 'Ошибка экспорта:',
+    loading: 'Загрузка...',
+    loadedToSlot: 'Загружено в слот',
+    error: 'Ошибка:',
+    micNotSupported: 'Микрофон не поддерживается',
+    micRequest: 'Запрос микрофона...',
+    recording: 'Запись...',
+    recorded: 'Записано',
+    noAudio: 'Ничего не записано',
+    processing: 'Обработка...',
+    accessDenied: 'Доступ запрещён',
+    recordingMix: 'Запись микса...',
+    recordingMixTime: 'Запись микса:',
+    converting: 'Конвертация в MP3...',
+    mixSaved: 'Микс сохранён как smplrbot.mp3!',
+    stopBtn: '■ Стоп',
+    recBtn: '⏺ Запись',
+    initError: 'Ошибка инициализации:',
+    chopped: 'Обрезано',
+    modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — волна активного семпла с индикатором позиции</li><li><strong>Pads (пады)</strong> — 10 ячеек 5×2 для хранения семплов</li><li><strong>Transport</strong> — кнопки записи/воспроизведения</li><li><strong>Actions</strong> — функции редактирования</li><li><strong>Effects</strong> — 10 ручек эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка семплов</h3><p><strong>Кнопка 📂 Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Семпл загрузится в активный слот (подсвечен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появится запрос разрешения на микрофон, разрешите доступ, кнопка станет ■ (красная, пульсирует), таймер покажет длительность записи</li><li><strong>Второе нажатие:</strong> запись останавливается, семпл загружается в активный слот</li></ul><div class="highlight">💡 <strong>Совет:</strong> Для лучшего качества открывайте приложение в Chrome.</div><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — играет семпл один раз</li><li><strong>ПЕТЛЯ</strong> (жёлтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все играющие семплы</li></ul><h2> Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Высота</td><td>±1200 ct</td><td>Высота тона</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео-панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Hz</td><td>Low-pass фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Дилей</td><td>0 — 1000 ms</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространственность</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Биткраш</td><td>0 — 16 bit</td><td>Lo-fi эффект</td></tr></table><h2>✂️ Продвинутые функции</h2><h3>Обрезка</h3><ul><li>Выделите фрагмент на волне: тапните и тяните</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Тапните на несколько падов</li><li>Нажмите 🔗 Слияние</li></ul><h3>Запись живого микса</h3><p><strong>️ Запись</strong> записывает всё что вы играете со всеми эффектами:</p><ul><li>Первый тап → начинает запись</li><li>Второй тап → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зелёный фон</strong> — слот содержит семпл</li></ul><p><strong>Удачного творчества! 🎸</strong></p>`
+  },
+  en: {
+    aboutBtn: 'ABOUT',
+    modalTitle: 'About SAMPLER HENDRIX 5.0',
+    selInfo: 'Tap and drag to select',
+    loopBtn: 'LOOP',
+    loadBtn: '📂 Load',
+    trimBtn: '✂ Chop',
+    resetBtn: '↺ Reset',
+    exportBtn: '💾 Save',
+    recMixBtn: '⏺ Rec Mix',
+    mergeBtn: '🔗 Merge',
+    clearBtn: '🗑 Clear',
+    selectModeBtn: '✓ Select',
+    selectModeCancel: '✕ Cancel',
+    statusDefault: 'Load audio or record',
+    slotIndicator: 'Slot',
+    tempoLabel: 'Tempo',
+    pitchLabel: 'Pitch',
+    volLabel: 'Volume',
+    panLabel: 'Pan',
+    filtLabel: 'Filter',
+    distLabel: 'Distortion',
+    delLabel: 'Delay',
+    revLabel: 'Reverb',
+    tremLabel: 'Tremolo',
+    bitLabel: 'Bitcrush',
+    filtOnLabel: 'LPF',
+    filtOff: 'Off',
+    panCenter: 'C',
+    panLeft: 'L',
+    panRight: 'R',
+    ms: 'ms',
+    percent: '%',
+    bit: '-bit',
+    modeSelect: 'SELECT MODE: Tap pads to merge',
+    emptySlot: 'Empty slot',
+    selectToChop: 'Select a slice first',
+    invalidSelection: 'Invalid selection',
+    slotCleared: 'Slot cleared',
+    slotClearedNum: 'Slot',
+    cleared: 'cleared',
+    notEnoughSlots: 'Not enough valid slots',
+    noFreeSlots: 'No free slots',
+    merged: 'Merged',
+    samplesToSlot: 'samples to slot',
+    noSlotsExport: 'No valid slots to export',
+    exporting: 'Exporting all slots...',
+    saved: 'All slots exported as smplrbot.mp3',
+    exportError: 'Export error:',
+    loading: 'Loading...',
+    loadedToSlot: 'Loaded to slot',
+    error: 'Error:',
+    micNotSupported: 'Microphone not supported',
+    micRequest: 'Requesting mic...',
+    recording: 'Recording...',
+    recorded: 'Recorded',
+    noAudio: 'No audio recorded',
+    processing: 'Processing...',
+    accessDenied: 'Permission denied',
+    recordingMix: 'Recording mix...',
+    recordingMixTime: 'Recording mix:',
+    converting: 'Converting to MP3...',
+    mixSaved: 'Mix saved as smplrbot.mp3!',
+    stopBtn: '■ Stop',
+    recBtn: '⏺ Rec Mix',
+    initError: 'Init error:',
+    chopped: 'Chopped',
+    modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><div class="highlight">💡 <strong>Tip:</strong> For best quality, open the app in Chrome.</div><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Pitch</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Bitcrush</td><td>0 — 16 bit</td><td>Lo-fi effect</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
+  }
+};
+
+let currentLang = 'ru';
+
+function toggleLanguage() {
+  currentLang = currentLang === 'ru' ? 'en' : 'ru';
+  document.getElementById('langSwitch').textContent = currentLang.toUpperCase();
+  applyTranslations();
+  vkHaptic('light');
+}
+
+function applyTranslations() {
+  const t = translations[currentLang];
+  
+  // Кнопка "О программе"
+  document.getElementById('aboutBtn').textContent = t.aboutBtn;
+  
+  // Заголовок модального окна
+  document.getElementById('modalTitle').textContent = t.modalTitle;
+  
+  // Содержимое модального окна
+  document.getElementById('modalContent').innerHTML = t.modalContent;
+  
+  // Основная информация
+  document.getElementById('selInfo').textContent = t.selInfo;
+  document.getElementById('loopBtn').textContent = t.loopBtn;
+  document.getElementById('loadBtn').textContent = t.loadBtn;
+  document.getElementById('trimBtn').textContent = t.trimBtn;
+  document.getElementById('resetBtn').textContent = t.resetBtn;
+  document.getElementById('exportBtn').textContent = t.exportBtn;
+  document.getElementById('recMixBtn').textContent = t.recMixBtn;
+  document.getElementById('mergeBtn').textContent = t.mergeBtn;
+  document.getElementById('clearBtn').textContent = t.clearBtn;
+  document.getElementById('selectModeBtn').textContent = t.selectModeBtn;
+  
+  // Эффекты
+  document.getElementById('tempoLabel').textContent = t.tempoLabel;
+  document.getElementById('pitchLabel').textContent = t.pitchLabel;
+  document.getElementById('volLabel').textContent = t.volLabel;
+  document.getElementById('panLabel').textContent = t.panLabel;
+  document.getElementById('filtLabel').textContent = t.filtLabel;
+  document.getElementById('distLabel').textContent = t.distLabel;
+  document.getElementById('delLabel').textContent = t.delLabel;
+  document.getElementById('revLabel').textContent = t.revLabel;
+  document.getElementById('tremLabel').textContent = t.tremLabel;
+  document.getElementById('bitLabel').textContent = t.bitLabel;
+  document.getElementById('filtOnLabel').textContent = t.filtOnLabel;
+  
+  // Индикатор слота
+  const slotNum = parseInt(document.getElementById('slotIndicator').textContent.replace(/\D/g, '')) || 1;
+  document.getElementById('slotIndicator').textContent = t.slotIndicator + ' ' + slotNum;
+  
+  // Статус по умолчанию
+  const status = document.getElementById('status').textContent;
+  if (status === translations.ru.statusDefault || status === translations.en.statusDefault) {
+    document.getElementById('status').textContent = t.statusDefault;
+  }
+  
+  // Режим выбора
+  if (selectMode) {
+    document.getElementById('modeIndicator').textContent = t.modeSelect;
+  }
+  
+  updateLabelsUI();
+}
+
+// VK Bridge
 let vkBridgeReady = false;
 
 async function initVKBridge() {
@@ -268,7 +404,7 @@ async function initVKBridge() {
     if (window.vkBridge) {
       await vkBridge.send('VKWebAppInit');
       vkBridgeReady = true;
-      console.log('✅ VK Bridge инициализирован');
+      console.log('✅ VK Bridge initialized');
       try {
         await vkBridge.send('VKWebAppSetViewSettings', { 
           status_bar_style: 'light', 
@@ -277,7 +413,7 @@ async function initVKBridge() {
       } catch(e) {}
     }
   } catch (e) {
-    console.log('VK Bridge недоступен');
+    console.log('VK Bridge not available');
   }
 }
 
@@ -291,7 +427,7 @@ function vkNotify() {
   try { vkBridge.send('VKWebAppTapticNotificationOccurred', { type: 'success' }); } catch(e) {} 
 }
 
-// === МОДАЛЬНОЕ ОКНО ===
+// Модальное окно
 function openAbout() { 
   document.getElementById('aboutModal').classList.add('active'); 
   document.body.style.overflow = 'hidden'; 
@@ -312,7 +448,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout(); 
 });
 
-// === ОСНОВНОЙ КОД ===
+// Основной код
 const $ = id => document.getElementById(id);
 const canvas = $('wave'), ctx = canvas.getContext('2d');
 
@@ -346,7 +482,8 @@ function init() {
     initPads();
     loadSlotSettings(0);
     updateTransportButtons();
-  } catch (err) { console.error('Init error:', err); setStatus('Ошибка инициализации: ' + err.message); }
+    applyTranslations();
+  } catch (err) { console.error('Init error:', err); setStatus(translations[currentLang].initError + err.message); }
 }
 
 function ensureCtx() {
@@ -360,7 +497,7 @@ function loadSlotSettings(slotIndex) {
   $('filt').value = s.filt; $('filtOn').checked = s.filtOn; $('dist').value = s.dist; $('del').value = s.del;
   $('rev').value = s.rev; $('trem').value = s.trem; $('bit').value = s.bit;
   updateLabelsUI();
-  $('slotIndicator').textContent = `Слот ${slotIndex + 1}`;
+  $('slotIndicator').textContent = translations[currentLang].slotIndicator + ' ' + (slotIndex + 1);
 }
 
 function saveCurrentSettings() {
@@ -393,14 +530,14 @@ function handlePadClick(i) {
     activeSlot = i; selection = null;
     loadSlotSettings(i);
     updatePads(); drawWave(); updateTransportButtons();
-    $('selInfo').textContent = slots[i] ? 'Нажмите и тяните для выделения' : 'Пустой слот';
+    $('selInfo').textContent = slots[i] ? translations[currentLang].selInfo : translations[currentLang].emptySlot;
   }
 }
 
 function updatePads() {
   document.querySelectorAll('.pad').forEach((p, i) => {
     p.classList.remove('active', 'loaded', 'selected', 'playing');
-    if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = `${slots[i].duration.toFixed(1)}с`; }
+    if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = slots[i].duration.toFixed(1) + 'с'; }
     else p.querySelector('.pad-duration').textContent = '';
     if (i === activeSlot) p.classList.add('active');
     if (selectedSlots.has(i)) p.classList.add('selected');
@@ -425,52 +562,52 @@ setTimeout(resizeCanvas, 100);
 
 $('fileInput').onchange = async e => {
   const f = e.target.files[0]; if (!f) return;
-  ensureCtx(); setStatus('Загрузка...');
+  ensureCtx(); setStatus(translations[currentLang].loading);
   const arr = await f.arrayBuffer();
   try {
     slots[activeSlot] = await audioCtx.decodeAudioData(arr);
     selection = null; drawWave(); updatePads(); updateTransportButtons();
-    setStatus(`Загружено в слот ${activeSlot + 1}`);
+    setStatus(translations[currentLang].loadedToSlot + ' ' + (activeSlot + 1));
     vkNotify();
-  } catch (err) { setStatus('Ошибка: ' + err.message); }
+  } catch (err) { setStatus(translations[currentLang].error + err.message); }
 };
 
 $('recBtn').addEventListener('click', async function(e) {
   vkHaptic('medium');
   try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus('Микрофон не поддерживается'); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus(translations[currentLang].micNotSupported); return; }
     if (isRecording) { stopRecording(); return; }
     ensureCtx();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
-    setStatus('Запрос микрофона...');
+    setStatus(translations[currentLang].micRequest);
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).catch(() => navigator.mediaDevices.getUserMedia({ audio: true }));
     recStream = stream; recChunks = [];
     recMediaRecorder = new MediaRecorder(stream);
     recMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
-    recMediaRecorder.onerror = (e) => { setStatus('Ошибка записи'); stopRecording(); };
+    recMediaRecorder.onerror = (e) => { setStatus(translations[currentLang].error); stopRecording(); };
     recMediaRecorder.onstop = async () => {
       if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-      if (recChunks.length === 0) { setStatus('Ничего не записано'); resetRecordingUI(); return; }
-      setStatus('Обработка...');
+      if (recChunks.length === 0) { setStatus(translations[currentLang].noAudio); resetRecordingUI(); return; }
+      setStatus(translations[currentLang].processing);
       try {
         const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
         const arr = await blob.arrayBuffer();
         const buffer = await audioCtx.decodeAudioData(arr);
         slots[activeSlot] = buffer; selection = null;
         drawWave(); updatePads(); updateTransportButtons();
-        setStatus(`Записано ${buffer.duration.toFixed(1)}с`);
+        setStatus(translations[currentLang].recorded + ' ' + buffer.duration.toFixed(1) + 'с');
         vkNotify();
-      } catch (err) { setStatus('Ошибка: ' + err.message); }
+      } catch (err) { setStatus(translations[currentLang].error + err.message); }
       resetRecordingUI();
     };
     recMediaRecorder.start();
     isRecording = true; recStartTime = Date.now();
     $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active'); setStatus('Запись...');
+    $('recIndicator').classList.add('active'); setStatus(translations[currentLang].recording);
     recTimerInterval = setInterval(updateRecTimer, 100);
   } catch (err) {
-    if (err.name === 'NotAllowedError') setStatus('Доступ запрещён');
-    else setStatus('Ошибка: ' + err.message);
+    if (err.name === 'NotAllowedError') setStatus(translations[currentLang].accessDenied);
+    else setStatus(translations[currentLang].error + err.message);
     if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
     resetRecordingUI();
   }
@@ -493,7 +630,7 @@ function resetRecordingUI() {
 
 function updateRecTimer() {
   const e = Math.floor((Date.now() - recStartTime) / 1000);
-  $('recTime').textContent = `${Math.floor(e/60)}:${(e%60).toString().padStart(2,'0')}`;
+  $('recTime').textContent = Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0');
 }
 
 $('recMixBtn').onclick = async () => {
@@ -512,13 +649,13 @@ async function startRecordingMix() {
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
     mixRecorder.start(100);
     isRecordingMix = true; mixStartTime = Date.now();
-    $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = '■ Стоп';
-    setStatus('Запись микса...');
+    $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = translations[currentLang].stopBtn;
+    setStatus(translations[currentLang].recordingMix);
     mixTimerInterval = setInterval(() => {
       const e = Math.floor((Date.now() - mixStartTime) / 1000);
-      setStatus(`Запись микса: ${Math.floor(e/60)}:${(e%60).toString().padStart(2,'0')}`);
+      setStatus(translations[currentLang].recordingMixTime + ' ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
     }, 100);
-  } catch (err) { setStatus('Ошибка: ' + err.message); }
+  } catch (err) { setStatus(translations[currentLang].error + err.message); }
 }
 
 async function stopRecordingMix() {
@@ -527,8 +664,8 @@ async function stopRecordingMix() {
   activeChains.forEach(d => { try { d.chain.outputGain.disconnect(mixStreamDest); } catch(e){} });
   mixRecorder.stop();
   mixRecorder.onstop = async () => {
-    if (mixChunks.length === 0) { setStatus('Ничего не записано'); resetMixRecordingUI(); return; }
-    setStatus('Конвертация в MP3...');
+    if (mixChunks.length === 0) { setStatus(translations[currentLang].noAudio); resetMixRecordingUI(); return; }
+    setStatus(translations[currentLang].converting);
     try {
       const blob = new Blob(mixChunks, { type: 'audio/webm' });
       const arr = await blob.arrayBuffer();
@@ -537,16 +674,16 @@ async function stopRecordingMix() {
       const url = URL.createObjectURL(mp3);
       const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus('Микс сохранён как smplrbot.mp3!');
+      setStatus(translations[currentLang].mixSaved);
       vkNotify();
-    } catch (err) { setStatus('Ошибка: ' + err.message); }
+    } catch (err) { setStatus(translations[currentLang].error + err.message); }
     resetMixRecordingUI();
   };
 }
 
 function resetMixRecordingUI() {
   isRecordingMix = false;
-  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = '⏺ Запись';
+  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = translations[currentLang].recBtn;
   mixChunks = []; mixStreamDest = null; mixRecorder = null;
 }
 
@@ -727,7 +864,7 @@ function moveDrag(e) {
   if (!isDragging) return; e.preventDefault();
   const x = Math.max(0, Math.min(canvas.width, getPos(e)));
   selection.start = Math.min(dragStart, x); selection.end = Math.max(dragStart, x); drawWave();
-  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = `${(selection.start / canvas.width * d).toFixed(2)}с — ${(selection.end / canvas.width * d).toFixed(2)}с`; }
+  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = (selection.start / canvas.width * d).toFixed(2) + 'с — ' + (selection.end / canvas.width * d).toFixed(2) + 'с'; }
 }
 canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
 function endDrag() { isDragging = false; }
@@ -735,24 +872,24 @@ function endDrag() { isDragging = false; }
 $('trimBtn').onclick = () => {
   vkHaptic('light');
   const b = slots[activeSlot]; if (!b) return;
-  if (!selection || selection.end - selection.start < 2) { setStatus('Сначала выделите фрагмент'); return; }
+  if (!selection || selection.end - selection.start < 2) { setStatus(translations[currentLang].selectToChop); return; }
   const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
-  const nl = Math.max(1, e - s); if (nl <= 0) { setStatus('Неверное выделение'); return; }
+  const nl = Math.max(1, e - s); if (nl <= 0) { setStatus(translations[currentLang].invalidSelection); return; }
   const nb = audioCtx.createBuffer(b.numberOfChannels, nl, b.sampleRate);
   for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
-  slots[activeSlot] = nb; selection = null; drawWave(); updatePads(); setStatus('Обрезано');
+  slots[activeSlot] = nb; selection = null; drawWave(); updatePads(); setStatus(translations[currentLang].chopped);
   vkNotify();
 };
 
-$('resetBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus('Слот очищен'); };
-$('clearBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(`Слот ${activeSlot + 1} очищен`); };
+$('resetBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slotCleared); };
+$('clearBtn').onclick = () => { vkHaptic('light'); stopSlot(activeSlot); slots[activeSlot] = null; selection = null; drawWave(); updatePads(); updateTransportButtons(); setStatus(translations[currentLang].slotClearedNum + ' ' + (activeSlot + 1) + ' ' + translations[currentLang].cleared); };
 
 $('selectModeBtn').onclick = () => {
   vkHaptic('light');
   selectMode = !selectMode;
   if (!selectMode) { selectedSlots.clear(); updateMergeButton(); }
-  $('selectModeBtn').textContent = selectMode ? '✕ Отмена' : '✓ Выбрать';
-  $('modeIndicator').textContent = selectMode ? 'РЕЖИМ ВЫБОРА: Нажмите на пады для объединения' : '';
+  $('selectModeBtn').textContent = selectMode ? translations[currentLang].selectModeCancel : translations[currentLang].selectModeBtn;
+  $('modeIndicator').textContent = selectMode ? translations[currentLang].modeSelect : '';
   updatePads();
 };
 
@@ -761,27 +898,27 @@ $('mergeBtn').onclick = () => {
   if (selectedSlots.size < 2) return;
   const idx = Array.from(selectedSlots).sort((a, b) => a - b);
   const bufs = idx.map(i => slots[i]).filter(b => b !== null);
-  if (bufs.length < 2) { setStatus('Недостаточно слотов'); return; }
-  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus('Нет свободных слотов'); return; } }
+  if (bufs.length < 2) { setStatus(translations[currentLang].notEnoughSlots); return; }
+  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus(translations[currentLang].noFreeSlots); return; } }
   const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels; const tl = bufs.reduce((s, b) => s + b.length, 0);
   const m = audioCtx.createBuffer(nc, tl, sr); let off = 0;
   for (const b of bufs) { for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); } off += b.length; }
   slots[ts] = m; activeSlot = ts; selection = null; selectMode = false; selectedSlots.clear();
-  $('selectModeBtn').textContent = '✓ Выбрать'; $('modeIndicator').textContent = '';
+  $('selectModeBtn').textContent = translations[currentLang].selectModeBtn; $('modeIndicator').textContent = '';
   drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
-  setStatus(`Объединено ${bufs.length} семплов в слот ${ts + 1}`);
+  setStatus(translations[currentLang].merged + ' ' + bufs.length + ' ' + translations[currentLang].samplesToSlot + ' ' + (ts + 1));
   vkNotify();
 };
 
 $('exportBtn').onclick = async () => {
   vkHaptic('medium');
   const validSlots = slots.filter(slot => slot !== null);
-  if (validSlots.length === 0) { setStatus('Нет слотов для экспорта'); return; }
+  if (validSlots.length === 0) { setStatus(translations[currentLang].noSlotsExport); return; }
   const sr = validSlots[0].sampleRate; const nc = validSlots[0].numberOfChannels;
   const totalLength = validSlots.reduce((sum, slot) => sum + slot.length, 0);
   const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr); let offset = 0;
   for (const slot of validSlots) { for (let c = 0; c < nc; c++) { mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset); } offset += slot.length; }
-  setStatus('Экспорт всех слотов...');
+  setStatus(translations[currentLang].exporting);
   try {
     const oc = new OfflineAudioContext(nc, totalLength, sr);
     const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
@@ -790,26 +927,27 @@ $('exportBtn').onclick = async () => {
     const url = URL.createObjectURL(mp3);
     const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setStatus('Все слоты сохранены как smplrbot.mp3');
+    setStatus(translations[currentLang].saved);
     vkNotify();
-  } catch (err) { setStatus('Ошибка экспорта: ' + err.message); }
+  } catch (err) { setStatus(translations[currentLang].exportError + ' ' + err.message); }
 };
 
 function makeDistortionCurve(a) { const k = a, n = 44100, c = new Float32Array(n), d = Math.PI / 180; for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * d / (Math.PI + k * Math.abs(x)); } return c; }
 function makeImpulse(ac, dur, dec) { const r = ac.sampleRate, l = Math.max(1, Math.floor(r * dur)); const i = ac.createBuffer(2, l, r); for (let c = 0; c < 2; c++) { const ch = i.getChannelData(c); for (let x = 0; x < l; x++) ch[x] = (Math.random() * 2 - 1) * Math.pow(1 - x / l, dec); } return i; }
 
 function updateLabelsUI() {
+  const t = translations[currentLang];
   $('tempoVal').textContent = parseFloat($('tempo').value).toFixed(2) + 'x';
   $('pitchVal').textContent = $('pitch').value + ' ct';
-  $('volVal').textContent = Math.round($('vol').value * 100) + '%';
+  $('volVal').textContent = Math.round($('vol').value * 100) + t.percent;
   const p = parseFloat($('pan').value);
-  if (Math.abs(p) < 0.02) $('panVal').textContent = 'Ц'; else if (p < 0) $('panVal').textContent = 'Л' + Math.round(-p * 100); else $('panVal').textContent = 'П' + Math.round(p * 100);
-  $('revVal').textContent = Math.round($('rev').value * 100) + '%';
-  $('delVal').textContent = $('del').value + ' мс';
+  if (Math.abs(p) < 0.02) $('panVal').textContent = t.panCenter; else if (p < 0) $('panVal').textContent = t.panLeft + Math.round(-p * 100); else $('panVal').textContent = t.panRight + Math.round(p * 100);
+  $('revVal').textContent = Math.round($('rev').value * 100) + t.percent;
+  $('delVal').textContent = $('del').value + ' ' + t.ms;
   $('distVal').textContent = $('dist').value;
-  $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Гц' : 'Выкл';
-  $('tremVal').textContent = Math.round($('trem').value * 100) + '%';
-  $('bitVal').textContent = $('bit').value > 0 ? $('bit').value + '-бит' : '0';
+  $('filtVal').textContent = $('filtOn').checked ? $('filt').value + ' Hz' : t.filtOff;
+  $('tremVal').textContent = Math.round($('trem').value * 100) + t.percent;
+  $('bitVal').textContent = $('bit').value > 0 ? $('bit').value + t.bit : '0';
 }
 
 function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
@@ -817,7 +955,6 @@ function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChai
 $('filtOn').addEventListener('change', updateLabels);
 function setStatus(t) { $('status').textContent = t; }
 
-// Запуск
 init();
 initVKBridge();
 </script>
