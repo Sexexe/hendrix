@@ -13,19 +13,26 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
 .container { max-width: 650px; margin: 0 auto; }
-.header { position: relative; display: flex; align-items: center; justify-content: center; padding: 16px 0 8px 0; border-bottom: 1px solid #333; margin-bottom: 16px; gap: 8px; }
-.header-center { display: flex; flex-direction: column; align-items: center; }
-.header-title { font-size: 20px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; }
+
+/* --- ИСПРАВЛЕННЫЙ HEADER --- */
+.header { position: relative; display: flex; align-items: center; justify-content: center; padding: 16px 0 8px 0; border-bottom: 1px solid #333; margin-bottom: 16px; }
+.header-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+.header-title { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.about-row { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+
 .icon-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; width: 32px; height: 32px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .icon-btn:hover:not(:disabled) { background: #3a3a3a; border-color: #4a4a4a; }
 .icon-btn:active:not(:disabled) { transform: scale(0.95); }
 .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-.lang-btn { position: absolute; left: 0; top: 16px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+.lang-btn { position: absolute; left: 0; top: 16px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; z-index: 10; }
 .lang-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
 .lang-btn:active { transform: scale(0.95); }
-.about-btn { display: inline-block; margin-top: 8px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
+.about-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 12px; color: #fff; font-size: 10px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; }
 .about-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
 .about-btn:active { transform: scale(0.95); }
+
 .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; animation: fadeIn 0.3s ease; }
 .modal-overlay.active { display: flex; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -106,7 +113,19 @@ input[type=file] { display: none; }
 .rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
 .rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
 .slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; }
-@media (max-width: 500px) { .pad-num { font-size: 16px; } .pad-duration { font-size: 9px; } .header-title { font-size: 16px; } .pads { gap: 6px; } .modal { max-height: 90vh; } .modal-content { padding: 16px; font-size: 13px; } .modal-content h1 { font-size: 20px; } .modal-content h2 { font-size: 16px; } .modal-content h3 { font-size: 14px; } .icon-btn { width: 28px; height: 28px; font-size: 14px; } }
+
+@media (max-width: 500px) { 
+  .pad-num { font-size: 16px; } 
+  .pad-duration { font-size: 9px; } 
+  .header-title { font-size: 16px; } 
+  .pads { gap: 6px; } 
+  .modal { max-height: 90vh; } 
+  .modal-content { padding: 16px; font-size: 13px; } 
+  .modal-content h1 { font-size: 20px; } 
+  .modal-content h2 { font-size: 16px; } 
+  .modal-content h3 { font-size: 14px; } 
+  .icon-btn { width: 28px; height: 28px; font-size: 14px; } 
+}
 @media (max-width: 400px) { 
   .transport button { padding: 14px 10px; font-size: 18px; } 
   .transport button.loop { font-size: 12px; }
@@ -116,14 +135,19 @@ input[type=file] { display: none; }
   .pad-duration { font-size: 8px; }
   .pads { gap: 4px; }
   .header-title { font-size: 14px; }
-  .about-btn, .lang-btn { padding: 4px 6px; font-size: 7px; }
-  .icon-btn { width: 26px; height: 26px; font-size: 13px; }
+  .about-btn { padding: 4px 8px; font-size: 9px; }
+  .lang-btn { padding: 4px 6px; font-size: 7px; }
+  .icon-btn { width: 28px; height: 28px; font-size: 14px; }
 }
 @media (max-width: 340px) { 
-  .pad-num { font-size: 12px; } .pad-duration { font-size: 7px; margin-top: 2px; } .pads { gap: 3px; } .pad { border-width: 1px; border-radius: 4px; }
+  .pad-num { font-size: 12px; } 
+  .pad-duration { font-size: 7px; margin-top: 2px; } 
+  .pads { gap: 3px; } 
+  .pad { border-width: 1px; border-radius: 4px; }
   .header-title { font-size: 12px; letter-spacing: 0.5px; }
-  .about-btn, .lang-btn { padding: 3px 5px; font-size: 6px; }
-  .icon-btn { width: 24px; height: 24px; font-size: 12px; }
+  .about-btn { padding: 3px 6px; font-size: 8px; }
+  .lang-btn { padding: 3px 5px; font-size: 6px; }
+  .icon-btn { width: 26px; height: 26px; font-size: 12px; }
 }
 </style>
 </head>
@@ -131,12 +155,14 @@ input[type=file] { display: none; }
 <div class="container">
   <div class="header">
     <button class="lang-btn" id="langBtn" onclick="toggleLang()">RU</button>
-    <button class="icon-btn" id="undoBtn" onclick="undo()" disabled title="Undo">←</button>
     <div class="header-center">
       <span class="header-title">SAMPLER HENDRIX 5.0</span>
-      <button class="about-btn" id="aboutBtn" onclick="openAbout()"><span data-i18n="about">О ПРОГРАММЕ</span></button>
+      <div class="about-row">
+        <button class="icon-btn" id="undoBtn" onclick="undo()" disabled title="Undo">←</button>
+        <button class="about-btn" id="aboutBtn" onclick="openAbout()"><span data-i18n="about">О ПРОГРАММЕ</span></button>
+        <button class="icon-btn" id="redoBtn" onclick="redo()" disabled title="Redo">→</button>
+      </div>
     </div>
-    <button class="icon-btn" id="redoBtn" onclick="redo()" disabled title="Redo">→</button>
   </div>
   
   <div class="modal-overlay" id="aboutModal">
@@ -636,8 +662,20 @@ async function startRecordingMix() {
     mixStreamDest = audioCtx.createMediaStreamDestination();
     mixChunks = [];
     activeChains.forEach(d => d.chain.outputGain.connect(mixStreamDest));
-    const mt = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus' : 'audio/webm';
-    mixRecorder = new MediaRecorder(mixStreamDest.stream, { mimeType: mt });
+    
+    // ИСПРАВЛЕНИЕ ДЛЯ iOS: корректный выбор MIME-типа
+    let mt = '';
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+      mt = 'audio/webm;codecs=opus';
+    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+      mt = 'audio/webm';
+    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+      mt = 'audio/mp4'; // Родной формат для iOS Safari
+    } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+      mt = 'audio/aac';
+    }
+    
+    mixRecorder = new MediaRecorder(mixStreamDest.stream, mt ? { mimeType: mt } : undefined);
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
     mixRecorder.start(100);
     isRecordingMix = true; mixStartTime = Date.now();
@@ -647,19 +685,23 @@ async function startRecordingMix() {
       const e = Math.floor((Date.now() - mixStartTime) / 1000);
       setStatus(t('recordingMix') + ': ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
     }, 100);
-  } catch (err) { setStatus(t('micError') + ': ' + err.message); }
+  } catch (err) { 
+    console.error('Mix recording error:', err);
+    setStatus(t('micError') + ': ' + err.message); 
+  }
 }
 
 async function stopRecordingMix() {
   if (!isRecordingMix) return;
   if (mixTimerInterval) { clearInterval(mixTimerInterval); mixTimerInterval = null; }
   activeChains.forEach(d => { try { d.chain.outputGain.disconnect(mixStreamDest); } catch(e){} });
-  mixRecorder.stop();
+  
+  // ИСПРАВЛЕНИЕ ДЛЯ iOS: назначаем обработчик onstop ДО вызова stop(), чтобы избежать гонки событий
   mixRecorder.onstop = async () => {
     if (mixChunks.length === 0) { setStatus(t('noAudioRecorded')); resetMixRecordingUI(); return; }
     setStatus(t('processing'));
     try {
-      const blob = new Blob(mixChunks, { type: 'audio/webm' });
+      const blob = new Blob(mixChunks, { type: mixRecorder.mimeType || 'audio/mp4' });
       const arr = await blob.arrayBuffer();
       const ab = await audioCtx.decodeAudioData(arr);
       const mp3 = await convertToMP3(ab);
@@ -667,9 +709,19 @@ async function stopRecordingMix() {
       const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus(t('mixSaved'));
-    } catch (err) { setStatus(t('errorExport') + ': ' + err.message); }
+    } catch (err) { 
+      console.error('Mix export error:', err);
+      setStatus(t('errorExport') + ': ' + err.message); 
+    }
     resetMixRecordingUI();
   };
+  
+  try {
+    mixRecorder.stop();
+  } catch (err) {
+    console.error('Error stopping mix recorder:', err);
+    resetMixRecordingUI();
+  }
 }
 
 function resetMixRecordingUI() {
