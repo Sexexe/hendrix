@@ -69,11 +69,27 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .pad.loaded.active { border-color: #fff; background: #2d4a2d; }
 .pad.selected { border-color: #d97706; background: #3a2f1a; }
 .pad.playing { animation: padPulse 0.6s infinite; }
+.pad.locked { opacity: 0.5; border-style: dashed; border-color: #555; background: #111; }
+.pad.locked .pad-num, .pad.locked .pad-duration { opacity: 0.3; }
 @keyframes padPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); } 50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15); } }
 .pad-num { font-size: 20px; font-weight: 600; color: #666; line-height: 1; }
 .pad.loaded .pad-num { color: #fff; }
 .pad-duration { font-size: 10px; color: #888; margin-top: 4px; line-height: 1; }
 .pad.loaded .pad-duration { color: #aaa; }
+
+.lock-icon { 
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  font-size: 13px; 
+  display: none; 
+  pointer-events: none; 
+  z-index: 2; 
+  filter: grayscale(100%) brightness(0.7) drop-shadow(0 2px 4px rgba(0,0,0,0.9)); 
+}
+.pad.locked .lock-icon { display: block; }
+
 .transport { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
 .transport button { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 16px 12px; color: #fff; font-size: 20px; cursor: pointer; transition: all 0.1s; min-height: 60px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
 .transport button:active { transform: scale(0.95); background: #3a3a3a; }
@@ -92,8 +108,9 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .actions button.merge { background: #713f12; border-color: #854d0e; }
 .actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
 .actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
-.actions button.reward-btn { background: #3a2f1a; border-color: #d97706; color: #fbbf24; }
-.actions button.reward-btn:active { background: #4a3f2a; }
+/* Зелёная кнопка Бонус */
+.actions button.ad-btn { background: #166534; border-color: #16a34a; }
+.actions button.ad-btn:active { background: #14532d; border-color: #15803d; }
 input[type=file] { display: none; }
 .status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -206,7 +223,7 @@ input[type=file] { display: none; }
       <button id="mergeBtn" class="merge" disabled>🔗 <span data-i18n="merge">Объединить</span></button>
       <button id="clearBtn" disabled>🗑 <span data-i18n="clear">Очистить</span></button>
       <button id="selectModeBtn">✓ <span data-i18n="select">Выбрать</span></button>
-      <button id="rewardBtn" class="reward-btn">🎁 <span data-i18n="reward">Бонус</span></button>
+      <button id="adBtn" class="ad-btn" onclick="unlockNextSlot()">🎁 <span data-i18n="bonus">Бонус</span></button>
     </div>
     <div class="status" id="status"><span data-i18n="loadOrRecord">Загрузите аудио или запишите</span></div>
   </div>
@@ -229,154 +246,62 @@ input[type=file] { display: none; }
 
 <script>
 let currentLang = localStorage.getItem('samplerLang') || 'ru';
+let unlockedSlots = [true, true, true, true, true, false, false, false, false, false];
 
 const translations = {
   ru: {
-    about: 'О ПРОГРАММЕ',
-    aboutTitle: 'О SAMPLER HENDRIX 5.0',
-    tapDrag: 'Нажмите и перетащите для выбора',
-    loop: 'ЦИКЛ',
-    load: 'Загрузить',
-    chop: 'Обрезать',
-    reset: 'Сброс',
-    save: 'Сохранить',
-    recMix: 'Запись микса',
-    merge: 'Объединить',
-    clear: 'Очистить',
-    select: 'Выбрать',
-    cancel: 'Отмена',
-    loadOrRecord: 'Загрузите аудио или запишите',
-    slot: 'Слот',
-    tempo: 'Темп',
-    pitch: 'Тон',
-    volume: 'Громкость',
-    pan: 'Панорама',
-    filter: 'Фильтр',
-    distortion: 'Дисторшн',
-    delay: 'Задержка',
-    reverb: 'Реверб',
-    tremolo: 'Тремоло',
-    invert: 'Инверт',
-    off: 'Выкл',
-    on: 'Вкл',
-    reverse: 'Реверс',
-    emptySlot: 'Пустой слот',
-    selectMode: 'РЕЖИМ ВЫБОРА: Нажмите на пэды для объединения',
-    sampleReversed: 'Сэмпл перевернут',
-    sampleRestored: 'Сэмпл восстановлен',
-    slotCleared: 'Слот очищен',
-    chopped: 'Обрезано',
-    merged: 'Объединено',
-    exported: 'Экспортировано',
-    recorded: 'Записано',
-    loading: 'Загрузка...',
-    processing: 'Обработка...',
-    recording: 'Запись...',
-    recordingMix: 'Запись микса...',
-    mixSaved: 'Микс сохранен!',
-    selectSliceFirst: 'Сначала выберите фрагмент',
-    invalidSelection: 'Неверный выбор',
-    notEnoughSlots: 'Недостаточно слотов',
-    noFreeSlots: 'Нет свободных слотов',
-    noValidSlots: 'Нет валидных слотов для экспорта',
-    micNotSupported: 'Микрофон не поддерживается',
-    micPermissionDenied: 'Доступ к микрофону запрещен. Проверьте настройки браузера.',
-    micError: 'Ошибка микрофона',
-    noAudioRecorded: 'Аудио не записано',
-    errorLoading: 'Ошибка загрузки файла',
-    errorProcessing: 'Ошибка обработки аудио',
-    errorExport: 'Ошибка экспорта',
-    initError: 'Ошибка инициализации',
-    loadedToSlot: 'Загружено в слот',
-    requestMic: 'Запрос микрофона...',
-    undo: 'Отмена',
-    redo: 'Вернуть',
-    nothingToUndo: 'Нечего отменять',
-    nothingToRedo: 'Нечего возвращать',
-    reward: 'Бонус',
-    rewardApplied: 'Бонус применен!',
-    adError: 'Ошибка рекламы',
+    about: 'О ПРОГРАММЕ', aboutTitle: 'О SAMPLER HENDRIX 5.0', tapDrag: 'Нажмите и перетащите для выбора', loop: 'ЦИКЛ',
+    load: 'Загрузить', chop: 'Обрезать', reset: 'Сброс', save: 'Сохранить', recMix: 'Запись микса', merge: 'Объединить',
+    clear: 'Очистить', select: 'Выбрать', cancel: 'Отмена', loadOrRecord: 'Загрузите аудио или запишите', slot: 'Слот',
+    tempo: 'Темп', pitch: 'Тон', volume: 'Громкость', pan: 'Панорама', filter: 'Фильтр', distortion: 'Дисторшн',
+    delay: 'Задержка', reverb: 'Реверб', tremolo: 'Тремоло', invert: 'Инверт', off: 'Выкл', on: 'Вкл', reverse: 'Реверс',
+    emptySlot: 'Пустой слот', selectMode: 'РЕЖИМ ВЫБОРА: Нажмите на пэды для объединения', sampleReversed: 'Сэмпл перевернут',
+    sampleRestored: 'Сэмпл восстановлен', slotCleared: 'Слот очищен', chopped: 'Обрезано', merged: 'Объединено', exported: 'Экспортировано',
+    recorded: 'Записано', loading: 'Загрузка...', processing: 'Обработка...', recording: 'Запись...', recordingMix: 'Запись микса...',
+    mixSaved: 'Микс сохранен!', selectSliceFirst: 'Сначала выберите фрагмент', invalidSelection: 'Неверный выбор',
+    notEnoughSlots: 'Недостаточно слотов', noFreeSlots: 'Нет свободных слотов', noValidSlots: 'Нет валидных слотов для экспорта',
+    micNotSupported: 'Микрофон не поддерживается', micPermissionDenied: 'Доступ к микрофону запрещен. Проверьте настройки.',
+    micError: 'Ошибка микрофона', noAudioRecorded: 'Аудио не записано', errorLoading: 'Ошибка загрузки файла',
+    errorProcessing: 'Ошибка обработки аудио', errorExport: 'Ошибка экспорта', initError: 'Ошибка инициализации',
+    loadedToSlot: 'Загружено в слот', requestMic: 'Запрос микрофона...', undo: 'Отмена', redo: 'Вернуть',
+    nothingToUndo: 'Нечего отменять', nothingToRedo: 'Нечего возвращать', bonus: 'Бонус',
+    adLoading: 'Загрузка бонуса...', adThanks: 'Спасибо за поддержку! 🎁', adUnavailable: 'Бонус недоступен или отменен',
+    progressLoaded: 'Прогресс загружен из VK', progressSaved: 'Прогресс сохранен в VK', slotUnlocked: 'Слот разблокирован:',
+    allUnlocked: 'Все слоты уже открыты! 🎉', slotLockedMsg: 'Смотрите короткое видео, чтобы разблокировать этот слот',
     modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить доступ к микрофону</h2><p>Если кнопка записи не работает, вам нужно разрешить доступ к микрофону:</p><h3>💻 В вашем браузере:</h3><ol><li>Нажмите на <strong>значок замка 🔒</strong> слева от адресной строки</li><li>Найдите <strong>"Микрофон"</strong> в списке разрешений</li><li>Выберите <strong>"Разрешить"</strong></li><li>Обновите страницу (F5)</li></ol><h3>📱 На мобильных устройствах:</h3><ol><li>Откройте <strong>настройки устройства</strong></li><li>Найдите раздел <strong>"Приложения"</strong></li><li>Найдите ваше <strong>приложение браузера</strong></li><li>Нажмите <strong>"Разрешения"</strong></li><li>Найдите <strong>"Микрофон"</strong></li><li>Включите переключатель (разрешить доступ)</li><li>Вернитесь в браузер и обновите страницу</li></ol></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — форма волны активного сэмпла с индикатором позиции</li><li><strong>Пэды</strong> — 10 ячеек (5×2) для хранения сэмплов</li><li><strong>Транспорт</strong> — кнопки записи/воспроизведения</li><li><strong>Действия</strong> — функции редактирования</li><li><strong>Эффекты</strong> — 10 регуляторов эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка сэмплов</h3><p><strong>📂 Кнопка Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Сэмпл загружается в активный слот (выделен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появляется запрос разрешения, разрешите доступ, кнопка становится ■ (красная, пульсирует), таймер показывает длительность</li><li><strong>Второе нажатие:</strong> запись останавливается, сэмпл загружается в активный слот</li></ul><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — воспроизводит сэмпл один раз</li><li><strong>ЦИКЛ</strong> (желтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все воспроизводимые сэмплы</li></ul><h2>🎚️ Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои собственные настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Тон</td><td>±1200 ct</td><td>Изменяет тон/тембр без изменения скорости</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Гц</td><td>Низкочастотный фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Задержка</td><td>0 — 1000 мс</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространство</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Инверт</td><td>Вкл/Выкл</td><td>Переворачивает сэмпл (воспроизводит задом наперед)</td></tr></table><h2>✂️ Расширенные функции</h2><h3>Обрезка</h3><ul><li>Выберите фрагмент на форме волны: нажмите и перетащите</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Нажмите на несколько пэдов</li><li>Нажмите 🔗 Объединить</li></ul><h3>Запись живого микса</h3><p><strong>⏺️ Запись микса</strong> записывает все, что вы играете, со всеми эффектами:</p><ul><li>Первое нажатие → начинает запись</li><li>Второе нажатие → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зеленый фон</strong> — слот содержит сэмпл</li></ul><p><strong>Приятного творчества! 🎸</strong></p>`
   },
   en: {
-    about: 'ABOUT',
-    aboutTitle: 'About SAMPLER HENDRIX 5.0',
-    tapDrag: 'Tap and drag to select',
-    loop: 'LOOP',
-    load: 'Load',
-    chop: 'Chop',
-    reset: 'Reset',
-    save: 'Save',
-    recMix: 'Rec Mix',
-    merge: 'Merge',
-    clear: 'Clear',
-    select: 'Select',
-    cancel: 'Cancel',
-    loadOrRecord: 'Load audio or record',
-    slot: 'Slot',
-    tempo: 'Tempo',
-    pitch: 'Pitch',
-    volume: 'Volume',
-    pan: 'Pan',
-    filter: 'Filter',
-    distortion: 'Distortion',
-    delay: 'Delay',
-    reverb: 'Reverb',
-    tremolo: 'Tremolo',
-    invert: 'Invert',
-    off: 'Off',
-    on: 'On',
-    reverse: 'Reverse',
-    emptySlot: 'Empty slot',
-    selectMode: 'SELECT MODE: Tap pads to merge',
-    sampleReversed: 'Sample reversed',
-    sampleRestored: 'Sample restored',
-    slotCleared: 'Slot cleared',
-    chopped: 'Chopped',
-    merged: 'Merged',
-    exported: 'Exported',
-    recorded: 'Recorded',
-    loading: 'Loading...',
-    processing: 'Processing...',
-    recording: 'Recording...',
-    recordingMix: 'Recording mix...',
-    mixSaved: 'Mix saved!',
-    selectSliceFirst: 'Select a slice first',
-    invalidSelection: 'Invalid selection',
-    notEnoughSlots: 'Not enough valid slots',
-    noFreeSlots: 'No free slots',
-    noValidSlots: 'No valid slots to export',
-    micNotSupported: 'Microphone not supported',
-    micPermissionDenied: 'Mic permission denied. Check browser settings.',
-    micError: 'Mic Error',
-    noAudioRecorded: 'No audio recorded',
-    errorLoading: 'Error loading file',
-    errorProcessing: 'Error processing audio',
-    errorExport: 'Export error',
-    initError: 'Init error',
-    loadedToSlot: 'Loaded to slot',
-    requestMic: 'Requesting mic...',
-    undo: 'Undo',
-    redo: 'Redo',
-    nothingToUndo: 'Nothing to undo',
-    nothingToRedo: 'Nothing to redo',
-    reward: 'Bonus',
-    rewardApplied: 'Bonus applied!',
-    adError: 'Ad error',
+    about: 'ABOUT', aboutTitle: 'About SAMPLER HENDRIX 5.0', tapDrag: 'Tap and drag to select', loop: 'LOOP',
+    load: 'Load', chop: 'Chop', reset: 'Reset', save: 'Save', recMix: 'Rec Mix', merge: 'Merge',
+    clear: 'Clear', select: 'Select', cancel: 'Cancel', loadOrRecord: 'Load audio or record', slot: 'Slot',
+    tempo: 'Tempo', pitch: 'Pitch', volume: 'Volume', pan: 'Pan', filter: 'Filter', distortion: 'Distortion',
+    delay: 'Delay', reverb: 'Reverb', tremolo: 'Tremolo', invert: 'Invert', off: 'Off', on: 'On', reverse: 'Reverse',
+    emptySlot: 'Empty slot', selectMode: 'SELECT MODE: Tap pads to merge', sampleReversed: 'Sample reversed',
+    sampleRestored: 'Sample restored', slotCleared: 'Slot cleared', chopped: 'Chopped', merged: 'Merged', exported: 'Exported',
+    recorded: 'Recorded', loading: 'Loading...', processing: 'Processing...', recording: 'Recording...', recordingMix: 'Recording mix...',
+    mixSaved: 'Mix saved!', selectSliceFirst: 'Select a slice first', invalidSelection: 'Invalid selection',
+    notEnoughSlots: 'Not enough valid slots', noFreeSlots: 'No free slots', noValidSlots: 'No valid slots to export',
+    micNotSupported: 'Microphone not supported', micPermissionDenied: 'Mic permission denied. Check browser settings.',
+    micError: 'Mic Error', noAudioRecorded: 'No audio recorded', errorLoading: 'Error loading file',
+    errorProcessing: 'Error processing audio', errorExport: 'Export error', initError: 'Init error',
+    loadedToSlot: 'Loaded to slot', requestMic: 'Requesting mic...', undo: 'Undo', redo: 'Redo',
+    nothingToUndo: 'Nothing to undo', nothingToRedo: 'Nothing to redo', bonus: 'Bonus',
+    adLoading: 'Loading bonus...', adThanks: 'Thanks for your support! 🎁', adUnavailable: 'Bonus unavailable or cancelled',
+    progressLoaded: 'Progress loaded from VK', progressSaved: 'Progress saved to VK', slotUnlocked: 'Slot unlocked:',
+    allUnlocked: 'All slots are already unlocked! 🎉', slotLockedMsg: 'Watch a short video to unlock this slot',
     modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone Access</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>💻 In Your Browser:</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address bar in your browser</li><li>Find <strong>"Microphone"</strong> in the permissions list</li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><h3>📱 On Mobile Devices:</h3><ol><li>Open your <strong>device settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find your <strong>browser app</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to the browser and refresh the page</li></ol></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Changes pitch/timbre without changing speed</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Invert</td><td>On/Off</td><td>Reverses the sample (plays backwards)</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
   }
 };
 
-function t(key) {
-  return translations[currentLang][key] || key;
-}
+function t(key) { return translations[currentLang][key] || key; }
 
 function applyTranslations() {
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     el.textContent = t(key);
   });
-  document.getElementById('langBtn').textContent = currentLang === 'ru' ? 'EN' : 'RU';
+  // Теперь кнопка показывает ТЕКУЩИЙ язык (RU когда русский, EN когда английский)
+  document.getElementById('langBtn').textContent = currentLang === 'ru' ? 'RU' : 'EN';
   document.getElementById('modalContent').innerHTML = t('modalContent');
   $('undoBtn').title = t('undo');
   $('redoBtn').title = t('redo');
@@ -386,233 +311,91 @@ function toggleLang() {
   currentLang = currentLang === 'ru' ? 'en' : 'ru';
   localStorage.setItem('samplerLang', currentLang);
   applyTranslations();
+  saveProgressToVK();
 }
 
-const DB_NAME = 'SamplerHendrixDB';
-const DB_VERSION = 1;
-const STORE_NAME = 'audioData';
-let dbPromise = null;
-
-function getDB() {
-  if (!dbPromise) {
-    dbPromise = new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, DB_VERSION);
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
-        if (!db.objectStoreNames.contains(STORE_NAME)) {
-          db.createObjectStore(STORE_NAME);
-        }
-      };
-      request.onsuccess = (event) => resolve(event.target.result);
-      request.onerror = (event) => reject(event.target.error);
-    });
+function unlockNextSlot() {
+  const lockedIndex = unlockedSlots.findIndex(isUnlocked => !isUnlocked);
+  if (lockedIndex === -1) {
+    setStatus(t('allUnlocked'));
+    return;
   }
-  return dbPromise;
+  unlockSlot(lockedIndex);
 }
 
-async function saveSlotToDB(slotIndex, audioBuffer) {
-  if (!audioBuffer) return;
-  try {
-    const db = await getDB();
-    const transaction = db.transaction([STORE_NAME], 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    const numberOfChannels = audioBuffer.numberOfChannels;
-    const sampleRate = audioBuffer.sampleRate;
-    const length = audioBuffer.length;
-    const channels = [];
-    for (let i = 0; i < numberOfChannels; i++) {
-      channels.push(audioBuffer.getChannelData(i).slice());
-    }
-    store.put({ numberOfChannels, sampleRate, length, channels }, `slot_${slotIndex}`);
-  } catch (e) {
-    console.error('DB save error:', e);
-  }
-}
-
-async function loadSlotFromDB(slotIndex) {
-  try {
-    const db = await getDB();
-    return new Promise((resolve, reject) => {
-      const transaction = db.transaction([STORE_NAME], 'readonly');
-      const store = transaction.objectStore(STORE_NAME);
-      const request = store.get(`slot_${slotIndex}`);
-      request.onsuccess = (event) => resolve(event.target.result || null);
-      request.onerror = (event) => reject(event.target.error);
-    });
-  } catch (e) {
-    console.error('DB load error:', e);
-    return null;
-  }
-}
-
-async function clearSlotInDB(slotIndex) {
-  try {
-    const db = await getDB();
-    const transaction = db.transaction([STORE_NAME], 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    store.delete(`slot_${slotIndex}`);
-  } catch (e) {
-    console.error('DB clear error:', e);
-  }
-}
-
-async function reconstructAudioBuffer(data) {
-  if (!data || !audioCtx) return null;
-  try {
-    const buffer = audioCtx.createBuffer(data.numberOfChannels, data.length, data.sampleRate);
-    for (let i = 0; i < data.numberOfChannels; i++) {
-      buffer.getChannelData(i).set(data.channels[i]);
-    }
-    return buffer;
-  } catch (e) {
-    console.error('Reconstruct buffer error:', e);
-    return null;
-  }
-}
-
-let saveSettingsTimeout = null;
-
-function saveSettings() {
-  const state = { settings: slotSettings, activeSlot: activeSlot };
-  localStorage.setItem('samplerState', JSON.stringify(state));
-  if (window.vkBridge) {
-    if (saveSettingsTimeout) clearTimeout(saveSettingsTimeout);
-    saveSettingsTimeout = setTimeout(() => {
-      window.vkBridge.send("VKWebAppStorageSet", { 
-        key: "sampler_state", 
-        value: JSON.stringify(state) 
-      }).catch(e => console.warn("VK Storage save failed", e));
-    }, 1000);
-  }
-}
-
-function loadLocalSettings() {
-  const saved = localStorage.getItem('samplerState');
-  if (saved) {
-    try {
-      const parsed = JSON.parse(saved);
-      if (parsed.settings) {
-        slotSettings = slotSettings.map((def, i) => ({ ...def, ...(parsed.settings[i] || {}) }));
-      }
-      if (typeof parsed.activeSlot === 'number') {
-        activeSlot = parsed.activeSlot;
-      }
-    } catch(e) {}
-  }
-}
-
-function initAds() {
-  if (!window.vkBridge) return;
-
-  // Предзагрузка рекламы за вознаграждение
-  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
-    .catch((e) => console.warn('Reward ad check failed', e));
-
-  // Предзагрузка межстраничной рекламы
-  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' })
-    .catch((e) => console.warn('Interstitial ad check failed', e));
-
-  // Показ баннерной рекламы
-  window.vkBridge.send('VKWebAppShowBannerAd', {
-    banner_location: 'bottom'
-  }).catch((e) => console.warn('Banner ad failed', e));
-
-  // Подписка на события баннера
-  window.vkBridge.subscribe((e) => {
-    if (!e.detail) return;
-    if (e.detail.type === 'VKWebAppBannerAdClosedByUser') {
-      console.log('Banner closed by user');
-    }
-  });
-}
-
-function showRewardAd() {
+function unlockSlot(index) {
   if (!window.vkBridge) {
-    applyRandomPreset();
+    setStatus("Разблокировка доступна только внутри VK");
     return;
   }
-  
-  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
-    .then((data) => {
-      if (data.result) {
-        applyRandomPreset();
-        window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
-      } else {
-        setStatus(t('adError'));
-      }
-    })
-    .catch((error) => {
-      console.log('Reward ad error', error);
-      setStatus(t('adError'));
-      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
-    });
+  setStatus(t('slotLockedMsg'));
+  setTimeout(() => {
+    setStatus(t('adLoading'));
+    window.vkBridge.send("VKWebAppShowRewardedAds", { ad_format: "reward" })
+      .then(res => {
+        if (res.result) {
+          unlockedSlots[index] = true;
+          saveProgressToVK();
+          updatePads();
+          setStatus(t('slotUnlocked') + ' ' + (index + 1));
+        } else {
+          setStatus(t('adUnavailable'));
+        }
+      })
+      .catch(err => {
+        console.log("Ad error:", err);
+        setStatus(t('adUnavailable'));
+      });
+  }, 800);
 }
 
-function showInterstitialAd() {
+function saveProgressToVK() {
   if (!window.vkBridge) return;
-  
-  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
-    .then((data) => {
-      if (data.result) console.log('Interstitial shown');
-      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
-    })
-    .catch((error) => {
-      console.log('Interstitial ad error', error);
-      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
-    });
+  const progressData = {
+    settings: slotSettings,
+    activeSlot: activeSlot,
+    lang: currentLang,
+    unlockedSlots: unlockedSlots,
+    slotStatus: slots.map(s => s ? { duration: s.duration, sampleRate: s.sampleRate } : null)
+  };
+  const jsonString = JSON.stringify(progressData);
+  window.vkBridge.send("VKWebAppStorageSet", { key: "sampler_hendrix_progress_v3", value: jsonString })
+    .then(() => console.log("Progress saved to VK"))
+    .catch(err => console.error("Failed to save progress:", err));
 }
 
-function applyRandomPreset() {
-  if (!slots[activeSlot]) {
-    setStatus(t('emptySlot'));
-    return;
-  }
-  const presets = [
-    { tempo: 1.2, pitch: 200, dist: 40, rev: 0.6, del: 300, filtOn: true, filt: 2000, trem: 0 },
-    { tempo: 0.8, pitch: -400, dist: 80, rev: 0.2, del: 100, filtOn: false, trem: 0.8 },
-    { tempo: 1.5, pitch: 700, dist: 10, rev: 0.9, del: 500, filtOn: true, filt: 800, trem: 0.3 },
-    { tempo: 0.5, pitch: -1200, dist: 20, rev: 0.8, del: 800, filtOn: true, filt: 400, trem: 0.5 }
-  ];
-  const p = presets[Math.floor(Math.random() * presets.length)];
-  $('tempo').value = p.tempo;
-  $('pitch').value = p.pitch;
-  $('dist').value = p.dist;
-  $('rev').value = p.rev;
-  $('del').value = p.del;
-  $('filtOn').checked = p.filtOn;
-  $('filt').value = p.filt;
-  $('trem').value = p.trem;
-  updateLabels();
-  setStatus('🎁 ' + t('rewardApplied'));
-}
-
-async function initVKAndSettings() {
-  if (window.vkBridge) {
-    try {
-      await window.vkBridge.send('VKWebAppInit');
-      window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
-      
-      initAds(); // Инициализация рекламы после VKWebAppInit
-      
-      const res = await window.vkBridge.send("VKWebAppStorageGet", { key: "sampler_state" });
-      if (res && res.value) {
-        const parsed = JSON.parse(res.value);
-        if (parsed.settings) {
-          slotSettings = slotSettings.map((def, i) => ({ ...def, ...(parsed.settings[i] || {}) }));
+function loadProgressFromVK() {
+  if (!window.vkBridge) return;
+  window.vkBridge.send("VKWebAppStorageGet", { key: "sampler_hendrix_progress_v3" })
+    .then(res => {
+      if (res.value) {
+        try {
+          const data = JSON.parse(res.value);
+          if (data.settings) slotSettings = data.settings;
+          if (data.activeSlot !== undefined) activeSlot = data.activeSlot;
+          if (data.lang) { 
+            currentLang = data.lang; 
+            localStorage.setItem('samplerLang', currentLang); 
+          }
+          if (data.unlockedSlots && Array.isArray(data.unlockedSlots) && data.unlockedSlots.length === 10) {
+            unlockedSlots = data.unlockedSlots;
+          }
+          loadSlotSettings(activeSlot);
+          applyTranslations();
+          updatePads();
+          setStatus(t('progressLoaded'));
+        } catch (e) {
+          console.error("Error parsing VK progress:", e);
         }
-        if (typeof parsed.activeSlot === 'number') {
-          activeSlot = parsed.activeSlot;
-        }
-      } else {
-        loadLocalSettings();
       }
-    } catch (e) {
-      console.warn("VK Bridge init or storage get failed, falling back to local", e);
-      loadLocalSettings();
-    }
-  } else {
-    loadLocalSettings();
-  }
+    })
+    .catch(err => console.log("No saved progress or error:", err));
+}
+
+if (window.vkBridge) {
+  window.vkBridge.send('VKWebAppInit').then(() => {
+    window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
+  });
 }
 
 function openAbout() { document.getElementById('aboutModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
@@ -650,50 +433,30 @@ function pushHistory(slotIndex) {
   if (!currentBuf) return;
   const copy = cloneBuffer(currentBuf);
   history[slotIndex].push(copy);
-  if (history[slotIndex].length > MAX_HISTORY) {
-    history[slotIndex].shift();
-  }
+  if (history[slotIndex].length > MAX_HISTORY) history[slotIndex].shift();
   redoHistory[slotIndex] = [];
   updateUndoRedoButtons();
 }
 
-async function undo() {
+function undo() {
   const slotIdx = activeSlot;
-  if (history[slotIdx].length === 0) {
-    setStatus(t('nothingToUndo'));
-    return;
-  }
+  if (history[slotIdx].length === 0) { setStatus(t('nothingToUndo')); return; }
   const currentBuf = slots[slotIdx];
-  if (currentBuf) {
-    redoHistory[slotIdx].push(cloneBuffer(currentBuf));
-  }
+  if (currentBuf) redoHistory[slotIdx].push(cloneBuffer(currentBuf));
   slots[slotIdx] = history[slotIdx].pop();
-  updateUndoRedoButtons();
-  drawWave();
-  updatePads();
-  setStatus(t('undo'));
-  await saveSlotToDB(slotIdx, slots[slotIdx]);
+  updateUndoRedoButtons(); drawWave(); updatePads(); setStatus(t('undo')); saveProgressToVK();
 }
 
-async function redo() {
+function redo() {
   const slotIdx = activeSlot;
-  if (redoHistory[slotIdx].length === 0) {
-    setStatus(t('nothingToRedo'));
-    return;
-  }
+  if (redoHistory[slotIdx].length === 0) { setStatus(t('nothingToRedo')); return; }
   const currentBuf = slots[slotIdx];
   if (currentBuf) {
     history[slotIdx].push(cloneBuffer(currentBuf));
-    if (history[slotIdx].length > MAX_HISTORY) {
-      history[slotIdx].shift();
-    }
+    if (history[slotIdx].length > MAX_HISTORY) history[slotIdx].shift();
   }
   slots[slotIdx] = redoHistory[slotIdx].pop();
-  updateUndoRedoButtons();
-  drawWave();
-  updatePads();
-  setStatus(t('redo'));
-  await saveSlotToDB(slotIdx, slots[slotIdx]);
+  updateUndoRedoButtons(); drawWave(); updatePads(); setStatus(t('redo')); saveProgressToVK();
 }
 
 function updateUndoRedoButtons() {
@@ -710,48 +473,27 @@ let recChunks = [], recStartTime = 0, recTimerInterval = null;
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 const activeChains = new Map();
 let rafId = null;
-let isDBLoaded = false;
-
-async function loadAllFromDB() {
-  if (isDBLoaded) return;
-  isDBLoaded = true;
-  for (let i = 0; i < 10; i++) {
-    const data = await loadSlotFromDB(i);
-    if (data) {
-      slots[i] = await reconstructAudioBuffer(data);
-    }
-  }
-  updatePads();
-  updateTransportButtons();
-  drawWave();
-}
 
 function init() {
   try {
-    const wakeUpAudio = async () => {
+    const wakeUpAudio = () => {
       if (!audioCtx) {
         try { audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' }); } 
         catch (e) { console.error('AudioContext error:', e); }
       }
-      if (audioCtx && audioCtx.state === 'suspended') {
-        await audioCtx.resume().catch(e => console.warn('Resume failed:', e));
-      }
-      await loadAllFromDB();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(e => console.warn('Resume failed:', e));
     };
     window.addEventListener('pointerdown', wakeUpAudio, { once: false });
     window.addEventListener('touchstart', wakeUpAudio, { once: false, passive: true });
     window.addEventListener('click', wakeUpAudio, { once: false });
     
-    initVKAndSettings().then(() => {
-      initPads();
-      loadSlotSettings(activeSlot);
-      updateTransportButtons();
-      applyTranslations();
-      updateUndoRedoButtons();
-      resizeCanvas();
-      
-      $('rewardBtn').onclick = showRewardAd;
-    });
+    initPads();
+    loadProgressFromVK();
+    loadSlotSettings(activeSlot);
+    updateTransportButtons();
+    applyTranslations();
+    updateUndoRedoButtons();
+    resizeCanvas();
   } catch (err) { console.error('Init error:', err); setStatus(t('initError') + ': ' + err.message); }
 }
 
@@ -776,6 +518,7 @@ function saveCurrentSettings() {
     filt: parseFloat($('filt').value), filtOn: $('filtOn').checked, dist: parseInt($('dist').value), del: parseFloat($('del').value),
     rev: parseFloat($('rev').value), trem: parseFloat($('trem').value), invert: $('invertOn').checked
   };
+  saveProgressToVK();
 }
 
 function initPads() {
@@ -783,7 +526,7 @@ function initPads() {
   for (let i = 0; i < 10; i++) {
     const p = document.createElement('div');
     p.className = 'pad'; p.dataset.index = i;
-    p.innerHTML = `<div class="pad-num">${i + 1}</div><div class="pad-duration"></div>`;
+    p.innerHTML = `<div class="pad-num">${i + 1}</div><div class="pad-duration"></div><div class="lock-icon">🔒</div>`;
     p.addEventListener('click', () => handlePadClick(i));
     c.appendChild(p);
   }
@@ -791,6 +534,10 @@ function initPads() {
 }
 
 function handlePadClick(i) {
+  if (!unlockedSlots[i]) {
+    unlockSlot(i);
+    return;
+  }
   if (selectMode) {
     if (selectedSlots.has(i)) selectedSlots.delete(i); else selectedSlots.add(i);
     updatePads(); updateMergeButton();
@@ -801,13 +548,14 @@ function handlePadClick(i) {
     updatePads(); drawWave(); updateTransportButtons();
     updateUndoRedoButtons();
     $('selInfo').textContent = slots[i] ? t('tapDrag') : t('emptySlot');
-    saveSettings();
+    saveProgressToVK();
   }
 }
 
 function updatePads() {
   document.querySelectorAll('.pad').forEach((p, i) => {
-    p.classList.remove('active', 'loaded', 'selected', 'playing');
+    p.classList.remove('active', 'loaded', 'selected', 'playing', 'locked');
+    if (!unlockedSlots[i]) p.classList.add('locked');
     if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = slots[i].duration.toFixed(1) + 's'; }
     else p.querySelector('.pad-duration').textContent = '';
     if (i === activeSlot) p.classList.add('active');
@@ -837,11 +585,10 @@ $('fileInput').onchange = async e => {
   try {
     pushHistory(activeSlot);
     slots[activeSlot] = await audioCtx.decodeAudioData(arr);
-    $('invertOn').checked = false;
-    slotSettings[activeSlot].invert = false;
+    $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
     selection = null; drawWave(); updatePads(); updateTransportButtons();
     setStatus(t('loadedToSlot') + ' ' + (activeSlot + 1));
-    await saveSlotToDB(activeSlot, slots[activeSlot]);
+    saveProgressToVK();
   } catch (err) { setStatus(t('errorLoading') + ': ' + err.message); }
 };
 
@@ -849,8 +596,7 @@ $('recBtn').addEventListener('click', async function(e) {
   try {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus(t('micNotSupported')); return; }
     if (isRecording) { stopRecording(); return; }
-    ensureCtx();
-    setStatus(t('requestMic'));
+    ensureCtx(); setStatus(t('requestMic'));
     const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).catch(() => navigator.mediaDevices.getUserMedia({ audio: true }));
     recStream = stream; recChunks = [];
     recMediaRecorder = new MediaRecorder(stream);
@@ -865,17 +611,14 @@ $('recBtn').addEventListener('click', async function(e) {
         const buffer = await audioCtx.decodeAudioData(arr);
         pushHistory(activeSlot);
         slots[activeSlot] = buffer;
-        $('invertOn').checked = false;
-        slotSettings[activeSlot].invert = false;
-        selection = null;
-        drawWave(); updatePads(); updateTransportButtons();
+        $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
+        selection = null; drawWave(); updatePads(); updateTransportButtons();
         setStatus(t('recorded') + ' ' + buffer.duration.toFixed(1) + 's');
-        await saveSlotToDB(activeSlot, slots[activeSlot]);
+        saveProgressToVK();
       } catch (err) { setStatus(t('errorProcessing') + ': ' + err.message); }
       resetRecordingUI();
     };
-    recMediaRecorder.start();
-    isRecording = true; recStartTime = Date.now();
+    recMediaRecorder.start(); isRecording = true; recStartTime = Date.now();
     $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
     $('recIndicator').classList.add('active'); setStatus(t('recording'));
     recTimerInterval = setInterval(updateRecTimer, 100);
@@ -913,35 +656,24 @@ $('recMixBtn').onclick = async () => {
 
 async function startRecordingMix() {
   try {
-    mixStreamDest = audioCtx.createMediaStreamDestination();
-    mixChunks = [];
+    mixStreamDest = audioCtx.createMediaStreamDestination(); mixChunks = [];
     activeChains.forEach(d => d.chain.outputGain.connect(mixStreamDest));
-    
     let mt = '';
-    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
-      mt = 'audio/webm;codecs=opus';
-    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
-      mt = 'audio/webm';
-    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
-      mt = 'audio/mp4';
-    } else if (MediaRecorder.isTypeSupported('audio/aac')) {
-      mt = 'audio/aac';
-    }
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mt = 'audio/webm;codecs=opus';
+    else if (MediaRecorder.isTypeSupported('audio/webm')) mt = 'audio/webm';
+    else if (MediaRecorder.isTypeSupported('audio/mp4')) mt = 'audio/mp4';
+    else if (MediaRecorder.isTypeSupported('audio/aac')) mt = 'audio/aac';
     
     mixRecorder = new MediaRecorder(mixStreamDest.stream, mt ? { mimeType: mt } : undefined);
     mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
-    mixRecorder.start(100);
-    isRecordingMix = true; mixStartTime = Date.now();
+    mixRecorder.start(100); isRecordingMix = true; mixStartTime = Date.now();
     $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = '■ ' + t('save');
     setStatus(t('recordingMix'));
     mixTimerInterval = setInterval(() => {
       const e = Math.floor((Date.now() - mixStartTime) / 1000);
       setStatus(t('recordingMix') + ': ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
     }, 100);
-  } catch (err) { 
-    console.error('Mix recording error:', err);
-    setStatus(t('micError') + ': ' + err.message); 
-  }
+  } catch (err) { console.error('Mix recording error:', err); setStatus(t('micError') + ': ' + err.message); }
 }
 
 async function stopRecordingMix() {
@@ -961,20 +693,10 @@ async function stopRecordingMix() {
       const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus(t('mixSaved'));
-      showInterstitialAd(); // Показ межстраничной рекламы после сохранения микса
-    } catch (err) { 
-      console.error('Mix export error:', err);
-      setStatus(t('errorExport') + ': ' + err.message); 
-    }
+    } catch (err) { console.error('Mix export error:', err); setStatus(t('errorExport') + ': ' + err.message); }
     resetMixRecordingUI();
   };
-  
-  try {
-    mixRecorder.stop();
-  } catch (err) {
-    console.error('Error stopping mix recorder:', err);
-    resetMixRecordingUI();
-  }
+  try { mixRecorder.stop(); } catch (err) { console.error('Error stopping mix recorder:', err); resetMixRecordingUI(); }
 }
 
 function resetMixRecordingUI() {
@@ -1007,8 +729,7 @@ function f32ToI16(f) {
 function createChain(ac, buffer, opts, slotIdx) {
   const source = ac.createBufferSource();
   source.buffer = buffer; source.loop = opts.loop;
-  source.playbackRate.value = opts.playbackRate; 
-  source.detune.value = opts.detune;
+  source.playbackRate.value = opts.playbackRate; source.detune.value = opts.detune;
   if (opts.loop) { source.loopStart = opts.loopStart; source.loopEnd = opts.loopEnd; }
   const filter = ac.createBiquadFilter();
   filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
@@ -1149,7 +870,7 @@ function moveDrag(e) {
 canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
 function endDrag() { isDragging = false; }
 
-$('trimBtn').onclick = async () => {
+$('trimBtn').onclick = () => {
   const b = slots[activeSlot]; if (!b) return;
   if (!selection || selection.end - selection.start < 2) { setStatus(t('selectSliceFirst')); return; }
   const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
@@ -1159,22 +880,16 @@ $('trimBtn').onclick = async () => {
   for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
   slots[activeSlot] = nb; 
   $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
-  selection = null; drawWave(); updatePads(); setStatus(t('chopped'));
-  await saveSlotToDB(activeSlot, slots[activeSlot]);
+  selection = null; drawWave(); updatePads(); setStatus(t('chopped')); saveProgressToVK();
 };
 
-$('resetBtn').onclick = async () => { 
+$('resetBtn').onclick = () => { 
   if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; 
-  drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slotCleared')); 
-  await clearSlotInDB(activeSlot);
+  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slotCleared')); saveProgressToVK();
 };
-
-$('clearBtn').onclick = async () => { 
+$('clearBtn').onclick = () => { 
   if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; 
-  drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slot') + ' ' + (activeSlot + 1) + ' ' + t('slotCleared')); 
-  await clearSlotInDB(activeSlot);
+  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slot') + ' ' + (activeSlot + 1) + ' ' + t('slotCleared')); saveProgressToVK();
 };
 
 $('selectModeBtn').onclick = () => {
@@ -1185,7 +900,7 @@ $('selectModeBtn').onclick = () => {
   updatePads();
 };
 
-$('mergeBtn').onclick = async () => {
+$('mergeBtn').onclick = () => {
   if (selectedSlots.size < 2) return;
   const idx = Array.from(selectedSlots).sort((a, b) => a - b);
   const bufs = idx.map(i => slots[i]).filter(b => b !== null);
@@ -1199,9 +914,7 @@ $('mergeBtn').onclick = async () => {
   $('invertOn').checked = false; slotSettings[ts].invert = false;
   $('selectModeBtn').innerHTML = '✓ ' + t('select'); $('modeIndicator').textContent = '';
   drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
-  setStatus(t('merged') + ' ' + bufs.length + ' ' + t('slot') + ' ' + (ts + 1));
-  await saveSlotToDB(ts, slots[ts]);
-  saveSettings();
+  setStatus(t('merged') + ' ' + bufs.length + ' ' + t('slot') + ' ' + (ts + 1)); saveProgressToVK();
 };
 
 $('exportBtn').onclick = async () => {
@@ -1221,7 +934,6 @@ $('exportBtn').onclick = async () => {
     const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setStatus(t('exported'));
-    showInterstitialAd(); // Показ межстраничной рекламы после сохранения
   } catch (err) { setStatus(t('errorExport') + ': ' + err.message); }
 };
 
@@ -1242,33 +954,18 @@ function updateLabelsUI() {
   $('invertVal').innerHTML = $('invertOn').checked ? t('on') : t('off');
 }
 
-function updateLabels() { 
-  updateLabelsUI(); 
-  saveCurrentSettings(); 
-  saveSettings(); 
-  updateAllChains(); 
-}
-
+function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
 ['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id => $(id).addEventListener('input', updateLabels));
 $('filtOn').addEventListener('change', updateLabels);
 
-$('invertOn').addEventListener('change', async (e) => {
+$('invertOn').addEventListener('change', (e) => {
   const buf = slots[activeSlot];
-  if (!buf) {
-    e.target.checked = false;
-    $('invertVal').innerHTML = t('off');
-    return;
-  }
+  if (!buf) { e.target.checked = false; $('invertVal').innerHTML = t('off'); return; }
   pushHistory(activeSlot);
-  for (let c = 0; c < buf.numberOfChannels; c++) {
-    buf.getChannelData(c).reverse();
-  }
+  for (let c = 0; c < buf.numberOfChannels; c++) buf.getChannelData(c).reverse();
   slotSettings[activeSlot].invert = e.target.checked;
-  updateLabelsUI();
-  saveCurrentSettings();
-  saveSettings();
+  updateLabelsUI(); saveCurrentSettings();
   setStatus(e.target.checked ? t('sampleReversed') : t('sampleRestored'));
-  await saveSlotToDB(activeSlot, buf);
 });
 
 function setStatus(text) { $('status').textContent = text; }
