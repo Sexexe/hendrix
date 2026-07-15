@@ -92,6 +92,8 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .actions button.merge { background: #713f12; border-color: #854d0e; }
 .actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
 .actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
+.actions button.reward-btn { background: #3a2f1a; border-color: #d97706; color: #fbbf24; }
+.actions button.reward-btn:active { background: #4a3f2a; }
 input[type=file] { display: none; }
 .status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -204,6 +206,7 @@ input[type=file] { display: none; }
       <button id="mergeBtn" class="merge" disabled>🔗 <span data-i18n="merge">Объединить</span></button>
       <button id="clearBtn" disabled>🗑 <span data-i18n="clear">Очистить</span></button>
       <button id="selectModeBtn">✓ <span data-i18n="select">Выбрать</span></button>
+      <button id="rewardBtn" class="reward-btn">🎁 <span data-i18n="reward">Бонус</span></button>
     </div>
     <div class="status" id="status"><span data-i18n="loadOrRecord">Загрузите аудио или запишите</span></div>
   </div>
@@ -290,6 +293,9 @@ const translations = {
     redo: 'Вернуть',
     nothingToUndo: 'Нечего отменять',
     nothingToRedo: 'Нечего возвращать',
+    reward: 'Бонус',
+    rewardApplied: 'Бонус применен!',
+    adError: 'Ошибка рекламы',
     modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить доступ к микрофону</h2><p>Если кнопка записи не работает, вам нужно разрешить доступ к микрофону:</p><h3>💻 В вашем браузере:</h3><ol><li>Нажмите на <strong>значок замка 🔒</strong> слева от адресной строки</li><li>Найдите <strong>"Микрофон"</strong> в списке разрешений</li><li>Выберите <strong>"Разрешить"</strong></li><li>Обновите страницу (F5)</li></ol><h3>📱 На мобильных устройствах:</h3><ol><li>Откройте <strong>настройки устройства</strong></li><li>Найдите раздел <strong>"Приложения"</strong></li><li>Найдите ваше <strong>приложение браузера</strong></li><li>Нажмите <strong>"Разрешения"</strong></li><li>Найдите <strong>"Микрофон"</strong></li><li>Включите переключатель (разрешить доступ)</li><li>Вернитесь в браузер и обновите страницу</li></ol></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — форма волны активного сэмпла с индикатором позиции</li><li><strong>Пэды</strong> — 10 ячеек (5×2) для хранения сэмплов</li><li><strong>Транспорт</strong> — кнопки записи/воспроизведения</li><li><strong>Действия</strong> — функции редактирования</li><li><strong>Эффекты</strong> — 10 регуляторов эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка сэмплов</h3><p><strong>📂 Кнопка Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Сэмпл загружается в активный слот (выделен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появляется запрос разрешения, разрешите доступ, кнопка становится ■ (красная, пульсирует), таймер показывает длительность</li><li><strong>Второе нажатие:</strong> запись останавливается, сэмпл загружается в активный слот</li></ul><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — воспроизводит сэмпл один раз</li><li><strong>ЦИКЛ</strong> (желтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все воспроизводимые сэмплы</li></ul><h2>🎚️ Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои собственные настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Тон</td><td>±1200 ct</td><td>Изменяет тон/тембр без изменения скорости</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Гц</td><td>Низкочастотный фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Задержка</td><td>0 — 1000 мс</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространство</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Инверт</td><td>Вкл/Выкл</td><td>Переворачивает сэмпл (воспроизводит задом наперед)</td></tr></table><h2>✂️ Расширенные функции</h2><h3>Обрезка</h3><ul><li>Выберите фрагмент на форме волны: нажмите и перетащите</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Нажмите на несколько пэдов</li><li>Нажмите 🔗 Объединить</li></ul><h3>Запись живого микса</h3><p><strong>⏺️ Запись микса</strong> записывает все, что вы играете, со всеми эффектами:</p><ul><li>Первое нажатие → начинает запись</li><li>Второе нажатие → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зеленый фон</strong> — слот содержит сэмпл</li></ul><p><strong>Приятного творчества! 🎸</strong></p>`
   },
   en: {
@@ -354,6 +360,9 @@ const translations = {
     redo: 'Redo',
     nothingToUndo: 'Nothing to undo',
     nothingToRedo: 'Nothing to redo',
+    reward: 'Bonus',
+    rewardApplied: 'Bonus applied!',
+    adError: 'Ad error',
     modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone Access</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>💻 In Your Browser:</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address bar in your browser</li><li>Find <strong>"Microphone"</strong> in the permissions list</li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><h3>📱 On Mobile Devices:</h3><ol><li>Open your <strong>device settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find your <strong>browser app</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to the browser and refresh the page</li></ol></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Changes pitch/timbre without changing speed</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Invert</td><td>On/Off</td><td>Reverses the sample (plays backwards)</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
   }
 };
@@ -379,10 +388,231 @@ function toggleLang() {
   applyTranslations();
 }
 
-if (window.vkBridge) {
-  window.vkBridge.send('VKWebAppInit').then(() => {
-    window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
+const DB_NAME = 'SamplerHendrixDB';
+const DB_VERSION = 1;
+const STORE_NAME = 'audioData';
+let dbPromise = null;
+
+function getDB() {
+  if (!dbPromise) {
+    dbPromise = new Promise((resolve, reject) => {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        if (!db.objectStoreNames.contains(STORE_NAME)) {
+          db.createObjectStore(STORE_NAME);
+        }
+      };
+      request.onsuccess = (event) => resolve(event.target.result);
+      request.onerror = (event) => reject(event.target.error);
+    });
+  }
+  return dbPromise;
+}
+
+async function saveSlotToDB(slotIndex, audioBuffer) {
+  if (!audioBuffer) return;
+  try {
+    const db = await getDB();
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const numberOfChannels = audioBuffer.numberOfChannels;
+    const sampleRate = audioBuffer.sampleRate;
+    const length = audioBuffer.length;
+    const channels = [];
+    for (let i = 0; i < numberOfChannels; i++) {
+      channels.push(audioBuffer.getChannelData(i).slice());
+    }
+    store.put({ numberOfChannels, sampleRate, length, channels }, `slot_${slotIndex}`);
+  } catch (e) {
+    console.error('DB save error:', e);
+  }
+}
+
+async function loadSlotFromDB(slotIndex) {
+  try {
+    const db = await getDB();
+    return new Promise((resolve, reject) => {
+      const transaction = db.transaction([STORE_NAME], 'readonly');
+      const store = transaction.objectStore(STORE_NAME);
+      const request = store.get(`slot_${slotIndex}`);
+      request.onsuccess = (event) => resolve(event.target.result || null);
+      request.onerror = (event) => reject(event.target.error);
+    });
+  } catch (e) {
+    console.error('DB load error:', e);
+    return null;
+  }
+}
+
+async function clearSlotInDB(slotIndex) {
+  try {
+    const db = await getDB();
+    const transaction = db.transaction([STORE_NAME], 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    store.delete(`slot_${slotIndex}`);
+  } catch (e) {
+    console.error('DB clear error:', e);
+  }
+}
+
+async function reconstructAudioBuffer(data) {
+  if (!data || !audioCtx) return null;
+  try {
+    const buffer = audioCtx.createBuffer(data.numberOfChannels, data.length, data.sampleRate);
+    for (let i = 0; i < data.numberOfChannels; i++) {
+      buffer.getChannelData(i).set(data.channels[i]);
+    }
+    return buffer;
+  } catch (e) {
+    console.error('Reconstruct buffer error:', e);
+    return null;
+  }
+}
+
+let saveSettingsTimeout = null;
+
+function saveSettings() {
+  const state = { settings: slotSettings, activeSlot: activeSlot };
+  localStorage.setItem('samplerState', JSON.stringify(state));
+  if (window.vkBridge) {
+    if (saveSettingsTimeout) clearTimeout(saveSettingsTimeout);
+    saveSettingsTimeout = setTimeout(() => {
+      window.vkBridge.send("VKWebAppStorageSet", { 
+        key: "sampler_state", 
+        value: JSON.stringify(state) 
+      }).catch(e => console.warn("VK Storage save failed", e));
+    }, 1000);
+  }
+}
+
+function loadLocalSettings() {
+  const saved = localStorage.getItem('samplerState');
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      if (parsed.settings) {
+        slotSettings = slotSettings.map((def, i) => ({ ...def, ...(parsed.settings[i] || {}) }));
+      }
+      if (typeof parsed.activeSlot === 'number') {
+        activeSlot = parsed.activeSlot;
+      }
+    } catch(e) {}
+  }
+}
+
+function initAds() {
+  if (!window.vkBridge) return;
+
+  // Предзагрузка рекламы за вознаграждение
+  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
+    .catch((e) => console.warn('Reward ad check failed', e));
+
+  // Предзагрузка межстраничной рекламы
+  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' })
+    .catch((e) => console.warn('Interstitial ad check failed', e));
+
+  // Показ баннерной рекламы
+  window.vkBridge.send('VKWebAppShowBannerAd', {
+    banner_location: 'bottom'
+  }).catch((e) => console.warn('Banner ad failed', e));
+
+  // Подписка на события баннера
+  window.vkBridge.subscribe((e) => {
+    if (!e.detail) return;
+    if (e.detail.type === 'VKWebAppBannerAdClosedByUser') {
+      console.log('Banner closed by user');
+    }
   });
+}
+
+function showRewardAd() {
+  if (!window.vkBridge) {
+    applyRandomPreset();
+    return;
+  }
+  
+  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
+    .then((data) => {
+      if (data.result) {
+        applyRandomPreset();
+        window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
+      } else {
+        setStatus(t('adError'));
+      }
+    })
+    .catch((error) => {
+      console.log('Reward ad error', error);
+      setStatus(t('adError'));
+      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' });
+    });
+}
+
+function showInterstitialAd() {
+  if (!window.vkBridge) return;
+  
+  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'interstitial' })
+    .then((data) => {
+      if (data.result) console.log('Interstitial shown');
+      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
+    })
+    .catch((error) => {
+      console.log('Interstitial ad error', error);
+      window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'interstitial' });
+    });
+}
+
+function applyRandomPreset() {
+  if (!slots[activeSlot]) {
+    setStatus(t('emptySlot'));
+    return;
+  }
+  const presets = [
+    { tempo: 1.2, pitch: 200, dist: 40, rev: 0.6, del: 300, filtOn: true, filt: 2000, trem: 0 },
+    { tempo: 0.8, pitch: -400, dist: 80, rev: 0.2, del: 100, filtOn: false, trem: 0.8 },
+    { tempo: 1.5, pitch: 700, dist: 10, rev: 0.9, del: 500, filtOn: true, filt: 800, trem: 0.3 },
+    { tempo: 0.5, pitch: -1200, dist: 20, rev: 0.8, del: 800, filtOn: true, filt: 400, trem: 0.5 }
+  ];
+  const p = presets[Math.floor(Math.random() * presets.length)];
+  $('tempo').value = p.tempo;
+  $('pitch').value = p.pitch;
+  $('dist').value = p.dist;
+  $('rev').value = p.rev;
+  $('del').value = p.del;
+  $('filtOn').checked = p.filtOn;
+  $('filt').value = p.filt;
+  $('trem').value = p.trem;
+  updateLabels();
+  setStatus('🎁 ' + t('rewardApplied'));
+}
+
+async function initVKAndSettings() {
+  if (window.vkBridge) {
+    try {
+      await window.vkBridge.send('VKWebAppInit');
+      window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
+      
+      initAds(); // Инициализация рекламы после VKWebAppInit
+      
+      const res = await window.vkBridge.send("VKWebAppStorageGet", { key: "sampler_state" });
+      if (res && res.value) {
+        const parsed = JSON.parse(res.value);
+        if (parsed.settings) {
+          slotSettings = slotSettings.map((def, i) => ({ ...def, ...(parsed.settings[i] || {}) }));
+        }
+        if (typeof parsed.activeSlot === 'number') {
+          activeSlot = parsed.activeSlot;
+        }
+      } else {
+        loadLocalSettings();
+      }
+    } catch (e) {
+      console.warn("VK Bridge init or storage get failed, falling back to local", e);
+      loadLocalSettings();
+    }
+  } else {
+    loadLocalSettings();
+  }
 }
 
 function openAbout() { document.getElementById('aboutModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
@@ -427,7 +657,7 @@ function pushHistory(slotIndex) {
   updateUndoRedoButtons();
 }
 
-function undo() {
+async function undo() {
   const slotIdx = activeSlot;
   if (history[slotIdx].length === 0) {
     setStatus(t('nothingToUndo'));
@@ -442,9 +672,10 @@ function undo() {
   drawWave();
   updatePads();
   setStatus(t('undo'));
+  await saveSlotToDB(slotIdx, slots[slotIdx]);
 }
 
-function redo() {
+async function redo() {
   const slotIdx = activeSlot;
   if (redoHistory[slotIdx].length === 0) {
     setStatus(t('nothingToRedo'));
@@ -462,6 +693,7 @@ function redo() {
   drawWave();
   updatePads();
   setStatus(t('redo'));
+  await saveSlotToDB(slotIdx, slots[slotIdx]);
 }
 
 function updateUndoRedoButtons() {
@@ -478,28 +710,48 @@ let recChunks = [], recStartTime = 0, recTimerInterval = null;
 let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
 const activeChains = new Map();
 let rafId = null;
+let isDBLoaded = false;
+
+async function loadAllFromDB() {
+  if (isDBLoaded) return;
+  isDBLoaded = true;
+  for (let i = 0; i < 10; i++) {
+    const data = await loadSlotFromDB(i);
+    if (data) {
+      slots[i] = await reconstructAudioBuffer(data);
+    }
+  }
+  updatePads();
+  updateTransportButtons();
+  drawWave();
+}
 
 function init() {
   try {
-    const wakeUpAudio = () => {
+    const wakeUpAudio = async () => {
       if (!audioCtx) {
         try { audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' }); } 
         catch (e) { console.error('AudioContext error:', e); }
       }
       if (audioCtx && audioCtx.state === 'suspended') {
-        audioCtx.resume().catch(e => console.warn('Resume failed:', e));
+        await audioCtx.resume().catch(e => console.warn('Resume failed:', e));
       }
+      await loadAllFromDB();
     };
     window.addEventListener('pointerdown', wakeUpAudio, { once: false });
     window.addEventListener('touchstart', wakeUpAudio, { once: false, passive: true });
     window.addEventListener('click', wakeUpAudio, { once: false });
     
-    initPads();
-    loadSlotSettings(0);
-    updateTransportButtons();
-    applyTranslations();
-    updateUndoRedoButtons();
-    resizeCanvas();
+    initVKAndSettings().then(() => {
+      initPads();
+      loadSlotSettings(activeSlot);
+      updateTransportButtons();
+      applyTranslations();
+      updateUndoRedoButtons();
+      resizeCanvas();
+      
+      $('rewardBtn').onclick = showRewardAd;
+    });
   } catch (err) { console.error('Init error:', err); setStatus(t('initError') + ': ' + err.message); }
 }
 
@@ -549,6 +801,7 @@ function handlePadClick(i) {
     updatePads(); drawWave(); updateTransportButtons();
     updateUndoRedoButtons();
     $('selInfo').textContent = slots[i] ? t('tapDrag') : t('emptySlot');
+    saveSettings();
   }
 }
 
@@ -588,6 +841,7 @@ $('fileInput').onchange = async e => {
     slotSettings[activeSlot].invert = false;
     selection = null; drawWave(); updatePads(); updateTransportButtons();
     setStatus(t('loadedToSlot') + ' ' + (activeSlot + 1));
+    await saveSlotToDB(activeSlot, slots[activeSlot]);
   } catch (err) { setStatus(t('errorLoading') + ': ' + err.message); }
 };
 
@@ -616,6 +870,7 @@ $('recBtn').addEventListener('click', async function(e) {
         selection = null;
         drawWave(); updatePads(); updateTransportButtons();
         setStatus(t('recorded') + ' ' + buffer.duration.toFixed(1) + 's');
+        await saveSlotToDB(activeSlot, slots[activeSlot]);
       } catch (err) { setStatus(t('errorProcessing') + ': ' + err.message); }
       resetRecordingUI();
     };
@@ -706,6 +961,7 @@ async function stopRecordingMix() {
       const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       setStatus(t('mixSaved'));
+      showInterstitialAd(); // Показ межстраничной рекламы после сохранения микса
     } catch (err) { 
       console.error('Mix export error:', err);
       setStatus(t('errorExport') + ': ' + err.message); 
@@ -893,7 +1149,7 @@ function moveDrag(e) {
 canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
 function endDrag() { isDragging = false; }
 
-$('trimBtn').onclick = () => {
+$('trimBtn').onclick = async () => {
   const b = slots[activeSlot]; if (!b) return;
   if (!selection || selection.end - selection.start < 2) { setStatus(t('selectSliceFirst')); return; }
   const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
@@ -904,15 +1160,21 @@ $('trimBtn').onclick = () => {
   slots[activeSlot] = nb; 
   $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
   selection = null; drawWave(); updatePads(); setStatus(t('chopped'));
+  await saveSlotToDB(activeSlot, slots[activeSlot]);
 };
 
-$('resetBtn').onclick = () => { 
+$('resetBtn').onclick = async () => { 
   if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slotCleared')); 
+  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; 
+  drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slotCleared')); 
+  await clearSlotInDB(activeSlot);
 };
-$('clearBtn').onclick = () => { 
+
+$('clearBtn').onclick = async () => { 
   if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slot') + ' ' + (activeSlot + 1) + ' ' + t('slotCleared')); 
+  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; 
+  drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slot') + ' ' + (activeSlot + 1) + ' ' + t('slotCleared')); 
+  await clearSlotInDB(activeSlot);
 };
 
 $('selectModeBtn').onclick = () => {
@@ -923,7 +1185,7 @@ $('selectModeBtn').onclick = () => {
   updatePads();
 };
 
-$('mergeBtn').onclick = () => {
+$('mergeBtn').onclick = async () => {
   if (selectedSlots.size < 2) return;
   const idx = Array.from(selectedSlots).sort((a, b) => a - b);
   const bufs = idx.map(i => slots[i]).filter(b => b !== null);
@@ -938,6 +1200,8 @@ $('mergeBtn').onclick = () => {
   $('selectModeBtn').innerHTML = '✓ ' + t('select'); $('modeIndicator').textContent = '';
   drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
   setStatus(t('merged') + ' ' + bufs.length + ' ' + t('slot') + ' ' + (ts + 1));
+  await saveSlotToDB(ts, slots[ts]);
+  saveSettings();
 };
 
 $('exportBtn').onclick = async () => {
@@ -957,6 +1221,7 @@ $('exportBtn').onclick = async () => {
     const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     setStatus(t('exported'));
+    showInterstitialAd(); // Показ межстраничной рекламы после сохранения
   } catch (err) { setStatus(t('errorExport') + ': ' + err.message); }
 };
 
@@ -977,11 +1242,17 @@ function updateLabelsUI() {
   $('invertVal').innerHTML = $('invertOn').checked ? t('on') : t('off');
 }
 
-function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
+function updateLabels() { 
+  updateLabelsUI(); 
+  saveCurrentSettings(); 
+  saveSettings(); 
+  updateAllChains(); 
+}
+
 ['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id => $(id).addEventListener('input', updateLabels));
 $('filtOn').addEventListener('change', updateLabels);
 
-$('invertOn').addEventListener('change', (e) => {
+$('invertOn').addEventListener('change', async (e) => {
   const buf = slots[activeSlot];
   if (!buf) {
     e.target.checked = false;
@@ -995,7 +1266,9 @@ $('invertOn').addEventListener('change', (e) => {
   slotSettings[activeSlot].invert = e.target.checked;
   updateLabelsUI();
   saveCurrentSettings();
+  saveSettings();
   setStatus(e.target.checked ? t('sampleReversed') : t('sampleRestored'));
+  await saveSlotToDB(activeSlot, buf);
 });
 
 function setStatus(text) { $('status').textContent = text; }
