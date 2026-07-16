@@ -108,9 +108,10 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .actions button.merge { background: #713f12; border-color: #854d0e; }
 .actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
 .actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
-/* Зелёная кнопка Бонус */
-.actions button.ad-btn { background: #166534; border-color: #16a34a; }
-.actions button.ad-btn:active { background: #14532d; border-color: #15803d; }
+/* Темно-зеленая кнопка Бонус */
+.actions button.ad-btn { background: #166534; border-color: #15803d; color: #fff; }
+.actions button.ad-btn:active { background: #14532d; border-color: #166534; }
+.actions button.ad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 input[type=file] { display: none; }
 .status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
@@ -247,6 +248,7 @@ input[type=file] { display: none; }
 <script>
 let currentLang = localStorage.getItem('samplerLang') || 'ru';
 let unlockedSlots = [true, true, true, true, true, false, false, false, false, false];
+let isAdReady = false; // Флаг готовности рекламы
 
 const translations = {
   ru: {
@@ -265,7 +267,8 @@ const translations = {
     errorProcessing: 'Ошибка обработки аудио', errorExport: 'Ошибка экспорта', initError: 'Ошибка инициализации',
     loadedToSlot: 'Загружено в слот', requestMic: 'Запрос микрофона...', undo: 'Отмена', redo: 'Вернуть',
     nothingToUndo: 'Нечего отменять', nothingToRedo: 'Нечего возвращать', bonus: 'Бонус',
-    adLoading: 'Загрузка бонуса...', adThanks: 'Спасибо за поддержку! 🎁', adUnavailable: 'Бонус недоступен или отменен',
+    adLoading: 'Загрузка рекламы...', adThanks: 'Спасибо за поддержку! 🎁', adUnavailable: 'Реклама недоступна. Попробуйте через пару секунд.',
+    adLoadingWait: 'Загрузка рекламы... Нажмите кнопку ещё раз через пару секунд.',
     progressLoaded: 'Прогресс загружен из VK', progressSaved: 'Прогресс сохранен в VK', slotUnlocked: 'Слот разблокирован:',
     allUnlocked: 'Все слоты уже открыты! 🎉', slotLockedMsg: 'Смотрите короткое видео, чтобы разблокировать этот слот',
     modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить доступ к микрофону</h2><p>Если кнопка записи не работает, вам нужно разрешить доступ к микрофону:</p><h3>💻 В вашем браузере:</h3><ol><li>Нажмите на <strong>значок замка 🔒</strong> слева от адресной строки</li><li>Найдите <strong>"Микрофон"</strong> в списке разрешений</li><li>Выберите <strong>"Разрешить"</strong></li><li>Обновите страницу (F5)</li></ol><h3>📱 На мобильных устройствах:</h3><ol><li>Откройте <strong>настройки устройства</strong></li><li>Найдите раздел <strong>"Приложения"</strong></li><li>Найдите ваше <strong>приложение браузера</strong></li><li>Нажмите <strong>"Разрешения"</strong></li><li>Найдите <strong>"Микрофон"</strong></li><li>Включите переключатель (разрешить доступ)</li><li>Вернитесь в браузер и обновите страницу</li></ol></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — форма волны активного сэмпла с индикатором позиции</li><li><strong>Пэды</strong> — 10 ячеек (5×2) для хранения сэмплов</li><li><strong>Транспорт</strong> — кнопки записи/воспроизведения</li><li><strong>Действия</strong> — функции редактирования</li><li><strong>Эффекты</strong> — 10 регуляторов эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка сэмплов</h3><p><strong>📂 Кнопка Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Сэмпл загружается в активный слот (выделен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появляется запрос разрешения, разрешите доступ, кнопка становится ■ (красная, пульсирует), таймер показывает длительность</li><li><strong>Второе нажатие:</strong> запись останавливается, сэмпл загружается в активный слот</li></ul><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — воспроизводит сэмпл один раз</li><li><strong>ЦИКЛ</strong> (желтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все воспроизводимые сэмплы</li></ul><h2>🎚️ Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои собственные настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Тон</td><td>±1200 ct</td><td>Изменяет тон/тембр без изменения скорости</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Гц</td><td>Низкочастотный фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Задержка</td><td>0 — 1000 мс</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространство</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Инверт</td><td>Вкл/Выкл</td><td>Переворачивает сэмпл (воспроизводит задом наперед)</td></tr></table><h2>✂️ Расширенные функции</h2><h3>Обрезка</h3><ul><li>Выберите фрагмент на форме волны: нажмите и перетащите</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Нажмите на несколько пэдов</li><li>Нажмите 🔗 Объединить</li></ul><h3>Запись живого микса</h3><p><strong>⏺️ Запись микса</strong> записывает все, что вы играете, со всеми эффектами:</p><ul><li>Первое нажатие → начинает запись</li><li>Второе нажатие → сохраняет файл как <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зеленый фон</strong> — слот содержит сэмпл</li></ul><p><strong>Приятного творчества! 🎸</strong></p>`
@@ -286,7 +289,8 @@ const translations = {
     errorProcessing: 'Error processing audio', errorExport: 'Export error', initError: 'Init error',
     loadedToSlot: 'Loaded to slot', requestMic: 'Requesting mic...', undo: 'Undo', redo: 'Redo',
     nothingToUndo: 'Nothing to undo', nothingToRedo: 'Nothing to redo', bonus: 'Bonus',
-    adLoading: 'Loading bonus...', adThanks: 'Thanks for your support! 🎁', adUnavailable: 'Bonus unavailable or cancelled',
+    adLoading: 'Loading ad...', adThanks: 'Thanks for your support! 🎁', adUnavailable: 'Ad unavailable. Try again in a few seconds.',
+    adLoadingWait: 'Loading ad... Please tap the button again in a few seconds.',
     progressLoaded: 'Progress loaded from VK', progressSaved: 'Progress saved to VK', slotUnlocked: 'Slot unlocked:',
     allUnlocked: 'All slots are already unlocked! 🎉', slotLockedMsg: 'Watch a short video to unlock this slot',
     modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone Access</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>💻 In Your Browser:</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address bar in your browser</li><li>Find <strong>"Microphone"</strong> in the permissions list</li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><h3>📱 On Mobile Devices:</h3><ol><li>Open your <strong>device settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find your <strong>browser app</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to the browser and refresh the page</li></ol></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Changes pitch/timbre without changing speed</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Invert</td><td>On/Off</td><td>Reverses the sample (plays backwards)</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
@@ -300,7 +304,6 @@ function applyTranslations() {
     const key = el.getAttribute('data-i18n');
     el.textContent = t(key);
   });
-  // Теперь кнопка показывает ТЕКУЩИЙ язык (RU когда русский, EN когда английский)
   document.getElementById('langBtn').textContent = currentLang === 'ru' ? 'RU' : 'EN';
   document.getElementById('modalContent').innerHTML = t('modalContent');
   $('undoBtn').title = t('undo');
@@ -314,39 +317,63 @@ function toggleLang() {
   saveProgressToVK();
 }
 
+// --- ПРАВИЛЬНАЯ ИНТЕГРАЦИЯ РЕКЛАМЫ ПО ДОКУМЕНТАЦИИ VK ---
+function checkAdReadiness() {
+  if (!window.vkBridge) return;
+  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
+    .then((data) => {
+      isAdReady = data.result;
+      if (isAdReady) {
+        console.log('Реклама готова к показу');
+      } else {
+        console.log('Рекламные материалы не найдены, ожидаем загрузку');
+      }
+    })
+    .catch((error) => {
+      console.log('Ошибка проверки рекламы:', error);
+      isAdReady = false;
+    });
+}
+
 function unlockNextSlot() {
+  if (!window.vkBridge) {
+    setStatus("Разблокировка доступна только внутри VK");
+    return;
+  }
+
   const lockedIndex = unlockedSlots.findIndex(isUnlocked => !isUnlocked);
   if (lockedIndex === -1) {
     setStatus(t('allUnlocked'));
     return;
   }
-  unlockSlot(lockedIndex);
-}
 
-function unlockSlot(index) {
-  if (!window.vkBridge) {
-    setStatus("Разблокировка доступна только внутри VK");
+  if (!isAdReady) {
+    // Если реклама ещё не загрузилась, инициируем загрузку и просим подождать
+    setStatus(t('adLoadingWait'));
+    checkAdReadiness();
     return;
   }
-  setStatus(t('slotLockedMsg'));
-  setTimeout(() => {
-    setStatus(t('adLoading'));
-    window.vkBridge.send("VKWebAppShowRewardedAds", { ad_format: "reward" })
-      .then(res => {
-        if (res.result) {
-          unlockedSlots[index] = true;
-          saveProgressToVK();
-          updatePads();
-          setStatus(t('slotUnlocked') + ' ' + (index + 1));
-        } else {
-          setStatus(t('adUnavailable'));
-        }
-      })
-      .catch(err => {
-        console.log("Ad error:", err);
+
+  setStatus(t('adLoading'));
+  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
+    .then((data) => {
+      if (data.result) {
+        unlockedSlots[lockedIndex] = true;
+        saveProgressToVK();
+        updatePads();
+        setStatus(t('slotUnlocked') + ' ' + (lockedIndex + 1));
+        // Запускаем проверку для следующей порции рекламы
+        setTimeout(checkAdReadiness, 2000);
+      } else {
         setStatus(t('adUnavailable'));
-      });
-  }, 800);
+        checkAdReadiness();
+      }
+    })
+    .catch((error) => {
+      console.log("Ad error:", error);
+      setStatus(t('adUnavailable'));
+      checkAdReadiness();
+    });
 }
 
 function saveProgressToVK() {
@@ -395,6 +422,10 @@ function loadProgressFromVK() {
 if (window.vkBridge) {
   window.vkBridge.send('VKWebAppInit').then(() => {
     window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
+    // Проверяем готовность рекламы при старте
+    checkAdReadiness();
+    // Периодически проверяем наличие рекламы, как рекомендует VK (каждые 30 сек)
+    setInterval(checkAdReadiness, 30000);
   });
 }
 
@@ -535,7 +566,7 @@ function initPads() {
 
 function handlePadClick(i) {
   if (!unlockedSlots[i]) {
-    unlockSlot(i);
+    unlockNextSlot(); // Используем общую логику разблокировки
     return;
   }
   if (selectMode) {
