@@ -108,7 +108,6 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .actions button.merge { background: #713f12; border-color: #854d0e; }
 .actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
 .actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
-/* Темно-зеленая кнопка Бонус */
 .actions button.ad-btn { background: #166534; border-color: #15803d; color: #fff; }
 .actions button.ad-btn:active { background: #14532d; border-color: #166534; }
 .actions button.ad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -248,7 +247,7 @@ input[type=file] { display: none; }
 <script>
 let currentLang = localStorage.getItem('samplerLang') || 'ru';
 let unlockedSlots = [true, true, true, true, true, false, false, false, false, false];
-let isAdReady = false; // Флаг готовности рекламы
+let isAdReady = false;
 
 const translations = {
   ru: {
@@ -317,22 +316,13 @@ function toggleLang() {
   saveProgressToVK();
 }
 
-// --- ПРАВИЛЬНАЯ ИНТЕГРАЦИЯ РЕКЛАМЫ ПО ДОКУМЕНТАЦИИ VK ---
 function checkAdReadiness() {
   if (!window.vkBridge) return;
   window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
     .then((data) => {
       isAdReady = data.result;
-      if (isAdReady) {
-        console.log('Реклама готова к показу');
-      } else {
-        console.log('Рекламные материалы не найдены, ожидаем загрузку');
-      }
     })
-    .catch((error) => {
-      console.log('Ошибка проверки рекламы:', error);
-      isAdReady = false;
-    });
+    .catch((error) => { isAdReady = false; });
 }
 
 function unlockNextSlot() {
@@ -340,20 +330,16 @@ function unlockNextSlot() {
     setStatus("Разблокировка доступна только внутри VK");
     return;
   }
-
   const lockedIndex = unlockedSlots.findIndex(isUnlocked => !isUnlocked);
   if (lockedIndex === -1) {
     setStatus(t('allUnlocked'));
     return;
   }
-
   if (!isAdReady) {
-    // Если реклама ещё не загрузилась, инициируем загрузку и просим подождать
     setStatus(t('adLoadingWait'));
     checkAdReadiness();
     return;
   }
-
   setStatus(t('adLoading'));
   window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
     .then((data) => {
@@ -362,7 +348,6 @@ function unlockNextSlot() {
         saveProgressToVK();
         updatePads();
         setStatus(t('slotUnlocked') + ' ' + (lockedIndex + 1));
-        // Запускаем проверку для следующей порции рекламы
         setTimeout(checkAdReadiness, 2000);
       } else {
         setStatus(t('adUnavailable'));
@@ -370,10 +355,56 @@ function unlockNextSlot() {
       }
     })
     .catch((error) => {
-      console.log("Ad error:", error);
       setStatus(t('adUnavailable'));
       checkAdReadiness();
     });
+}
+
+// --- НАДЕЖНОЕ СОХРАНЕНИЕ ФАЙЛОВ (РЕШЕНИЕ ПРОБЛЕМ ANDROID/iOS) ---
+async function saveFileToDevice(blob, filename) {
+  setStatus(t('processing'));
+  try {
+    if (window.vkBridge) {
+      const url = URL.createObjectURL(blob);
+      try {
+        // Нативный метод VK вызывает системный диалог сохранения, 
+        // полностью исключая "ловушку" превью на iOS и тихие сбои на Android.
+        const res = await window.vkBridge.send('VKWebAppDownloadFile', {
+          url: url,
+          filename: filename
+        });
+        URL.revokeObjectURL(url);
+        if (res && res.result) {
+          setStatus(t('exported'));
+          return true;
+        }
+      } catch (vkErr) {
+        console.warn('VKWebAppDownloadFile failed, falling back', vkErr);
+        URL.revokeObjectURL(url);
+      }
+    }
+    
+    // Резервный вариант для обычных браузеров
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    
+    // dispatchEvent надежнее, чем .click() на мобильных Safari/Chrome
+    const event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
+    a.dispatchEvent(event);
+    
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    setStatus(t('exported'));
+    return true;
+  } catch (err) {
+    console.error('Save error:', err);
+    setStatus(t('errorExport') + ': ' + err.message);
+    return false;
+  }
 }
 
 function saveProgressToVK() {
@@ -400,10 +431,7 @@ function loadProgressFromVK() {
           const data = JSON.parse(res.value);
           if (data.settings) slotSettings = data.settings;
           if (data.activeSlot !== undefined) activeSlot = data.activeSlot;
-          if (data.lang) { 
-            currentLang = data.lang; 
-            localStorage.setItem('samplerLang', currentLang); 
-          }
+          if (data.lang) { currentLang = data.lang; localStorage.setItem('samplerLang', currentLang); }
           if (data.unlockedSlots && Array.isArray(data.unlockedSlots) && data.unlockedSlots.length === 10) {
             unlockedSlots = data.unlockedSlots;
           }
@@ -411,9 +439,7 @@ function loadProgressFromVK() {
           applyTranslations();
           updatePads();
           setStatus(t('progressLoaded'));
-        } catch (e) {
-          console.error("Error parsing VK progress:", e);
-        }
+        } catch (e) { console.error("Error parsing VK progress:", e); }
       }
     })
     .catch(err => console.log("No saved progress or error:", err));
@@ -422,9 +448,7 @@ function loadProgressFromVK() {
 if (window.vkBridge) {
   window.vkBridge.send('VKWebAppInit').then(() => {
     window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
-    // Проверяем готовность рекламы при старте
     checkAdReadiness();
-    // Периодически проверяем наличие рекламы, как рекомендует VK (каждые 30 сек)
     setInterval(checkAdReadiness, 30000);
   });
 }
@@ -453,17 +477,14 @@ let redoHistory = Array(10).fill(null).map(() => []);
 function cloneBuffer(buf) {
   if (!buf) return null;
   const newBuf = audioCtx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
-  for (let c = 0; c < buf.numberOfChannels; c++) {
-    newBuf.getChannelData(c).set(buf.getChannelData(c));
-  }
+  for (let c = 0; c < buf.numberOfChannels; c++) newBuf.getChannelData(c).set(buf.getChannelData(c));
   return newBuf;
 }
 
 function pushHistory(slotIndex) {
   const currentBuf = slots[slotIndex];
   if (!currentBuf) return;
-  const copy = cloneBuffer(currentBuf);
-  history[slotIndex].push(copy);
+  history[slotIndex].push(cloneBuffer(currentBuf));
   if (history[slotIndex].length > MAX_HISTORY) history[slotIndex].shift();
   redoHistory[slotIndex] = [];
   updateUndoRedoButtons();
@@ -565,10 +586,7 @@ function initPads() {
 }
 
 function handlePadClick(i) {
-  if (!unlockedSlots[i]) {
-    unlockNextSlot(); // Используем общую логику разблокировки
-    return;
-  }
+  if (!unlockedSlots[i]) { unlockNextSlot(); return; }
   if (selectMode) {
     if (selectedSlots.has(i)) selectedSlots.delete(i); else selectedSlots.add(i);
     updatePads(); updateMergeButton();
@@ -716,15 +734,16 @@ async function stopRecordingMix() {
     if (mixChunks.length === 0) { setStatus(t('noAudioRecorded')); resetMixRecordingUI(); return; }
     setStatus(t('processing'));
     try {
-      const blob = new Blob(mixChunks, { type: mixRecorder.mimeType || 'audio/mp4' });
+      const blob = new Blob(mixChunks, { type: mixRecorder.mimeType || 'audio/webm' });
       const arr = await blob.arrayBuffer();
       const ab = await audioCtx.decodeAudioData(arr);
       const mp3 = await convertToMP3(ab);
-      const url = URL.createObjectURL(mp3);
-      const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setStatus(t('mixSaved'));
-    } catch (err) { console.error('Mix export error:', err); setStatus(t('errorExport') + ': ' + err.message); }
+      // Используем новую надежную функцию сохранения
+      await saveFileToDevice(mp3, 'smplrbot_mix.mp3');
+    } catch (err) { 
+      console.error('Mix export error:', err);
+      setStatus(t('errorExport') + ': ' + err.message); 
+    }
     resetMixRecordingUI();
   };
   try { mixRecorder.stop(); } catch (err) { console.error('Error stopping mix recorder:', err); resetMixRecordingUI(); }
@@ -961,10 +980,8 @@ $('exportBtn').onclick = async () => {
     const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
     const r = await oc.startRendering();
     const mp3 = await convertToMP3(r);
-    const url = URL.createObjectURL(mp3);
-    const a = document.createElement('a'); a.href = url; a.download = 'smplrbot.mp3'; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setStatus(t('exported'));
+    // Используем новую надежную функцию сохранения
+    await saveFileToDevice(mp3, 'smplrbot_export.mp3');
   } catch (err) { setStatus(t('errorExport') + ': ' + err.message); }
 };
 
