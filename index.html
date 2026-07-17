@@ -113,6 +113,7 @@ canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333
 .actions button.ad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 input[type=file] { display: none; }
 .status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.status a { color: #4ade80; text-decoration: underline; font-weight: bold; }
 .effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
 .effect { background: #141414; border-radius: 6px; padding: 12px; border: 1px solid #2a2a2a; }
 .effect-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
@@ -360,15 +361,16 @@ function unlockNextSlot() {
     });
 }
 
-// --- НАДЕЖНОЕ СОХРАНЕНИЕ ФАЙЛОВ (РЕШЕНИЕ ПРОБЛЕМ ANDROID/iOS) ---
+// --- МНОГОУРОВНЕВАЯ СИСТЕМА СОХРАНЕНИЯ (РЕШЕНИЕ ПРОБЛЕМ iOS/ANDROID) ---
 async function saveFileToDevice(blob, filename) {
   setStatus(t('processing'));
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
   try {
+    // УРОВЕНЬ 1: Нативный метод VK (Лучше всего работает на Android и Desktop)
     if (window.vkBridge) {
       const url = URL.createObjectURL(blob);
       try {
-        // Нативный метод VK вызывает системный диалог сохранения, 
-        // полностью исключая "ловушку" превью на iOS и тихие сбои на Android.
         const res = await window.vkBridge.send('VKWebAppDownloadFile', {
           url: url,
           filename: filename
@@ -379,30 +381,70 @@ async function saveFileToDevice(blob, filename) {
           return true;
         }
       } catch (vkErr) {
-        console.warn('VKWebAppDownloadFile failed, falling back', vkErr);
+        console.warn('VKWebAppDownloadFile failed, trying fallbacks', vkErr);
         URL.revokeObjectURL(url);
       }
     }
-    
-    // Резервный вариант для обычных браузеров
-    const url = URL.createObjectURL(blob);
+
+    // УРОВЕНЬ 2: Web Share API с файлами (САМЫЙ НАДЕЖНЫЙ СПОСОБ ДЛЯ iOS 15+)
+    // Открывает нативное меню "Поделиться", где есть пункт "Сохранить в Файлы"
+    if (navigator.share && navigator.canShare) {
+      const file = new File([blob], filename, { type: 'audio/mpeg' });
+      if (navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'SAMPLER HENDRIX 5.0',
+            text: filename
+          });
+          setStatus(t('exported'));
+          return true;
+        } catch (shareErr) {
+          if (shareErr.name !== 'AbortError') {
+            console.warn('Web Share API failed', shareErr);
+          } else {
+            setStatus(t('loadOrRecord')); // Пользователь отменил действие
+            return false;
+          }
+        }
+      }
+    }
+
+    // УРОВЕНЬ 3: Классический фолбэк через DOM (для старых браузеров)
+    const downloadUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
+    a.href = downloadUrl;
     a.download = filename;
     a.style.display = 'none';
     document.body.appendChild(a);
-    
-    // dispatchEvent надежнее, чем .click() на мобильных Safari/Chrome
+
     const event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
     a.dispatchEvent(event);
-    
     document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-    setStatus(t('exported'));
+
+    // УРОВЕНЬ 4: Если это iOS, даем инструкцию, так как программный клик часто блокируется системой
+    if (isIOS) {
+      const statusEl = $('status');
+      statusEl.innerHTML = `iOS: <a href="${downloadUrl}" download="${filename}" target="_blank">Нажмите и удерживайте здесь → Сохранить в Файлы</a>`;
+      setTimeout(() => {
+        statusEl.textContent = t('loadOrRecord');
+        URL.revokeObjectURL(downloadUrl);
+      }, 15000);
+    } else {
+      setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
+      setStatus(t('exported'));
+    }
+
     return true;
   } catch (err) {
     console.error('Save error:', err);
-    setStatus(t('errorExport') + ': ' + err.message);
+    if (isIOS) {
+       const downloadUrl = URL.createObjectURL(blob);
+       $('status').innerHTML = `iOS: <a href="${downloadUrl}" download="${filename}" target="_blank">Нажмите и удерживайте здесь → Сохранить в Файлы</a>`;
+       setTimeout(() => { $('status').textContent = t('loadOrRecord'); URL.revokeObjectURL(downloadUrl); }, 15000);
+    } else {
+       setStatus(t('errorExport') + ': ' + err.message);
+    }
     return false;
   }
 }
@@ -738,7 +780,6 @@ async function stopRecordingMix() {
       const arr = await blob.arrayBuffer();
       const ab = await audioCtx.decodeAudioData(arr);
       const mp3 = await convertToMP3(ab);
-      // Используем новую надежную функцию сохранения
       await saveFileToDevice(mp3, 'smplrbot_mix.mp3');
     } catch (err) { 
       console.error('Mix export error:', err);
@@ -980,7 +1021,6 @@ $('exportBtn').onclick = async () => {
     const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
     const r = await oc.startRendering();
     const mp3 = await convertToMP3(r);
-    // Используем новую надежную функцию сохранения
     await saveFileToDevice(mp3, 'smplrbot_export.mp3');
   } catch (err) { setStatus(t('errorExport') + ': ' + err.message); }
 };
