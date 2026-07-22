@@ -10,149 +10,103 @@
 <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.1/lame.min.js"></script>
 <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f0f; color: #e0e0e0; min-height: 100vh; padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px; overflow-x: hidden; user-select: none; -webkit-user-select: none; }
-.container { max-width: 650px; margin: 0 auto; }
-
-.header { position: relative; display: flex; align-items: center; justify-content: center; padding: 16px 0 8px 0; border-bottom: 1px solid #333; margin-bottom: 16px; }
-.header-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; min-width: 0; }
-.header-title { font-size: 18px; font-weight: 600; color: #fff; letter-spacing: 1px; text-transform: uppercase; text-align: center; white-space: nowrap; max-width: 100%; }
-.about-row { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
-
-.icon-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; width: 32px; height: 32px; color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.icon-btn:hover:not(:disabled) { background: #3a3a3a; border-color: #4a4a4a; }
-.icon-btn:active:not(:disabled) { transform: scale(0.95); }
-.icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
-.lang-btn { position: absolute; left: 0; top: 16px; background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 8px; color: #fff; font-size: clamp(7px, 2vw, 10px); font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; z-index: 10; }
-.lang-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
-.lang-btn:active { transform: scale(0.95); }
-
-.about-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; padding: 6px 12px; color: #fff; font-size: clamp(8px, 2.5vw, 11px); font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; flex-shrink: 0; }
-.about-btn:hover { background: #3a3a3a; border-color: #4a4a4a; }
-.about-btn:active { transform: scale(0.95); }
-
-.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; animation: fadeIn 0.3s ease; }
-.modal-overlay.active { display: flex; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; max-width: 700px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; animation: slideUp 0.3s ease; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
-@keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-.modal-header { padding: 20px; border-bottom: 1px solid #333; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.modal-title { font-size: 18px; font-weight: 600; color: #fff; }
-.modal-controls { display: flex; gap: 8px; align-items: center; }
-.close-btn { background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; width: 32px; height: 32px; color: #fff; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.close-btn:hover { background: #dc2626; border-color: #ef4444; }
-.modal-content { padding: 20px; overflow-y: auto; flex: 1; line-height: 1.6; color: #ccc; font-size: 14px; }
-.modal-content::-webkit-scrollbar { width: 8px; }
-.modal-content::-webkit-scrollbar-track { background: #0f0f0f; }
-.modal-content::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
-.modal-content h1 { font-size: 22px; color: #fff; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 2px solid #333; }
-.modal-content h2 { font-size: 18px; color: #fff; margin-top: 24px; margin-bottom: 12px; }
-.modal-content h3 { font-size: 16px; color: #fff; margin-top: 16px; margin-bottom: 8px; }
-.modal-content p { margin-bottom: 12px; }
-.modal-content ul { margin-left: 20px; margin-bottom: 12px; }
-.modal-content li { margin-bottom: 6px; }
-.modal-content strong { color: #fff; font-weight: 600; }
-.modal-content code { background: #0f0f0f; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 13px; color: #4ade80; }
-.modal-content .highlight { background: rgba(74, 222, 128, 0.1); padding: 12px; border-left: 3px solid #4ade80; border-radius: 6px; margin: 12px 0; }
-.modal-content .warning { background: rgba(251, 191, 36, 0.1); padding: 12px; border-left: 3px solid #fbbf24; border-radius: 6px; margin: 12px 0; }
-.modal-content table { width: 100%; border-collapse: collapse; margin: 12px 0; }
-.modal-content th, .modal-content td { padding: 8px; text-align: left; border: 1px solid #333; font-size: 13px; }
-.modal-content th { background: #0f0f0f; color: #fff; font-weight: 600; }
-
-.panel { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 16px; margin-bottom: 12px; }
-canvas { width: 100%; height: 160px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; cursor: crosshair; display: block; touch-action: none; }
-
-.pads { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.pad { aspect-ratio: 1; background: #2a2a2a; border: 2px solid #3a3a3a; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.1s; position: relative; min-height: 0; padding: 4px; }
-.pad:active { transform: scale(0.95); }
-.pad.active { border-color: #fff; background: #3a3a3a; }
-.pad.loaded { background: #1a2f1a; border-color: #2d5a2d; }
-.pad.loaded.active { border-color: #fff; background: #2d4a2d; }
-.pad.selected { border-color: #d97706; background: #3a2f1a; }
-.pad.playing { animation: padPulse 0.6s infinite; }
-.pad.locked { opacity: 0.5; border-style: dashed; border-color: #555; background: #111; }
-.pad.locked .pad-num, .pad.locked .pad-duration { opacity: 0.3; }
-@keyframes padPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(255,255,255,0.3); } 50% { box-shadow: 0 0 0 6px rgba(255,255,255,0.15); } }
-.pad-num { font-size: clamp(12px, 4vw, 20px); font-weight: 600; color: #666; line-height: 1; }
-.pad.loaded .pad-num { color: #fff; }
-.pad-duration { font-size: clamp(8px, 2.5vw, 10px); color: #888; margin-top: 4px; line-height: 1; }
-.pad.loaded .pad-duration { color: #aaa; }
-
-.lock-icon { 
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
-  font-size: clamp(10px, 3vw, 13px); display: none; pointer-events: none; z-index: 2; 
-  filter: grayscale(100%) brightness(0.7) drop-shadow(0 2px 4px rgba(0,0,0,0.9)); 
-}
-.pad.locked .lock-icon { display: block; }
-
-.transport { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-.transport button { 
-  background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; 
-  padding: 16px 4px; color: #fff; cursor: pointer; transition: all 0.1s; min-height: 60px; 
-  display: flex; align-items: center; justify-content: center; font-weight: 600; 
-  white-space: nowrap; line-height: 1.1;
-  font-size: clamp(12px, 3.5vw, 20px); /* Динамическое масштабирование без троеточий */
-}
-.transport button:active { transform: scale(0.95); background: #3a3a3a; }
-.transport button:disabled { opacity: 0.3; cursor: not-allowed; }
-.transport button.rec { background: #7f1d1d; border-color: #991b1b; }
-.transport button.rec.active { background: #dc2626; border-color: #ef4444; animation: recPulse 1s infinite; }
-@keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.85; } }
-.transport button.play { background: #14532d; border-color: #166534; }
-.transport button.loop { background: #713f12; border-color: #854d0e; }
-.transport button.loop.active { background: #ca8a04; border-color: #eab308; color: #000; }
-.transport button.stop { background: #450a0a; border-color: #7f1d1d; }
-
-.actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.actions button, .actions label { 
-  background: #2a2a2a; border: 1px solid #3a3a3a; border-radius: 6px; 
-  color: #fff; font-weight: 500; cursor: pointer; transition: all 0.1s; min-height: 48px; width: 100%;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-  white-space: nowrap; /* Строгий запрет переноса строк */
-  line-height: 1.1;
-  font-size: clamp(7px, 2.6vw, 12px); /* Жесткое масштабирование текста под ширину экрана */
-  padding: 8px 2px; /* Минимальные боковые отступы для максимизации места под текст */
-}
-.actions button:active, .actions label:active { transform: scale(0.95); background: #3a3a3a; }
-.actions button:disabled { opacity: 0.3; cursor: not-allowed; }
-.actions button.merge { background: #713f12; border-color: #854d0e; }
-.actions button.rec-mix { background: #7f1d1d; border-color: #991b1b; }
-.actions button.rec-mix.active { background: #dc2626; animation: recPulse 1s infinite; }
-.actions button.ad-btn { background: #166534; border-color: #15803d; color: #fff; }
-.actions button.ad-btn:active { background: #14532d; border-color: #166534; }
-.actions button.ad-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-input[type=file] { display: none; }
-
-.status { text-align: center; color: #888; font-size: 12px; margin-top: 12px; min-height: 18px; white-space: normal; word-wrap: break-word; }
-.status a { color: #4ade80; text-decoration: underline; font-weight: bold; }
-
-.effects { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-.effect { background: #141414; border-radius: 6px; padding: 12px; border: 1px solid #2a2a2a; }
-.effect-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: clamp(9px, 2.5vw, 11px); font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
-.effect-value { color: #fff; font-size: clamp(11px, 3vw, 13px); font-weight: 600; white-space: nowrap; }
-.effect input[type=range] { width: 100%; height: 5px; border-radius: 3px; background: #333; outline: none; -webkit-appearance: none; appearance: none; cursor: pointer; }
-.effect input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
-.effect input[type=range]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; cursor: pointer; border: 2px solid #000; }
-.toggle { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: clamp(9px, 2.5vw, 11px); color: #888; white-space: nowrap; }
-.toggle input { width: 16px; height: 16px; cursor: pointer; accent-color: #fff; }
-
-.selection-info { text-align: center; color: #666; font-size: 11px; margin-top: 8px; min-height: 16px; white-space: normal; word-wrap: break-word; }
-.mode-indicator { text-align: center; color: #d97706; font-size: 11px; margin-bottom: 8px; min-height: 16px; font-weight: 600; white-space: normal; word-wrap: break-word; }
-.rec-indicator { display: none; align-items: center; justify-content: center; gap: 10px; padding: 10px; background: rgba(220, 38, 38, 0.1); border: 1px solid #7f1d1d; border-radius: 6px; margin-top: 10px; font-size: 12px; color: #f87171; font-weight: 600; }
-.rec-indicator.active { display: flex; }
-.rec-dot { width: 10px; height: 10px; border-radius: 50%; background: #dc2626; animation: recDotPulse 1s infinite; }
-@keyframes recDotPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-.rec-level { flex: 1; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
-.rec-level-bar { height: 100%; background: linear-gradient(90deg, #22c55e, #eab308, #ef4444); width: 0%; transition: width 0.05s; }
-.slot-indicator { text-align: center; color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 10px; padding: 8px; background: #2a2a2a; border-radius: 6px; border: 1px solid #3a3a3a; white-space: nowrap; }
-
-/* Дополнительные уточнения для очень узких экранов (складные телефоны, старые Android) */
-@media (max-width: 360px) { 
-  .actions button, .actions label { padding: 6px 1px; font-size: clamp(6.5px, 2.4vw, 10px); }
-  .transport button { font-size: clamp(11px, 3vw, 16px); padding: 12px 2px; }
-  .pad-num { font-size: clamp(10px, 3.5vw, 16px); }
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f0f;color:#e0e0e0;min-height:100vh;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;overflow-x:hidden;user-select:none;-webkit-user-select:none;touch-action:pan-y}
+.container{max-width:650px;margin:0 auto}
+.header{position:relative;display:flex;align-items:center;justify-content:center;padding:16px 0 8px 0;border-bottom:1px solid #333;margin-bottom:16px}
+.header-center{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:0}
+.header-title{font-size:18px;font-weight:600;color:#fff;letter-spacing:1px;text-transform:uppercase;text-align:center;white-space:nowrap;max-width:100%}
+.about-row{display:flex;align-items:center;justify-content:center;gap:8px;width:100%}
+.icon-btn{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;width:32px;height:32px;color:#fff;font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.icon-btn:hover:not(:disabled){background:#3a3a3a;border-color:#4a4a4a}
+.icon-btn:active:not(:disabled){transform:scale(.95)}
+.icon-btn:disabled{opacity:.3;cursor:not-allowed}
+.lang-btn{position:absolute;left:0;top:16px;background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;padding:6px 8px;color:#fff;font-size:clamp(7px,2vw,10px);font-weight:600;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;z-index:10}
+.about-btn{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;padding:6px 12px;color:#fff;font-size:clamp(8px,2.5vw,11px);font-weight:600;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0}
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:#1a1a1a;border:1px solid #333;border-radius:12px;max-width:700px;width:100%;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-header{padding:20px;border-bottom:1px solid #333;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modal-title{font-size:18px;font-weight:600;color:#fff}
+.close-btn{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;width:32px;height:32px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.close-btn:hover{background:#dc2626;border-color:#ef4444}
+.modal-content{padding:20px;overflow-y:auto;flex:1;line-height:1.6;color:#ccc;font-size:14px}
+.modal-content h1{font-size:22px;color:#fff;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid #333}
+.modal-content h2{font-size:18px;color:#fff;margin-top:24px;margin-bottom:12px}
+.modal-content p{margin-bottom:12px}
+.modal-content ul{margin-left:20px;margin-bottom:12px}
+.modal-content li{margin-bottom:6px}
+.modal-content strong{color:#fff}
+.modal-content .warning{background:rgba(251,191,36,.1);padding:12px;border-left:3px solid #fbbf24;border-radius:6px;margin:12px 0}
+.panel{background:#1a1a1a;border:1px solid #333;border-radius:8px;padding:16px;margin-bottom:12px}
+canvas{width:100%;height:200px;background:#0a0a0a;border:1px solid #333;border-radius:6px;cursor:crosshair;display:block;touch-action:none}
+.pads{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.pad{aspect-ratio:1;background:#2a2a2a;border:2px solid #3a3a3a;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .1s;position:relative;min-height:0;padding:4px}
+.pad:active{transform:scale(.95)}
+.pad.active{border-color:#fff;background:#3a3a3a}
+.pad.loaded{background:#1a2f1a;border-color:#2d5a2d}
+.pad.loaded.active{border-color:#fff;background:#2d4a2d}
+.pad.selected{border-color:#d97706;background:#3a2f1a}
+.pad.bpm-select1{border-color:#3b82f6!important;background:rgba(59,130,246,.3)!important;animation:bpmPulse 1s infinite}
+.pad.bpm-select2{border-color:#8b5cf6!important;background:rgba(139,92,246,.3)!important;animation:bpmPulse 1s infinite}
+@keyframes bpmPulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,.4)}50%{box-shadow:0 0 0 8px rgba(59,130,246,.1)}}
+.pad.playing{animation:padPulse .6s infinite}
+.pad.locked{opacity:.5;border-style:dashed;border-color:#555;background:#111}
+@keyframes padPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{box-shadow:0 0 0 6px rgba(255,255,255,.15)}}
+.pad-num{font-size:clamp(12px,4vw,20px);font-weight:600;color:#666;line-height:1}
+.pad.loaded .pad-num{color:#fff}
+.pad-duration{font-size:clamp(8px,2.5vw,10px);color:#888;margin-top:4px}
+.pad.loaded .pad-duration{color:#aaa}
+.lock-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(10px,3vw,13px);display:none;pointer-events:none;z-index:2}
+.pad.locked .lock-icon{display:block}
+.transport{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.transport button{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;padding:16px 4px;color:#fff;cursor:pointer;transition:all .1s;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:600;white-space:nowrap;line-height:1.1;font-size:clamp(12px,3.5vw,20px)}
+.transport button:active{transform:scale(.95);background:#3a3a3a}
+.transport button:disabled{opacity:.3;cursor:not-allowed}
+.transport button.rec{background:#7f1d1d;border-color:#991b1b}
+.transport button.rec.active{background:#dc2626;border-color:#ef4444;animation:recPulse 1s infinite}
+@keyframes recPulse{0%,100%{opacity:1}50%{opacity:.85}}
+.transport button.play{background:#14532d;border-color:#166534}
+.transport button.loop{background:#713f12;border-color:#854d0e}
+.transport button.loop.active{background:#ca8a04;border-color:#eab308;color:#000}
+.transport button.stop{background:#450a0a;border-color:#7f1d1d}
+.btn-xl{font-size:clamp(8.4px,3.12vw,14.4px)!important;font-weight:400!important;text-transform:uppercase}
+.btn-sm{font-size:clamp(10.8px,3.15vw,18px)!important;font-weight:400!important;text-transform:uppercase}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.actions button,.actions label{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;color:#fff;font-weight:400;cursor:pointer;transition:all .1s;min-height:48px;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;line-height:1.1;font-size:clamp(7px,2.6vw,12px);padding:8px 2px;text-transform:uppercase}
+.actions button:active,.actions label:active{transform:scale(.95);background:#3a3a3a}
+.actions button:disabled{opacity:.3;cursor:not-allowed}
+.actions button.merge{background:#713f12;border-color:#854d0e}
+.actions button.bpm-sync{background:#2563eb;border-color:#3b82f6;animation:bpmPulse 2s infinite}
+.actions button.bpm-sync.active{background:#1d4ed8;box-shadow:0 0 20px rgba(37,99,235,.6)}
+.actions button.rec-mix{background:#7f1d1d;border-color:#991b1b}
+.actions button.rec-mix.active{background:#dc2626;animation:recPulse 1s infinite}
+.actions button.ad-btn{background:#166534;border-color:#15803d}
+input[type=file]{display:none}
+.status{text-align:center;color:#888;font-size:12px;margin-top:12px;min-height:18px;white-space:normal;word-wrap:break-word}
+.effects{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.effect{background:#141414;border-radius:6px;padding:12px;border:1px solid #2a2a2a}
+.effect-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:clamp(9px,2.5vw,11px);font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.effect-value{color:#fff;font-size:clamp(11px,3vw,13px);font-weight:600;white-space:nowrap}
+.effect input[type=range]{width:100%;height:5px;border-radius:3px;background:#333;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer}
+.effect input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:#fff;cursor:pointer;border:2px solid #000}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:clamp(9px,2.5vw,11px);color:#888;white-space:nowrap}
+.toggle input{width:16px;height:16px;cursor:pointer;accent-color:#fff}
+.selection-info{text-align:center;color:#666;font-size:11px;margin-top:8px;min-height:16px}
+.mode-indicator{text-align:center;color:#d97706;font-size:11px;margin-bottom:8px;min-height:16px;font-weight:600}
+.rec-indicator{display:none;align-items:center;justify-content:center;gap:10px;padding:10px;background:rgba(220,38,38,.1);border:1px solid #7f1d1d;border-radius:6px;margin-top:10px;font-size:12px;color:#f87171;font-weight:600}
+.rec-indicator.active{display:flex}
+.rec-dot{width:10px;height:10px;border-radius:50%;background:#dc2626;animation:recDotPulse 1s infinite}
+@keyframes recDotPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.rec-level{flex:1;height:6px;background:#333;border-radius:3px;overflow:hidden}
+.rec-level-bar{height:100%;background:linear-gradient(90deg,#22c55e,#eab308,#ef4444);width:0%;transition:width .05s}
+.slot-indicator{text-align:center;color:#fff;font-size:13px;font-weight:600;margin-bottom:10px;padding:8px;background:#2a2a2a;border-radius:6px;border:1px solid #3a3a3a;white-space:nowrap}
+.context-menu{position:fixed;background:#1a1a1a;border:1px solid #3a3a3a;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.5);z-index:1000;display:none;min-width:150px}
+.context-menu.active{display:block}
+.context-menu-item{padding:10px 16px;cursor:pointer;font-size:13px;color:#e0e0e0;text-transform:uppercase;font-weight:400}
+.context-menu-item:hover{background:#2a2a2a}
+.context-menu-item.disabled{opacity:.3;cursor:not-allowed}
+.zoom-row{display:flex;justify-content:center;gap:8px;align-items:center;margin-top:8px}
 </style>
 </head>
 <body>
@@ -162,25 +116,28 @@ input[type=file] { display: none; }
     <div class="header-center">
       <span class="header-title">SAMPLER HENDRIX 5.0</span>
       <div class="about-row">
-        <button class="icon-btn" id="undoBtn" onclick="undo()" disabled title="Undo">←</button>
-        <button class="about-btn" id="aboutBtn" onclick="openAbout()"><span data-i18n="about">О ПРОГРАММЕ</span></button>
-        <button class="icon-btn" id="redoBtn" onclick="redo()" disabled title="Redo">→</button>
+        <button class="icon-btn" id="undoBtn" onclick="undo()" disabled>←</button>
+        <button class="about-btn" onclick="openAbout()"><span data-i18n="about">О ПРОГРАММЕ</span></button>
+        <button class="icon-btn" id="redoBtn" onclick="redo()" disabled>→</button>
       </div>
     </div>
   </div>
-  
   <div class="modal-overlay" id="aboutModal">
     <div class="modal">
-      <div class="modal-header">
-        <div class="modal-title" id="modalTitle"><span data-i18n="aboutTitle">О SAMPLER HENDRIX 5.0</span></div>
-        <div class="modal-controls"><button class="close-btn" onclick="closeAbout()">×</button></div>
-      </div>
+      <div class="modal-header"><div class="modal-title"><span data-i18n="aboutTitle">О SAMPLER HENDRIX 5.0</span></div><button class="close-btn" onclick="closeAbout()">×</button></div>
       <div class="modal-content" id="modalContent"></div>
     </div>
   </div>
-
   <div class="panel">
+    <div style="display:flex;justify-content:center;margin-bottom:8px;">
+      <button id="viewModeBtn" class="icon-btn" style="width:100%;padding:8px;font-size:14px;font-weight:700;text-transform:uppercase;text-align:center;" onclick="toggleViewMode()"><span data-i18n="sample">СЕМПЛ</span></button>
+    </div>
     <canvas id="wave"></canvas>
+    <div class="zoom-row">
+      <button class="icon-btn" onclick="changeZoom(-0.1)">➖</button>
+      <span id="zoomVal" style="font-size:12px;color:#888;min-width:50px;text-align:center;">100%</span>
+      <button class="icon-btn" onclick="changeZoom(0.1)">➕</button>
+    </div>
     <div class="selection-info" id="selInfo"><span data-i18n="tapDrag">Нажмите и перетащите для выбора</span></div>
   </div>
   <div class="panel">
@@ -191,36 +148,32 @@ input[type=file] { display: none; }
     <div class="transport">
       <button id="recBtn" class="rec">●</button>
       <button id="playBtn" class="play" disabled>▶</button>
-      <button id="loopBtn" class="loop" disabled><span data-i18n="loop">ЦИКЛ</span></button>
+      <button id="loopBtn" class="loop btn-sm" disabled><span data-i18n="loop">ЦИКЛ</span></button>
       <button id="stopBtn" class="stop" disabled>■</button>
     </div>
-    <div class="rec-indicator" id="recIndicator">
-      <div class="rec-dot"></div>
-      <span id="recTime">0:00</span>
-      <div class="rec-level"><div class="rec-level-bar" id="recLevel"></div></div>
-    </div>
+    <div class="rec-indicator" id="recIndicator"><div class="rec-dot"></div><span id="recTime">0:00</span><div class="rec-level"><div class="rec-level-bar" id="recLevel"></div></div></div>
     <div class="actions">
-      <label for="fileInput" id="loadBtn">📂 <span data-i18n="load">Загрузить</span></label>
+      <label for="fileInput" id="loadBtn" class="btn-xl">📂  <span data-i18n="load">Загрузить</span></label>
       <input type="file" id="fileInput" accept="audio/*">
-      <button id="trimBtn" disabled>✂ <span data-i18n="chop">Обрезать</span></button>
-      <button id="resetBtn" disabled>↺ <span data-i18n="reset">Сброс</span></button>
-      <button id="exportBtn" disabled>💾 <span data-i18n="save">Сохранить</span></button>
-      <button id="recMixBtn" class="rec-mix">⏺ <span data-i18n="recMix">Запись микса</span></button>
-      <button id="mergeBtn" class="merge" disabled>🔗 <span data-i18n="merge">Объединить</span></button>
-      <button id="clearBtn" disabled>🗑 <span data-i18n="clear">Очистить</span></button>
-      <button id="selectModeBtn">✓ <span data-i18n="select">Выбрать</span></button>
-      <button id="adBtn" class="ad-btn" onclick="unlockNextSlot()">🎁 <span data-i18n="bonus">Бонус</span></button>
+      <button id="trimBtn" class="btn-xl" disabled>✂  <span data-i18n="chop">Обрезать</span></button>
+      <button id="resetBtn" class="btn-xl" disabled>↺  <span data-i18n="reset">Сброс</span></button>
+      <button id="exportBtn" class="btn-xl" disabled>💾  <span data-i18n="save">Сохранить</span></button>
+      <button id="recMixBtn" class="rec-mix btn-xl">⏺  <span data-i18n="recMix">Запись микса</span></button>
+      <button id="mergeBtn" class="merge btn-xl" disabled>🔗  <span data-i18n="merge">Объединить</span></button>
+      <button id="bpmSyncBtn" class="bpm-sync btn-xl" onclick="toggleBpmSync()">🎵  <span data-i18n="bpmSync">СИНХ BPM</span></button>
+      <button id="clearBtn" class="btn-xl" disabled>🗑  <span data-i18n="clear">Очистить</span></button>
+      <button id="adBtn" class="ad-btn btn-xl" onclick="unlockNextSlot()">🎁  <span data-i18n="bonus">Бонус</span></button>
     </div>
     <div class="status" id="status"><span data-i18n="loadOrRecord">Загрузите аудио или запишите</span></div>
   </div>
   <div class="panel">
     <div class="slot-indicator" id="slotIndicator"><span data-i18n="slot">Слот</span> 1</div>
     <div class="effects">
-      <div class="effect"><div class="effect-label"><span data-i18n="tempo">Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="2" step="0.01" value="1"></div>
+      <div class="effect"><div class="effect-label"><span data-i18n="tempo">Темп</span><span class="effect-value" id="tempoVal">1.00x</span></div><input type="range" id="tempo" min="0.25" max="4" step="0.01" value="1"></div>
       <div class="effect"><div class="effect-label"><span data-i18n="pitch">Тон</span><span class="effect-value" id="pitchVal">0 ct</span></div><input type="range" id="pitch" min="-1200" max="1200" step="1" value="0"></div>
       <div class="effect"><div class="effect-label"><span data-i18n="volume">Громкость</span><span class="effect-value" id="volVal">100%</span></div><input type="range" id="vol" min="0" max="1" step="0.01" value="1"></div>
       <div class="effect"><div class="effect-label"><span data-i18n="pan">Панорама</span><span class="effect-value" id="panVal">C</span></div><input type="range" id="pan" min="-1" max="1" step="0.01" value="0"></div>
-      <div class="effect"><div class="effect-label"><span data-i18n="filter">Фильтр</span><span class="effect-value" id="filtVal"><span data-i18n="off">Выкл</span></span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn" id="filtOnLabel">LPF</label></div></div>
+      <div class="effect"><div class="effect-label"><span data-i18n="filter">Фильтр</span><span class="effect-value" id="filtVal"><span data-i18n="off">Выкл</span></span></div><input type="range" id="filt" min="100" max="16000" step="100" value="1000"><div class="toggle"><input type="checkbox" id="filtOn"><label for="filtOn">LPF</label></div></div>
       <div class="effect"><div class="effect-label"><span data-i18n="distortion">Дисторшн</span><span class="effect-value" id="distVal">0</span></div><input type="range" id="dist" min="0" max="100" step="1" value="0"></div>
       <div class="effect"><div class="effect-label"><span data-i18n="delay">Задержка</span><span class="effect-value" id="delVal">0 ms</span></div><input type="range" id="del" min="0" max="1000" step="10" value="0"></div>
       <div class="effect"><div class="effect-label"><span data-i18n="reverb">Реверб</span><span class="effect-value" id="revVal">0%</span></div><input type="range" id="rev" min="0" max="1" step="0.01" value="0"></div>
@@ -229,785 +182,529 @@ input[type=file] { display: none; }
     </div>
   </div>
 </div>
-
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item" onclick="ctxCopy()" data-i18n="copy">Копировать</div>
+  <div class="context-menu-item" onclick="ctxPaste()" data-i18n="paste">Вставить</div>
+  <div class="context-menu-item" onclick="ctxDelete()" data-i18n="delete">Удалить</div>
+  <div class="context-menu-item" onclick="ctxMove()" data-i18n="move">Двигать</div>
+</div>
 <script>
-let currentLang = localStorage.getItem('samplerLang') || 'ru';
-let unlockedSlots = [true, true, true, true, true, false, false, false, false, false];
-let isAdReady = false;
+let currentLang=localStorage.getItem('samplerLang')||'ru';
+let unlockedSlots=[true,true,true,true,true,false,false,false,false,false];
+let isAdReady=false;
+let viewMode='sample';
+let viewZoom=1.0;
+let patternClipboard=null;
+let selectedPatternSlot=-1;
+let isResizing=false,resizeSlotIndex=-1,resizeStartX=0,resizeStartVisualDuration=0;
+let initialPinchDistance=0,initialPinchTempo=1;
+let volPoints=Array(10).fill(null).map(()=>[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}]);
+let draggingVolPoint=-1;
+let isDraggingPattern=false,dragPatternSlot=-1,dragPatternStartX=0,dragPatternStartOffset=0;
+let pendingMoveSlot=-1;
+let patternLoopTimer=null;
+let patternStartTime=0;
+let bpmSyncMode=false;
+let bpmSelectFirst=-1;
 
-const translations = {
-  ru: {
-    about: 'О ПРОГРАММЕ', aboutTitle: 'О SAMPLER HENDRIX 5.0', tapDrag: 'Нажмите и перетащите для выбора', loop: 'ЦИКЛ',
-    load: 'Загрузить', chop: 'Обрезать', reset: 'Сброс', save: 'Сохранить', recMix: 'Запись микса', merge: 'Объединить',
-    clear: 'Очистить', select: 'Выбрать', cancel: 'Отмена', loadOrRecord: 'Загрузите аудио или запишите', slot: 'Слот',
-    tempo: 'Темп', pitch: 'Тон', volume: 'Громкость', pan: 'Панорама', filter: 'Фильтр', distortion: 'Дисторшн',
-    delay: 'Задержка', reverb: 'Реверб', tremolo: 'Тремоло', invert: 'Инверт', off: 'Выкл', on: 'Вкл', reverse: 'Реверс',
-    emptySlot: 'Пустой слот', selectMode: 'РЕЖИМ ВЫБОРА: Нажмите на пэды для объединения', sampleReversed: 'Сэмпл перевернут',
-    sampleRestored: 'Сэмпл восстановлен', slotCleared: 'Слот очищен', chopped: 'Обрезано', merged: 'Объединено', exported: 'Экспортировано',
-    recorded: 'Записано', loading: 'Загрузка...', processing: 'Обработка...', recording: 'Запись...', recordingMix: 'Запись микса...',
-    mixSaved: 'Микс сохранен!', selectSliceFirst: 'Сначала выберите фрагмент', invalidSelection: 'Неверный выбор',
-    notEnoughSlots: 'Недостаточно слотов', noFreeSlots: 'Нет свободных слотов', noValidSlots: 'Нет валидных слотов для экспорта',
-    micNotSupported: 'Микрофон не поддерживается', micPermissionDenied: 'Доступ к микрофону запрещен. Проверьте настройки.',
-    micError: 'Ошибка микрофона', noAudioRecorded: 'Аудио не записано', errorLoading: 'Ошибка загрузки файла',
-    errorProcessing: 'Ошибка обработки аудио', errorExport: 'Ошибка экспорта', initError: 'Ошибка инициализации',
-    loadedToSlot: 'Загружено в слот', requestMic: 'Запрос микрофона...', undo: 'Отмена', redo: 'Вернуть',
-    nothingToUndo: 'Нечего отменять', nothingToRedo: 'Нечего возвращать', bonus: 'Бонус',
-    adLoading: 'Загрузка рекламы...', adThanks: 'Спасибо за поддержку! 🎁', adUnavailable: 'Реклама недоступна. Попробуйте через пару секунд.',
-    adLoadingWait: 'Загрузка рекламы... Нажмите кнопку ещё раз через пару секунд.',
-    progressLoaded: 'Прогресс загружен из VK', progressSaved: 'Прогресс сохранен в VK', slotUnlocked: 'Слот разблокирован:',
-    allUnlocked: 'Все слоты уже открыты! 🎉', slotLockedMsg: 'Смотрите короткое видео, чтобы разблокировать этот слот',
-    modalContent: `<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера для создания музыки.</p><div class="warning"><h2>🎤 Как включить доступ к микрофону</h2><p>Если кнопка записи не работает, вам нужно разрешить доступ к микрофону:</p><h3>💻 В вашем браузере:</h3><ol><li>Нажмите на <strong>значок замка 🔒</strong> слева от адресной строки</li><li>Найдите <strong>"Микрофон"</strong> в списке разрешений</li><li>Выберите <strong>"Разрешить"</strong></li><li>Обновите страницу (F5)</li></ol><h3>📱 На мобильных устройствах:</h3><ol><li>Откройте <strong>настройки устройства</strong></li><li>Найдите раздел <strong>"Приложения"</strong></li><li>Найдите ваше <strong>приложение браузера</strong></li><li>Нажмите <strong>"Разрешения"</strong></li><li>Найдите <strong>"Микрофон"</strong></li><li>Включите переключатель (разрешить доступ)</li><li>Вернитесь в браузер и обновите страницу</li></ol></div><h2>📱 Начало работы</h2><h3>Интерфейс</h3><ul><li><strong>Верхняя панель</strong> — форма волны активного сэмпла с индикатором позиции</li><li><strong>Пэды</strong> — 10 ячеек (5×2) для хранения сэмплов</li><li><strong>Транспорт</strong> — кнопки записи/воспроизведения</li><li><strong>Действия</strong> — функции редактирования</li><li><strong>Эффекты</strong> — 10 регуляторов эффектов для каждого слота</li></ul><h2>🎯 Основные функции</h2><h3>1. Загрузка сэмплов</h3><p><strong>📂 Кнопка Загрузить:</strong></p><ul><li>Нажмите кнопку</li><li>Выберите аудиофайл (WAV, MP3, OGG)</li><li>Сэмпл загружается в активный слот (выделен белой рамкой)</li></ul><h3>2. Запись с микрофона</h3><p><strong>Красная кнопка ● REC:</strong></p><ul><li><strong>Первое нажатие:</strong> появляется запрос разрешения, разрешите доступ, кнопка становится ■ (красная, пульсирует), таймер показывает длительность</li><li><strong>Второе нажатие:</strong> запись останавливается, сэмпл загружается в активный слот</li></ul><h3>3. Воспроизведение</h3><ul><li><strong>▶️ PLAY</strong> — воспроизводит сэмпл один раз</li><li><strong>ЦИКЛ</strong> (желтая кнопка) — бесконечный цикл</li><li><strong>■ STOP</strong> — останавливает все воспроизводимые сэмплы</li></ul><h2>🎚️ Эффекты (индивидуальные для каждого слота!)</h2><p>Каждый из 10 слотов хранит свои собственные настройки.</p><table><tr><th>Эффект</th><th>Диапазон</th><th>Описание</th></tr><tr><td>Темп</td><td>0.25x — 2x</td><td>Скорость воспроизведения</td></tr><tr><td>Тон</td><td>±1200 ct</td><td>Изменяет тон/тембр без изменения скорости</td></tr><tr><td>Громкость</td><td>0 — 100%</td><td>Громкость слота</td></tr><tr><td>Панорама</td><td>L100 — C — R100</td><td>Стерео панорама</td></tr><tr><td>Фильтр</td><td>100 — 16000 Гц</td><td>Низкочастотный фильтр</td></tr><tr><td>Дисторшн</td><td>0 — 100</td><td>Искажение звука</td></tr><tr><td>Задержка</td><td>0 — 1000 мс</td><td>Эхо</td></tr><tr><td>Реверб</td><td>0 — 100%</td><td>Пространство</td></tr><tr><td>Тремоло</td><td>0 — 100%</td><td>Пульсация громкости</td></tr><tr><td>Инверт</td><td>Вкл/Выкл</td><td>Переворачивает сэмпл (воспроизводит задом наперед)</td></tr></table><h2>✂️ Расширенные функции</h2><h3>Обрезка</h3><ul><li>Выберите фрагмент на форме волны: нажмите и перетащите</li><li>Нажмите ✂️ Обрезать</li></ul><h3>Объединение</h3><ul><li>Нажмите ✓ Выбрать</li><li>Нажмите на несколько пэдов</li><li>Нажмите 🔗 Объединить</li></ul><h3>Запись живого микса</h3><p><strong>⏺️ Запись микса</strong> записывает все, что вы играете, со всеми эффектами:</p><ul><li>Первое нажатие → начинает запись</li><li>Второе нажатие → сохраняет файл как <code>smplrbot.mp3</code> (или .webm)</li></ul><div class="highlight">💡 Идеально для записи джемов!</div><h3>Сохранить (Экспорт)</h3><p><strong>💾 Сохранить</strong> объединяет все заполненные слоты в один файл <code>smplrbot.mp3</code>.</p><h2>🔴 Индикаторы</h2><ul><li><strong>Красная линия</strong> — позиция воспроизведения</li><li><strong>Зеленый фон</strong> — слот содержит сэмпл</li></ul><p><strong>Приятного творчества! 🎸</strong></p>`
-  },
-  en: {
-    about: 'ABOUT', aboutTitle: 'About SAMPLER HENDRIX 5.0', tapDrag: 'Tap and drag to select', loop: 'LOOP',
-    load: 'Load', chop: 'Chop', reset: 'Reset', save: 'Save', recMix: 'Rec Mix', merge: 'Merge',
-    clear: 'Clear', select: 'Select', cancel: 'Cancel', loadOrRecord: 'Load audio or record', slot: 'Slot',
-    tempo: 'Tempo', pitch: 'Pitch', volume: 'Volume', pan: 'Pan', filter: 'Filter', distortion: 'Distortion',
-    delay: 'Delay', reverb: 'Reverb', tremolo: 'Tremolo', invert: 'Invert', off: 'Off', on: 'On', reverse: 'Reverse',
-    emptySlot: 'Empty slot', selectMode: 'SELECT MODE: Tap pads to merge', sampleReversed: 'Sample reversed',
-    sampleRestored: 'Sample restored', slotCleared: 'Slot cleared', chopped: 'Chopped', merged: 'Merged', exported: 'Exported',
-    recorded: 'Recorded', loading: 'Loading...', processing: 'Processing...', recording: 'Recording...', recordingMix: 'Recording mix...',
-    mixSaved: 'Mix saved!', selectSliceFirst: 'Select a slice first', invalidSelection: 'Invalid selection',
-    notEnoughSlots: 'Not enough valid slots', noFreeSlots: 'No free slots', noValidSlots: 'No valid slots to export',
-    micNotSupported: 'Microphone not supported', micPermissionDenied: 'Mic permission denied. Check browser settings.',
-    micError: 'Mic Error', noAudioRecorded: 'No audio recorded', errorLoading: 'Error loading file',
-    errorProcessing: 'Error processing audio', errorExport: 'Export error', initError: 'Init error',
-    loadedToSlot: 'Loaded to slot', requestMic: 'Requesting mic...', undo: 'Undo', redo: 'Redo',
-    nothingToUndo: 'Nothing to undo', nothingToRedo: 'Nothing to redo', bonus: 'Bonus',
-    adLoading: 'Loading ad...', adThanks: 'Thanks for your support! 🎁', adUnavailable: 'Ad unavailable. Try again in a few seconds.',
-    adLoadingWait: 'Loading ad... Please tap the button again in a few seconds.',
-    progressLoaded: 'Progress loaded from VK', progressSaved: 'Progress saved to VK', slotUnlocked: 'Slot unlocked:',
-    allUnlocked: 'All slots are already unlocked! 🎉', slotLockedMsg: 'Watch a short video to unlock this slot',
-    modalContent: `<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler for music creation.</p><div class="warning"><h2>🎤 How to Enable Microphone Access</h2><p>If the record button doesn't work, you need to allow microphone access:</p><h3>💻 In Your Browser:</h3><ol><li>Click the <strong>lock icon 🔒</strong> left of the address bar in your browser</li><li>Find <strong>"Microphone"</strong> in the permissions list</li><li>Select <strong>"Allow"</strong></li><li>Refresh the page (F5)</li></ol><h3>📱 On Mobile Devices:</h3><ol><li>Open your <strong>device settings</strong></li><li>Find <strong>"Apps"</strong> or <strong>"Applications"</strong> section</li><li>Find your <strong>browser app</strong> in the list</li><li>Tap <strong>"Permissions"</strong></li><li>Find <strong>"Microphone"</strong></li><li>Enable the toggle (allow access)</li><li>Return to the browser and refresh the page</li></ol></div><h2>📱 Getting Started</h2><h3>Interface</h3><ul><li><strong>Top panel</strong> — active sample waveform with position indicator</li><li><strong>Pads</strong> — 10 cells (5×2) for storing samples</li><li><strong>Transport</strong> — record/playback buttons</li><li><strong>Actions</strong> — editing functions</li><li><strong>Effects</strong> — 10 effect knobs for each slot</li></ul><h2>🎯 Main Features</h2><h3>1. Loading Samples</h3><p><strong>📂 Load button:</strong></p><ul><li>Click the button</li><li>Select audio file (WAV, MP3, OGG)</li><li>Sample loads into active slot (highlighted with white border)</li></ul><h3>2. Microphone Recording</h3><p><strong>Red ● REC button:</strong></p><ul><li><strong>First press:</strong> permission request appears, allow access, button turns ■ (red, pulsing), timer shows duration</li><li><strong>Second press:</strong> recording stops, sample loads into active slot</li></ul><h3>3. Playback</h3><ul><li><strong>▶️ PLAY</strong> — plays sample once</li><li><strong>LOOP</strong> (yellow button) — infinite loop</li><li><strong>■ STOP</strong> — stops all playing samples</li></ul><h2>🎚️ Effects (Individual for Each Slot!)</h2><p>Each of the 10 slots stores its own settings.</p><table><tr><th>Effect</th><th>Range</th><th>Description</th></tr><tr><td>Tempo</td><td>0.25x — 2x</td><td>Playback speed</td></tr><tr><td>Pitch</td><td>±1200 ct</td><td>Changes pitch/timbre without changing speed</td></tr><tr><td>Volume</td><td>0 — 100%</td><td>Slot volume</td></tr><tr><td>Pan</td><td>L100 — C — R100</td><td>Stereo panorama</td></tr><tr><td>Filter</td><td>100 — 16000 Hz</td><td>Low-pass filter</td></tr><tr><td>Distortion</td><td>0 — 100</td><td>Sound distortion</td></tr><tr><td>Delay</td><td>0 — 1000 ms</td><td>Echo</td></tr><tr><td>Reverb</td><td>0 — 100%</td><td>Space</td></tr><tr><td>Tremolo</td><td>0 — 100%</td><td>Volume pulsation</td></tr><tr><td>Invert</td><td>On/Off</td><td>Reverses the sample (plays backwards)</td></tr></table><h2>✂️ Advanced Features</h2><h3>Chop</h3><ul><li>Select fragment on waveform: tap and drag</li><li>Click ✂️ Chop</li></ul><h3>Merge</h3><ul><li>Click ✓ Select</li><li>Tap multiple pads</li><li>Click 🔗 Merge</li></ul><h3>Live Mix Recording</h3><p><strong>⏺️ Rec Mix</strong> records everything you play with all effects:</p><ul><li>First tap → starts recording</li><li>Second tap → saves file as <code>smplrbot.mp3</code></li></ul><div class="highlight">💡 Perfect for recording jams!</div><h3>Save (Export)</h3><p><strong>💾 Save</strong> combines all filled slots into one file <code>smplrbot.mp3</code>.</p><h2>🔴 Indicators</h2><ul><li><strong>Red line</strong> — playback position</li><li><strong>Green background</strong> — slot contains sample</li></ul><p><strong>Happy creating! 🎸</strong></p>`
-  }
+const translations={
+ru:{about:'О ПРОГРАММЕ',aboutTitle:'О SAMPLER HENDRIX 5.0',sample:'СЕМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Запись микса...',selectSliceFirst:'Сначала выберите фрагмент',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:'Выберите первую дорожку',bpmSelect2:'Выберите вторую дорожку',bpmSynced:'BPM синхронизировано',bpmCalculated:'BPM дорожки ',modalContent:'<h1>️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li></ul><h2>🎹 Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ меняют масштаб от 10% до 1000%.</li><li><strong>Красный курсор:</strong> показывает текущую позицию воспроизведения.</li></ul><h2>🎵 СИНХ BPM</h2><p>Нажмите кнопку <strong>🎵 СИНХ BPM</strong> (синяя пульсирующая):</p><ol><li>Выберите первую дорожку (подсветка синим)</li><li>Выберите вторую дорожку (подсветка фиолетовым)</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой</li></ol><h2> Громкость</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
+en:{about:'ABOUT',aboutTitle:'About SAMPLER HENDRIX 5.0',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Recording mix...',selectSliceFirst:'Select a slice first',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! ',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:'Select first track',bpmSelect2:'Select second track',bpmSynced:'BPM synchronized',bpmCalculated:'Track BPM ',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2>🎤 Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon 🔒) or device settings.</p></div><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li></ul><h2> Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons scale the timeline from 10% to 1000%.</li><li><strong>Red cursor:</strong> shows current playback position.</li></ul><h2> SYNC BPM</h2><p>Click <strong>🎵 SYNC BPM</strong> button (blue pulsing):</p><ol><li>Select first track (blue highlight)</li><li>Select second track (purple highlight)</li><li>BPM of both samples is automatically calculated</li><li>Second track is synchronized with first</li></ol><h2> Volume</h2><p>Drag 7 points on the polyline to automate volume.</p><p><strong>Happy creating! 🎸</strong></p>'}
 };
+function t(k){return translations[currentLang][k]||k}
+function applyTranslations(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});$('langBtn').textContent=currentLang==='ru'?'RU':'EN';$('modalContent').innerHTML=t('modalContent');updateViewModeBtn()}
+function toggleLang(){currentLang=currentLang==='ru'?'en':'ru';localStorage.setItem('samplerLang',currentLang);applyTranslations()}
+function updateViewModeBtn(){$('viewModeBtn').innerHTML=viewMode==='sample'?t('sample'):t('pattern')}
+function toggleViewMode(){viewMode=viewMode==='sample'?'pattern':'sample';selectedPatternSlot=-1;pendingMoveSlot=-1;updateViewModeBtn();drawWave();updateTransportButtons()}
+function changeZoom(d){viewZoom=Math.max(0.1,Math.min(10,viewZoom+d));$('zoomVal').textContent=Math.round(viewZoom*100)+'%';drawWave()}
 
-function t(key) { return translations[currentLang][key] || key; }
+const $=id=>document.getElementById(id);
+const canvas=$('wave'),ctx=canvas.getContext('2d');
+let audioCtx,slots=Array(10).fill(null),activeSlot=0;
+let selection=null,isDragging=false,dragStart=0;
+let currentSourceId=0,isLooping=false;
+const MAX_HISTORY=5;
+let history=Array(10).fill(null).map(()=>[]),redoHistory=Array(10).fill(null).map(()=>[]);
+let slotSettings=Array(10).fill(null).map(()=>({tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0}));
+let isRecording=false,recStream=null,recMediaRecorder=null,recChunks=[],recStartTime=0,recTimerInterval=null;
+let isRecordingMix=false,mixRecorder=null,mixStreamDest=null,mixChunks=[],mixStartTime=0,mixTimerInterval=null;
+const activeChains=new Map();let rafId=null;
 
-function applyTranslations() {
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    el.textContent = t(key);
-  });
-  document.getElementById('langBtn').textContent = currentLang === 'ru' ? 'RU' : 'EN';
-  document.getElementById('modalContent').innerHTML = t('modalContent');
-  $('undoBtn').title = t('undo');
-  $('redoBtn').title = t('redo');
+function cloneBuffer(b){if(!b||!audioCtx)return null;const n=audioCtx.createBuffer(b.numberOfChannels,b.length,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++)n.getChannelData(c).set(b.getChannelData(c));return n}
+function pushHistory(i){const b=slots[i];if(!b)return;history[i].push(cloneBuffer(b));if(history[i].length>MAX_HISTORY)history[i].shift();redoHistory[i]=[];updUndoRedo()}
+function undo(){if(!history[activeSlot].length){setStatus(t('nothingToUndo'));return}const c=slots[activeSlot];if(c)redoHistory[activeSlot].push(cloneBuffer(c));slots[activeSlot]=history[activeSlot].pop();updUndoRedo();drawWave();updatePads();setStatus(t('undo'))}
+function redo(){if(!redoHistory[activeSlot].length){setStatus(t('nothingToRedo'));return}const c=slots[activeSlot];if(c){history[activeSlot].push(cloneBuffer(c));if(history[activeSlot].length>MAX_HISTORY)history[activeSlot].shift()}slots[activeSlot]=redoHistory[activeSlot].pop();updUndoRedo();drawWave();updatePads();setStatus(t('redo'))}
+function updUndoRedo(){$('undoBtn').disabled=!history[activeSlot].length;$('redoBtn').disabled=!redoHistory[activeSlot].length}
+
+function init(){
+  const w=()=>{if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100,latencyHint:'interactive'})}catch(e){};if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()};
+  window.addEventListener('pointerdown',w);window.addEventListener('touchstart',w,{passive:true});
+  initPads();loadSlotSettings(activeSlot);updateTransportButtons();applyTranslations();updUndoRedo();resizeCanvas();
 }
+function ensureCtx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100});if(audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
+function loadSlotSettings(i){const s=slotSettings[i];$('tempo').value=s.tempo;$('pitch').value=s.pitch;$('vol').value=s.vol;$('pan').value=s.pan;$('filt').value=s.filt;$('filtOn').checked=s.filtOn;$('dist').value=s.dist;$('del').value=s.del;$('rev').value=s.rev;$('trem').value=s.trem;$('invertOn').checked=s.invert;updateLabelsUI();$('slotIndicator').innerHTML=t('slot')+' '+(i+1)}
+function saveCurrentSettings(){slotSettings[activeSlot]={tempo:+$('tempo').value,pitch:+$('pitch').value,vol:+$('vol').value,pan:+$('pan').value,filt:+$('filt').value,filtOn:$('filtOn').checked,dist:+$('dist').value,del:+$('del').value,rev:+$('rev').value,trem:+$('trem').value,invert:$('invertOn').checked,offset:slotSettings[activeSlot].offset}}
 
-function toggleLang() {
-  currentLang = currentLang === 'ru' ? 'en' : 'ru';
-  localStorage.setItem('samplerLang', currentLang);
-  applyTranslations();
-  saveProgressToVK();
-}
-
-function checkAdReadiness() {
-  if (!window.vkBridge) return;
-  window.vkBridge.send('VKWebAppCheckNativeAds', { ad_format: 'reward' })
-    .then((data) => { isAdReady = data.result; })
-    .catch((error) => { isAdReady = false; });
-}
-
-function unlockNextSlot() {
-  if (!window.vkBridge) { setStatus("Разблокировка доступна только внутри VK"); return; }
-  const lockedIndex = unlockedSlots.findIndex(isUnlocked => !isUnlocked);
-  if (lockedIndex === -1) { setStatus(t('allUnlocked')); return; }
-  if (!isAdReady) { setStatus(t('adLoadingWait')); checkAdReadiness(); return; }
-  setStatus(t('adLoading'));
-  window.vkBridge.send('VKWebAppShowNativeAds', { ad_format: 'reward' })
-    .then((data) => {
-      if (data.result) {
-        unlockedSlots[lockedIndex] = true;
-        saveProgressToVK(); updatePads();
-        setStatus(t('slotUnlocked') + ' ' + (lockedIndex + 1));
-        setTimeout(checkAdReadiness, 2000);
-      } else { setStatus(t('adUnavailable')); checkAdReadiness(); }
-    })
-    .catch((error) => { setStatus(t('adUnavailable')); checkAdReadiness(); });
-}
-
-async function saveFileToDevice(blob, filename) {
-  setStatus(t('processing'));
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
-  try {
-    if (window.vkBridge) {
-      const url = URL.createObjectURL(blob);
-      try {
-        const res = await window.vkBridge.send('VKWebAppDownloadFile', { url: url, filename: filename });
-        URL.revokeObjectURL(url);
-        if (res && res.result) { setStatus(t('exported')); return true; }
-      } catch (vkErr) {
-        console.warn('VKWebAppDownloadFile failed, trying fallbacks', vkErr);
-        URL.revokeObjectURL(url);
-      }
+function initPads(){const c=$('pads');c.innerHTML='';for(let i=0;i<10;i++){const p=document.createElement('div');p.className='pad';p.innerHTML=`<div class="pad-num">${i+1}</div><div class="pad-duration"></div><div class="lock-icon">🔒</div>`;p.addEventListener('click',()=>handlePadClick(i));c.appendChild(p)}updatePads()}
+function handlePadClick(i){
+  if(!unlockedSlots[i]){unlockNextSlot();return}
+  if(bpmSyncMode){
+    if(bpmSelectFirst===-1){
+      bpmSelectFirst=i;
+      document.querySelectorAll('.pad')[i].classList.add('bpm-select1');
+      setStatus(t('bpmSelect2'));
+    } else if(bpmSelectFirst!==i){
+      document.querySelectorAll('.pad')[i].classList.add('bpm-select2');
+      syncBPM(bpmSelectFirst,i);
+      bpmSelectFirst=-1;
+      bpmSyncMode=false;
+      $('bpmSyncBtn').classList.remove('active');
+      updatePads();
     }
-
-    if (navigator.share && navigator.canShare) {
-      const file = new File([blob], filename, { type: blob.type || 'audio/mpeg' });
-      if (navigator.canShare({ files: [file] })) {
-        try {
-          await navigator.share({ files: [file], title: 'SAMPLER HENDRIX 5.0', text: filename });
-          setStatus(t('exported')); return true;
-        } catch (shareErr) {
-          if (shareErr.name !== 'AbortError') console.warn('Web Share API failed', shareErr);
-          else { setStatus(t('loadOrRecord')); return false; }
-        }
-      }
-    }
-
-    const downloadUrl = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = downloadUrl; a.download = filename; a.style.display = 'none';
-    document.body.appendChild(a);
-    const event = new MouseEvent('click', { view: window, bubbles: true, cancelable: true });
-    a.dispatchEvent(event); document.body.removeChild(a);
-
-    if (isIOS) {
-      const statusEl = $('status');
-      statusEl.innerHTML = `iOS: <a href="${downloadUrl}" download="${filename}" target="_blank">Нажмите и удерживайте здесь → Сохранить в Файлы</a>`;
-      setTimeout(() => { statusEl.textContent = t('loadOrRecord'); URL.revokeObjectURL(downloadUrl); }, 15000);
-    } else {
-      setTimeout(() => URL.revokeObjectURL(downloadUrl), 5000);
-      setStatus(t('exported'));
-    }
-    return true;
-  } catch (err) {
-    console.error('Save error:', err);
-    setStatus(t('errorExport') + ': ' + err.message);
-    return false;
+    return;
   }
-}
-
-function saveProgressToVK() {
-  if (!window.vkBridge) return;
-  const progressData = {
-    settings: slotSettings, activeSlot: activeSlot, lang: currentLang, unlockedSlots: unlockedSlots,
-    slotStatus: slots.map(s => s ? { duration: s.duration, sampleRate: s.sampleRate } : null)
-  };
-  window.vkBridge.send("VKWebAppStorageSet", { key: "sampler_hendrix_progress_v3", value: JSON.stringify(progressData) })
-    .catch(err => console.error("Failed to save progress:", err));
-}
-
-function loadProgressFromVK() {
-  if (!window.vkBridge) return;
-  window.vkBridge.send("VKWebAppStorageGet", { key: "sampler_hendrix_progress_v3" })
-    .then(res => {
-      if (res.value) {
-        try {
-          const data = JSON.parse(res.value);
-          if (data.settings) slotSettings = data.settings;
-          if (data.activeSlot !== undefined) activeSlot = data.activeSlot;
-          if (data.lang) { currentLang = data.lang; localStorage.setItem('samplerLang', currentLang); }
-          if (data.unlockedSlots && Array.isArray(data.unlockedSlots) && data.unlockedSlots.length === 10) {
-            unlockedSlots = data.unlockedSlots;
-          }
-          loadSlotSettings(activeSlot); applyTranslations(); updatePads();
-          setStatus(t('progressLoaded'));
-        } catch (e) { console.error("Error parsing VK progress:", e); }
-      }
-    })
-    .catch(err => console.log("No saved progress or error:", err));
-}
-
-if (window.vkBridge) {
-  window.vkBridge.send('VKWebAppInit').then(() => {
-    window.vkBridge.send('VKWebAppResizeWindow', { width: window.innerWidth, height: window.innerHeight });
-    checkAdReadiness(); setInterval(checkAdReadiness, 30000);
-  });
-}
-
-function openAbout() { document.getElementById('aboutModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
-function closeAbout() { document.getElementById('aboutModal').classList.remove('active'); document.body.style.overflow = ''; }
-document.getElementById('aboutModal').addEventListener('click', (e) => { if (e.target.id === 'aboutModal') closeAbout(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.getElementById('aboutModal').classList.contains('active')) closeAbout(); });
-
-const $ = id => document.getElementById(id);
-const canvas = $('wave'), ctx = canvas.getContext('2d');
-
-let audioCtx;
-let slots = Array(10).fill(null);
-let activeSlot = 0;
-let selection = null, isDragging = false, dragStart = 0;
-let selectMode = false;
-let selectedSlots = new Set();
-let currentSourceId = 0;
-let isLooping = false;
-
-const MAX_HISTORY = 5;
-let history = Array(10).fill(null).map(() => []);
-let redoHistory = Array(10).fill(null).map(() => []);
-
-function cloneBuffer(buf) {
-  if (!buf) return null;
-  const newBuf = audioCtx.createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
-  for (let c = 0; c < buf.numberOfChannels; c++) newBuf.getChannelData(c).set(buf.getChannelData(c));
-  return newBuf;
-}
-
-function pushHistory(slotIndex) {
-  const currentBuf = slots[slotIndex];
-  if (!currentBuf) return;
-  history[slotIndex].push(cloneBuffer(currentBuf));
-  if (history[slotIndex].length > MAX_HISTORY) history[slotIndex].shift();
-  redoHistory[slotIndex] = [];
-  updateUndoRedoButtons();
-}
-
-function undo() {
-  const slotIdx = activeSlot;
-  if (history[slotIdx].length === 0) { setStatus(t('nothingToUndo')); return; }
-  const currentBuf = slots[slotIdx];
-  if (currentBuf) redoHistory[slotIdx].push(cloneBuffer(currentBuf));
-  slots[slotIdx] = history[slotIdx].pop();
-  updateUndoRedoButtons(); drawWave(); updatePads(); setStatus(t('undo')); saveProgressToVK();
-}
-
-function redo() {
-  const slotIdx = activeSlot;
-  if (redoHistory[slotIdx].length === 0) { setStatus(t('nothingToRedo')); return; }
-  const currentBuf = slots[slotIdx];
-  if (currentBuf) {
-    history[slotIdx].push(cloneBuffer(currentBuf));
-    if (history[slotIdx].length > MAX_HISTORY) history[slotIdx].shift();
+  if(pendingMoveSlot>=0&&viewMode==='pattern'){
+    if(i!==pendingMoveSlot){performMove(pendingMoveSlot,i)}
+    pendingMoveSlot=-1;
+    return;
   }
-  slots[slotIdx] = redoHistory[slotIdx].pop();
-  updateUndoRedoButtons(); drawWave(); updatePads(); setStatus(t('redo')); saveProgressToVK();
+  saveCurrentSettings();activeSlot=i;selection=null;selectedPatternSlot=-1;loadSlotSettings(i);updatePads();drawWave();updateTransportButtons();updUndoRedo()
+}
+function updatePads(){
+  document.querySelectorAll('.pad').forEach((p,i)=>{
+    p.classList.remove('active','loaded','selected','playing','locked','bpm-select1','bpm-select2');
+    if(!unlockedSlots[i])p.classList.add('locked');
+    if(slots[i]){
+      p.classList.add('loaded');
+      p.querySelector('.pad-duration').textContent=(slots[i].duration/slotSettings[i].tempo).toFixed(1)+'s'
+    }else p.querySelector('.pad-duration').textContent='';
+    if(i===activeSlot)p.classList.add('active');
+    if(activeChains.has(i))p.classList.add('playing')
+  })
+}
+function updateTransportButtons(){
+  let hasAudio=false;
+  if(viewMode==='sample'){hasAudio=slots[activeSlot]!==null}
+  else{hasAudio=slots.some(s=>s!==null)}
+  ['playBtn','loopBtn','stopBtn','trimBtn','resetBtn','exportBtn','clearBtn'].forEach(id=>$(id).disabled=!hasAudio);
+}
+function resizeCanvas(){const r=canvas.getBoundingClientRect();if(r.width>0&&r.height>0){canvas.width=r.width;canvas.height=r.height;drawWave()}}
+window.addEventListener('resize',resizeCanvas);
+
+function showCtx(x,y){const m=$('contextMenu');m.style.left=x+'px';m.style.top=y+'px';m.classList.add('active');m.querySelector('[data-i18n="paste"]').classList.toggle('disabled',!patternClipboard)}
+function hideCtx(){$('contextMenu').classList.remove('active')}
+
+function ctxCopy(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}ensureCtx();patternClipboard={buffer:cloneBuffer(slots[selectedPatternSlot]),settings:{...slotSettings[selectedPatternSlot]},volPoints:volPoints[selectedPatternSlot].map(p=>({...p})),slot:selectedPatternSlot};setStatus(t('copied'))}
+
+function ctxPaste(){
+  hideCtx();
+  if(!patternClipboard||!patternClipboard.buffer){setStatus(t('nothingToPaste'));return}
+  ensureCtx();
+  const src=patternClipboard.slot;
+  // Ищем следующий свободный слот ПОСЛЕ исходного
+  let tgt=-1;
+  for(let i=src+1;i<10;i++){if(unlockedSlots[i]&&!slots[i]){tgt=i;break}}
+  // Если не нашли, ищем с начала
+  if(tgt===-1){for(let i=0;i<src;i++){if(unlockedSlots[i]&&!slots[i]){tgt=i;break}}}
+  if(tgt===-1){setStatus(t('noFreeSlots'));return}
+  pushHistory(tgt);
+  slots[tgt]=cloneBuffer(patternClipboard.buffer);
+  slotSettings[tgt]={...patternClipboard.settings};
+  volPoints[tgt]=patternClipboard.volPoints.map(p=>({...p}));
+  activeSlot=tgt;selectedPatternSlot=tgt;
+  loadSlotSettings(tgt);updatePads();drawWave();updateTransportButtons();
+  setStatus(t('pasted')+' '+(tgt+1));
 }
 
-function updateUndoRedoButtons() {
-  $('undoBtn').disabled = history[activeSlot].length === 0;
-  $('redoBtn').disabled = redoHistory[activeSlot].length === 0;
-}
+function ctxDelete(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}pushHistory(selectedPatternSlot);stopSlot(selectedPatternSlot);slots[selectedPatternSlot]=null;slotSettings[selectedPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[selectedPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];if(activeSlot===selectedPatternSlot){activeSlot=0;loadSlotSettings(0)}selectedPatternSlot=-1;updatePads();drawWave();updateTransportButtons();setStatus(t('deleted'))}
 
-let slotSettings = Array(10).fill(null).map(() => ({
-  tempo: 1, pitch: 0, vol: 1, pan: 0, filt: 1000, filtOn: false, dist: 0, del: 0, rev: 0, trem: 0, invert: false
-}));
+function ctxMove(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}pendingMoveSlot=selectedPatternSlot;setStatus(t('moveSameChannel'))}
 
-let isRecording = false, recStream = null, recMediaRecorder = null;
-let recChunks = [], recStartTime = 0, recTimerInterval = null;
-let isRecordingMix = false, mixRecorder = null, mixStreamDest = null, mixChunks = [], mixStartTime = 0, mixTimerInterval = null;
-const activeChains = new Map();
-let rafId = null;
-
-function init() {
-  try {
-    const wakeUpAudio = () => {
-      if (!audioCtx) {
-        try { audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' }); } 
-        catch (e) { console.error('AudioContext error:', e); }
-      }
-      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(e => console.warn('Resume failed:', e));
-    };
-    window.addEventListener('pointerdown', wakeUpAudio, { once: false });
-    window.addEventListener('touchstart', wakeUpAudio, { once: false, passive: true });
-    window.addEventListener('click', wakeUpAudio, { once: false });
-    
-    initPads(); loadProgressFromVK(); loadSlotSettings(activeSlot);
-    updateTransportButtons(); applyTranslations(); updateUndoRedoButtons(); resizeCanvas();
-  } catch (err) { console.error('Init error:', err); setStatus(t('initError') + ': ' + err.message); }
-}
-
-function ensureCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 44100, latencyHint: 'interactive' });
-  if (audioCtx.state === 'suspended') audioCtx.resume();
-  return audioCtx;
-}
-
-function loadSlotSettings(slotIndex) {
-  const s = slotSettings[slotIndex];
-  $('tempo').value = s.tempo; $('pitch').value = s.pitch; $('vol').value = s.vol; $('pan').value = s.pan;
-  $('filt').value = s.filt; $('filtOn').checked = s.filtOn; $('dist').value = s.dist; $('del').value = s.del;
-  $('rev').value = s.rev; $('trem').value = s.trem; $('invertOn').checked = s.invert;
-  updateLabelsUI(); $('slotIndicator').innerHTML = t('slot') + ' ' + (slotIndex + 1);
-}
-
-function saveCurrentSettings() {
-  slotSettings[activeSlot] = {
-    tempo: parseFloat($('tempo').value), pitch: parseInt($('pitch').value), vol: parseFloat($('vol').value), pan: parseFloat($('pan').value),
-    filt: parseFloat($('filt').value), filtOn: $('filtOn').checked, dist: parseInt($('dist').value), del: parseFloat($('del').value),
-    rev: parseFloat($('rev').value), trem: parseFloat($('trem').value), invert: $('invertOn').checked
-  };
-  saveProgressToVK();
-}
-
-function initPads() {
-  const c = $('pads'); c.innerHTML = '';
-  for (let i = 0; i < 10; i++) {
-    const p = document.createElement('div');
-    p.className = 'pad'; p.dataset.index = i;
-    p.innerHTML = `<div class="pad-num">${i + 1}</div><div class="pad-duration"></div><div class="lock-icon">🔒</div>`;
-    p.addEventListener('click', () => handlePadClick(i));
-    c.appendChild(p);
-  }
-  updatePads();
-}
-
-function handlePadClick(i) {
-  if (!unlockedSlots[i]) { unlockNextSlot(); return; }
-  if (selectMode) {
-    if (selectedSlots.has(i)) selectedSlots.delete(i); else selectedSlots.add(i);
-    updatePads(); updateMergeButton();
+function performMove(fromSlot,toSlot){
+  if(fromSlot===toSlot)return;
+  if(!slots[fromSlot])return;
+  pushHistory(fromSlot);pushHistory(toSlot);
+  if(slots[toSlot]){
+    const tmpBuf=slots[toSlot];const tmpSet={...slotSettings[toSlot]};const tmpVol=volPoints[toSlot].map(p=>({...p}));
+    slots[toSlot]=slots[fromSlot];slotSettings[toSlot]={...slotSettings[fromSlot]};volPoints[toSlot]=volPoints[fromSlot].map(p=>({...p}));
+    slots[fromSlot]=tmpBuf;slotSettings[fromSlot]=tmpSet;volPoints[fromSlot]=tmpVol;
   } else {
-    saveCurrentSettings(); activeSlot = i; selection = null;
-    loadSlotSettings(i); updatePads(); drawWave(); updateTransportButtons(); updateUndoRedoButtons();
-    $('selInfo').textContent = slots[i] ? t('tapDrag') : t('emptySlot');
-    saveProgressToVK();
+    slots[toSlot]=slots[fromSlot];slotSettings[toSlot]={...slotSettings[fromSlot]};volPoints[toSlot]=volPoints[fromSlot].map(p=>({...p}));
+    slots[fromSlot]=null;slotSettings[fromSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[fromSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+  }
+  selectedPatternSlot=toSlot;activeSlot=toSlot;loadSlotSettings(toSlot);updatePads();drawWave();updateTransportButtons();
+  setStatus(t('moved')+' → '+(toSlot+1));
+}
+
+// BPM Sync functions
+function toggleBpmSync(){
+  bpmSyncMode=!bpmSyncMode;
+  bpmSelectFirst=-1;
+  if(bpmSyncMode){
+    $('bpmSyncBtn').classList.add('active');
+    setStatus(t('bpmSelect1'));
+  } else {
+    $('bpmSyncBtn').classList.remove('active');
+    updatePads();
   }
 }
 
-function updatePads() {
-  document.querySelectorAll('.pad').forEach((p, i) => {
-    p.classList.remove('active', 'loaded', 'selected', 'playing', 'locked');
-    if (!unlockedSlots[i]) p.classList.add('locked');
-    if (slots[i]) { p.classList.add('loaded'); p.querySelector('.pad-duration').textContent = slots[i].duration.toFixed(1) + 's'; }
-    else p.querySelector('.pad-duration').textContent = '';
-    if (i === activeSlot) p.classList.add('active');
-    if (selectedSlots.has(i)) p.classList.add('selected');
-    if (activeChains.has(i)) p.classList.add('playing');
-  });
-}
-
-function updateTransportButtons() {
-  const h = slots[activeSlot] !== null;
-  ['playBtn','loopBtn','stopBtn','trimBtn','resetBtn','exportBtn','clearBtn'].forEach(id => $(id).disabled = !h);
-}
-
-function updateMergeButton() { $('mergeBtn').disabled = selectedSlots.size < 2; }
-
-function resizeCanvas() {
-  const r = canvas.getBoundingClientRect();
-  if (r.width > 0 && r.height > 0) { canvas.width = r.width; canvas.height = r.height; drawWave(); }
-}
-window.addEventListener('resize', resizeCanvas);
-window.addEventListener('orientationchange', () => setTimeout(resizeCanvas, 100));
-
-$('fileInput').onchange = async e => {
-  const f = e.target.files[0]; if (!f) return;
-  ensureCtx(); setStatus(t('loading'));
-  const arr = await f.arrayBuffer();
-  try {
-    pushHistory(activeSlot);
-    slots[activeSlot] = await audioCtx.decodeAudioData(arr);
-    $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
-    selection = null; drawWave(); updatePads(); updateTransportButtons();
-    setStatus(t('loadedToSlot') + ' ' + (activeSlot + 1));
-    saveProgressToVK();
-  } catch (err) { setStatus(t('errorLoading') + ': ' + err.message); }
-};
-
-$('recBtn').addEventListener('click', async function(e) {
-  try {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { setStatus(t('micNotSupported')); return; }
-    if (isRecording) { stopRecording(); return; }
-    ensureCtx(); setStatus(t('requestMic'));
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } }).catch(() => navigator.mediaDevices.getUserMedia({ audio: true }));
-    recStream = stream; recChunks = [];
-    recMediaRecorder = new MediaRecorder(stream);
-    recMediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) recChunks.push(e.data); };
-    recMediaRecorder.onstop = async () => {
-      if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-      if (recChunks.length === 0) { setStatus(t('noAudioRecorded')); resetRecordingUI(); return; }
-      setStatus(t('processing'));
-      try {
-        const blob = new Blob(recChunks, { type: recMediaRecorder.mimeType });
-        const arr = await blob.arrayBuffer();
-        const buffer = await audioCtx.decodeAudioData(arr);
-        pushHistory(activeSlot);
-        slots[activeSlot] = buffer;
-        $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
-        selection = null; drawWave(); updatePads(); updateTransportButtons();
-        setStatus(t('recorded') + ' ' + buffer.duration.toFixed(1) + 's');
-        saveProgressToVK();
-      } catch (err) { setStatus(t('errorProcessing') + ': ' + err.message); }
-      resetRecordingUI();
-    };
-    recMediaRecorder.start(); isRecording = true; recStartTime = Date.now();
-    $('recBtn').classList.add('active'); $('recBtn').textContent = '■';
-    $('recIndicator').classList.add('active'); setStatus(t('recording'));
-    recTimerInterval = setInterval(updateRecTimer, 100);
-  } catch (err) {
-    if (err.name === 'NotAllowedError') setStatus(t('micPermissionDenied'));
-    else setStatus(t('micError') + ': ' + err.message);
-    if (recStream) { recStream.getTracks().forEach(t => t.stop()); recStream = null; }
-    resetRecordingUI();
+function detectBPM(slotIndex){
+  const buf=slots[slotIndex];
+  if(!buf)return 0;
+  // Downsample to ~4kHz
+  const data=buf.getChannelData(0);
+  const step=Math.floor(buf.sampleRate/4000);
+  const downsampled=[];
+  for(let i=0;i<data.length;i+=step){
+    downsampled.push(Math.abs(data[i]));
   }
-});
-
-function stopRecording() {
-  if (!isRecording) return;
-  if (recTimerInterval) { clearInterval(recTimerInterval); recTimerInterval = null; }
-  if (recMediaRecorder && recMediaRecorder.state !== 'inactive') { try { recMediaRecorder.stop(); } catch(e) {} }
-}
-
-function resetRecordingUI() {
-  isRecording = false;
-  $('recBtn').classList.remove('active'); $('recBtn').textContent = '●';
-  $('recIndicator').classList.remove('active');
-  $('recTime').textContent = '0:00'; $('recLevel').style.width = '0%';
-  recChunks = []; recMediaRecorder = null;
-}
-
-function updateRecTimer() {
-  const e = Math.floor((Date.now() - recStartTime) / 1000);
-  $('recTime').textContent = Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0');
-}
-
-$('recMixBtn').onclick = async () => {
-  ensureCtx(); await audioCtx.resume();
-  if (!isRecordingMix) await startRecordingMix(); else await stopRecordingMix();
-};
-
-async function startRecordingMix() {
-  try {
-    mixStreamDest = audioCtx.createMediaStreamDestination(); mixChunks = [];
-    activeChains.forEach(d => d.chain.outputGain.connect(mixStreamDest));
-    let mt = '';
-    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mt = 'audio/webm;codecs=opus';
-    else if (MediaRecorder.isTypeSupported('audio/webm')) mt = 'audio/webm';
-    else if (MediaRecorder.isTypeSupported('audio/mp4')) mt = 'audio/mp4';
-    
-    mixRecorder = new MediaRecorder(mixStreamDest.stream, mt ? { mimeType: mt } : undefined);
-    mixRecorder.ondataavailable = e => { if (e.data.size > 0) mixChunks.push(e.data); };
-    mixRecorder.start(100); isRecordingMix = true; mixStartTime = Date.now();
-    $('recMixBtn').classList.add('active'); $('recMixBtn').textContent = '■ ' + t('save');
-    setStatus(t('recordingMix'));
-    mixTimerInterval = setInterval(() => {
-      const e = Math.floor((Date.now() - mixStartTime) / 1000);
-      setStatus(t('recordingMix') + ': ' + Math.floor(e/60) + ':' + (e%60).toString().padStart(2,'0'));
-    }, 100);
-  } catch (err) { console.error('Mix recording error:', err); setStatus(t('micError') + ': ' + err.message); }
-}
-
-async function stopRecordingMix() {
-  if (!isRecordingMix) return;
-  if (mixTimerInterval) { clearInterval(mixTimerInterval); mixTimerInterval = null; }
-  activeChains.forEach(d => { try { d.chain.outputGain.disconnect(mixStreamDest); } catch(e){} });
-  
-  mixRecorder.onstop = async () => {
-    if (mixChunks.length === 0) { setStatus(t('noAudioRecorded')); resetMixRecordingUI(); return; }
-    setStatus(t('processing'));
-    try {
-      const rawBlob = new Blob(mixChunks, { type: mixRecorder.mimeType || 'audio/webm' });
-      
-      // ЗАЩИТА ОТ "МУСОРНЫХ" ФАЙЛОВ: если сырой блоб слишком маленький, это ошибка записи
-      if (rawBlob.size < 5000) {
-         throw new Error("Запись слишком короткая или повреждена");
+  // Find peaks (threshold 40% of max, min gap 200ms = 800 samples at 4kHz)
+  const maxAmp=Math.max(...downsampled);
+  const threshold=maxAmp*0.4;
+  const minGap=Math.floor(4000*0.2); // 200ms at 4kHz
+  const peaks=[];
+  let lastPeak=-minGap;
+  for(let i=1;i<downsampled.length-1;i++){
+    if(downsampled[i]>threshold&&downsampled[i]>downsampled[i-1]&&downsampled[i]>downsampled[i+1]){
+      if(i-lastPeak>=minGap){
+        peaks.push(i);
+        lastPeak=i;
       }
-
-      let finalBlob = rawBlob;
-      let filename = 'smplrbot_mix.webm'; // Надежный формат по умолчанию для Android/VK
-
-      // Попытка безопасной конвертации в MP3
-      try {
-        const arr = await rawBlob.arrayBuffer();
-        const ab = await audioCtx.decodeAudioData(arr);
-
-        // Проверка на NaN/Infinity в данных (главная причина появления "мусора" в lamejs на Android VK)
-        let hasNaN = false;
-        const ch0 = ab.getChannelData(0);
-        for(let i = 0; i < Math.min(ch0.length, 2000); i++) {
-           if (isNaN(ch0[i]) || !isFinite(ch0[i])) { hasNaN = true; break; }
-        }
-
-        if (!hasNaN && ab.length > 0) {
-           const mp3Blob = await convertToMP3(ab);
-           // Если MP3 получился нормального размера (>10KB), используем его
-           if (mp3Blob && mp3Blob.size > 10000) {
-              finalBlob = mp3Blob;
-              filename = 'smplrbot_mix.mp3';
-           }
-        }
-      } catch (e) {
-        console.warn("MP3 конвертация не удалась или данные повреждены, сохраняем оригинальный стабильный формат", e);
-      }
-
-      await saveFileToDevice(finalBlob, filename);
-    } catch (err) { 
-      console.error('Mix export error:', err);
-      setStatus(t('errorExport') + ': ' + err.message); 
     }
-    resetMixRecordingUI();
-  };
-  try { mixRecorder.stop(); } catch (err) { console.error('Error stopping mix recorder:', err); resetMixRecordingUI(); }
-}
-
-function resetMixRecordingUI() {
-  isRecordingMix = false;
-  $('recMixBtn').classList.remove('active'); $('recMixBtn').textContent = '⏺ ' + t('recMix');
-  mixChunks = []; mixStreamDest = null; mixRecorder = null;
-}
-
-async function convertToMP3(ab) {
-  const sr = ab.sampleRate, nc = ab.numberOfChannels, len = ab.length;
-  const enc = new lamejs.Mp3Encoder(nc, sr, 128);
-  const chs = []; for (let c = 0; c < nc; c++) chs.push(ab.getChannelData(c));
-  const left = f32ToI16(chs[0]);
-  const right = nc > 1 ? f32ToI16(chs[1]) : left;
-  const data = []; const bs = 1152;
-  for (let i = 0; i < len; i += bs) {
-    const b = enc.encodeBuffer(left.subarray(i, i + bs), right.subarray(i, i + bs));
-    if (b.length > 0) data.push(b);
   }
-  const end = enc.flush(); if (end.length > 0) data.push(end);
-  return new Blob(data, { type: 'audio/mp3' });
-}
-
-function f32ToI16(f) {
-  const i = new Int16Array(f.length);
-  for (let x = 0; x < f.length; x++) { 
-    const s = Math.max(-1, Math.min(1, f[x])); 
-    i[x] = s < 0 ? s * 0x8000 : s * 0x7FFF; 
+  if(peaks.length<2)return 0;
+  // Calculate intervals
+  const intervals=[];
+  for(let i=1;i<peaks.length;i++){
+    intervals.push(peaks[i]-peaks[i-1]);
   }
-  return i;
+  // Median filter to remove outliers
+  intervals.sort((a,b)=>a-b);
+  const median=intervals[Math.floor(intervals.length/2)];
+  const filtered=intervals.filter(x=>x>=median*0.5&&x<=median*1.5);
+  const avgInterval=filtered.reduce((a,b)=>a+b,0)/filtered.length;
+  // BPM = 60 / avgInterval (in seconds)
+  const bpm=60/(avgInterval/4000);
+  // Normalize to 60-180 range
+  let normalized=bpm;
+  while(normalized<60)normalized*=2;
+  while(normalized>180)normalized/=2;
+  return Math.round(normalized);
 }
 
-function createChain(ac, buffer, opts, slotIdx) {
-  const source = ac.createBufferSource();
-  source.buffer = buffer; source.loop = opts.loop;
-  source.playbackRate.value = opts.playbackRate; source.detune.value = opts.detune;
-  if (opts.loop) { source.loopStart = opts.loopStart; source.loopEnd = opts.loopEnd; }
-  const filter = ac.createBiquadFilter();
-  filter.type = 'lowpass'; filter.frequency.value = opts.filtOn ? opts.filt : 20000; filter.Q.value = 1;
-  const shaper = ac.createWaveShaper();
-  shaper.curve = makeDistortionCurve(opts.dist); shaper.oversample = '4x';
-  const delay = ac.createDelay(2); delay.delayTime.value = Math.max(0.001, opts.del / 1000);
-  const delayFb = ac.createGain(); delayFb.gain.value = 0.4;
-  const delayWet = ac.createGain(); delayWet.gain.value = opts.del > 0 ? 0.5 : 0;
-  const convolver = ac.createConvolver(); convolver.buffer = makeImpulse(ac, 2, 2);
-  const revWet = ac.createGain(); revWet.gain.value = opts.rev;
-  const revDry = ac.createGain(); revDry.gain.value = 1 - opts.rev * 0.5;
-  const tremoloGain = ac.createGain(); tremoloGain.gain.value = 1;
-  const tremoloLfo = ac.createOscillator(); tremoloLfo.frequency.value = 6; tremoloLfo.type = 'sine';
-  const tremoloDepth = ac.createGain(); tremoloDepth.gain.value = opts.trem * 0.5;
-  tremoloLfo.connect(tremoloDepth); tremoloDepth.connect(tremoloGain.gain); tremoloLfo.start();
-  const panner = ac.createStereoPanner(); panner.pan.value = opts.pan;
-  const outputGain = ac.createGain(); outputGain.gain.value = opts.vol;
-  source.connect(filter); filter.connect(shaper); shaper.connect(delay); 
-  delay.connect(delayFb); delayFb.connect(delay); delay.connect(delayWet);
-  const afterDelay = ac.createGain(); shaper.connect(afterDelay); delayWet.connect(afterDelay);
-  afterDelay.connect(convolver); convolver.connect(revWet); afterDelay.connect(revDry);
-  const afterRev = ac.createGain(); revWet.connect(afterRev); revDry.connect(afterRev);
-  afterRev.connect(tremoloGain); tremoloGain.connect(panner); panner.connect(outputGain);
-  outputGain.connect(ac.destination);
-  if (isRecordingMix && mixStreamDest) outputGain.connect(mixStreamDest);
-  const now = ac.currentTime;
-  if (opts.loop) { if (opts.offset > 0) source.start(now, opts.offset); else source.start(now); }
-  else if (opts.offset > 0 || opts.duration) { source.start(now, opts.offset, opts.duration); }
-  else { source.start(now); }
-  return { source, filter, shaper, delay, delayFb, delayWet, convolver, revWet, revDry, tremoloGain, tremoloLfo, tremoloDepth, panner, outputGain, slotIndex: slotIdx, startTime: now, offset: opts.offset || 0, bufferDuration: buffer.duration, playbackRate: opts.playbackRate, loop: opts.loop, loopStart: opts.loopStart || 0, loopEnd: opts.loopEnd || buffer.duration };
-}
-
-function updateAllChains() {
-  activeChains.forEach((data, slotIdx) => {
-    const c = data.chain; const s = slotSettings[slotIdx];
-    c.source.playbackRate.value = s.tempo; c.source.detune.value = s.pitch; c.playbackRate = s.tempo;
-    c.filter.frequency.value = s.filtOn ? s.filt : 20000;
-    c.shaper.curve = makeDistortionCurve(s.dist);
-    c.delay.delayTime.value = Math.max(0.001, s.del / 1000); c.delayWet.gain.value = s.del > 0 ? 0.5 : 0;
-    c.revWet.gain.value = s.rev; c.revDry.gain.value = 1 - s.rev * 0.5;
-    c.tremoloDepth.gain.value = s.trem * 0.5; c.panner.pan.value = s.pan; c.outputGain.gain.value = s.vol;
-  });
-}
-
-function play(loop) {
-  const buffer = slots[activeSlot]; if (!buffer) return;
-  stopSlot(activeSlot);
-  const myId = ++currentSourceId;
-  const settings = slotSettings[activeSlot];
-  const opts = { loop, playbackRate: settings.tempo, detune: settings.pitch, vol: settings.vol, pan: settings.pan, filtOn: settings.filtOn, filt: settings.filt, dist: settings.dist, del: settings.del, rev: settings.rev, trem: settings.trem, offset: 0, duration: buffer.duration, loopStart: 0, loopEnd: buffer.duration };
-  if (selection && selection.end - selection.start > 2) {
-    const dur = buffer.duration; const offSec = selection.start / canvas.width * dur; const lenSec = (selection.end - selection.start) / canvas.width * dur;
-    if (loop) { opts.offset = offSec; opts.loopStart = offSec; opts.loopEnd = offSec + lenSec; }
-    else { opts.offset = offSec; opts.duration = Math.min(lenSec, dur - offSec); }
+function syncBPM(slot1,slot2){
+  const bpm1=detectBPM(slot1);
+  const bpm2=detectBPM(slot2);
+  if(bpm1===0||bpm2===0){
+    setStatus('Не удалось определить BPM');
+    return;
   }
-  const chain = createChain(audioCtx, buffer, opts, activeSlot);
-  activeChains.set(activeSlot, { chain, id: myId }); updatePads(); startRenderLoop();
-  chain.source.onended = () => {
-    const data = activeChains.get(activeSlot);
-    if (data && data.id === myId) {
-      try { chain.tremoloLfo.stop(); } catch(e){}
-      activeChains.delete(activeSlot); updatePads();
-      if (activeChains.size === 0) { stopRenderLoop(); if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); } }
-    }
-  };
-}
-
-function stopSlot(slotIndex) {
-  const data = activeChains.get(slotIndex);
-  if (data) { try { data.chain.source.stop(); } catch(e){} try { data.chain.tremoloLfo.stop(); } catch(e){} activeChains.delete(slotIndex); }
-  updatePads(); if (activeChains.size === 0) stopRenderLoop();
-}
-
-function stopAll() {
-  activeChains.forEach(d => { try { d.chain.source.stop(); } catch(e){} try { d.chain.tremoloLfo.stop(); } catch(e){} });
-  activeChains.clear(); updatePads(); stopRenderLoop(); isLooping = false; $('loopBtn').classList.remove('active');
-}
-
-$('playBtn').onclick = () => { if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); } play(false); };
-$('loopBtn').onclick = () => { if (isLooping) { isLooping = false; $('loopBtn').classList.remove('active'); stopSlot(activeSlot); } else { isLooping = true; $('loopBtn').classList.add('active'); play(true); } };
-$('stopBtn').onclick = stopAll;
-
-function getCurrentPosition(chain) {
-  if (!audioCtx) return 0;
-  const elapsed = audioCtx.currentTime - chain.startTime;
-  let pos = chain.offset + elapsed * chain.playbackRate;
-  const dur = chain.bufferDuration;
-  if (chain.loop) { const ll = chain.loopEnd - chain.loopStart; if (ll > 0 && pos >= chain.loopEnd) pos = chain.loopStart + ((pos - chain.loopStart) % ll); }
-  else { if (pos > dur) pos = dur; }
-  return Math.max(0, Math.min(dur, pos));
-}
-
-function drawPlayhead() {
-  if (canvas.width === 0 || canvas.height === 0) return;
-  const H = canvas.height;
-  activeChains.forEach((d, si) => {
-    const pos = getCurrentPosition(d.chain); const x = (pos / d.chain.bufferDuration) * canvas.width;
-    if (si === activeSlot) { ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 2; } else { ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; }
-    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-  });
-}
-
-function renderLoop() { drawWave(); if (activeChains.size > 0) rafId = requestAnimationFrame(renderLoop); else rafId = null; }
-function startRenderLoop() { if (!rafId) rafId = requestAnimationFrame(renderLoop); }
-function stopRenderLoop() { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } drawWave(); }
-
-function drawWave() {
-  const W = canvas.width, H = canvas.height; if (W === 0 || H === 0) return;
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
-  const buffer = slots[activeSlot]; if (!buffer) return;
-  const data = buffer.getChannelData(0); const step = Math.ceil(data.length / W); const amp = H / 2;
-  if (selection && selection.end - selection.start > 1) {
-    ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
-    ctx.fillRect(selection.start, 0, selection.end - selection.start, H);
-    ctx.strokeStyle = '#00ff00'; ctx.lineWidth = 2; ctx.strokeRect(selection.start, 0, selection.end - selection.start, H);
-  }
-  ctx.strokeStyle = '#fff'; ctx.lineWidth = 1; ctx.beginPath();
-  for (let i = 0; i < W; i++) {
-    let min = 1, max = -1;
-    for (let j = 0; j < step; j++) { const v = data[i * step + j] || 0; if (v < min) min = v; if (v > max) max = v; }
-    if (i === 0) ctx.moveTo(i, (1 + min) * amp);
-    ctx.lineTo(i, (1 + min) * amp); ctx.lineTo(i, (1 + max) * amp);
-  }
-  ctx.stroke(); drawPlayhead();
-}
-
-function getPos(e) { const r = canvas.getBoundingClientRect(); const cx = e.touches ? e.touches[0].clientX : e.clientX; return (cx - r.left) * (canvas.width / r.width); }
-
-canvas.addEventListener('mousedown', startDrag); canvas.addEventListener('touchstart', startDrag, { passive: false });
-function startDrag(e) { if (!slots[activeSlot]) return; e.preventDefault(); isDragging = true; dragStart = getPos(e); selection = { start: dragStart, end: dragStart }; }
-canvas.addEventListener('mousemove', moveDrag); canvas.addEventListener('touchmove', moveDrag, { passive: false });
-function moveDrag(e) {
-  if (!isDragging) return; e.preventDefault();
-  const x = Math.max(0, Math.min(canvas.width, getPos(e)));
-  selection.start = Math.min(dragStart, x); selection.end = Math.max(dragStart, x); drawWave();
-  const b = slots[activeSlot]; if (b) { const d = b.duration; $('selInfo').textContent = (selection.start / canvas.width * d).toFixed(2) + 's — ' + (selection.end / canvas.width * d).toFixed(2) + 's'; }
-}
-canvas.addEventListener('mouseup', endDrag); canvas.addEventListener('mouseleave', endDrag); canvas.addEventListener('touchend', endDrag); canvas.addEventListener('touchcancel', endDrag);
-function endDrag() { isDragging = false; }
-
-$('trimBtn').onclick = () => {
-  const b = slots[activeSlot]; if (!b) return;
-  if (!selection || selection.end - selection.start < 2) { setStatus(t('selectSliceFirst')); return; }
-  const s = Math.floor(selection.start / canvas.width * b.length); const e = Math.floor(selection.end / canvas.width * b.length);
-  const nl = Math.max(1, e - s); if (nl <= 0) { setStatus(t('invalidSelection')); return; }
-  pushHistory(activeSlot);
-  const nb = audioCtx.createBuffer(b.numberOfChannels, nl, b.sampleRate);
-  for (let c = 0; c < b.numberOfChannels; c++) { const src = b.getChannelData(c), dst = nb.getChannelData(c); for (let i = 0; i < nl; i++) dst[i] = src[s + i] || 0; }
-  slots[activeSlot] = nb; 
-  $('invertOn').checked = false; slotSettings[activeSlot].invert = false;
-  selection = null; drawWave(); updatePads(); setStatus(t('chopped')); saveProgressToVK();
-};
-
-$('resetBtn').onclick = () => { 
-  if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slotCleared')); saveProgressToVK();
-};
-$('clearBtn').onclick = () => { 
-  if (slots[activeSlot]) pushHistory(activeSlot);
-  stopSlot(activeSlot); slots[activeSlot] = null; selection = null; $('invertOn').checked = false; slotSettings[activeSlot].invert = false; drawWave(); updatePads(); updateTransportButtons(); setStatus(t('slot') + ' ' + (activeSlot + 1) + ' ' + t('slotCleared')); saveProgressToVK();
-};
-
-$('selectModeBtn').onclick = () => {
-  selectMode = !selectMode;
-  if (!selectMode) { selectedSlots.clear(); updateMergeButton(); }
-  $('selectModeBtn').innerHTML = '✓ ' + (selectMode ? t('cancel') : t('select'));
-  $('modeIndicator').textContent = selectMode ? t('selectMode') : '';
+  const ratio=bpm1/bpm2;
+  slotSettings[slot2].tempo*=ratio;
+  setStatus(`${t('bpmSynced')}: ${bpm2}→${bpm1} BPM`);
   updatePads();
-};
-
-$('mergeBtn').onclick = () => {
-  if (selectedSlots.size < 2) return;
-  const idx = Array.from(selectedSlots).sort((a, b) => a - b);
-  const bufs = idx.map(i => slots[i]).filter(b => b !== null);
-  if (bufs.length < 2) { setStatus(t('notEnoughSlots')); return; }
-  let ts = activeSlot; if (slots[ts] !== null) { ts = slots.findIndex(s => s === null); if (ts === -1) { setStatus(t('noFreeSlots')); return; } }
-  const sr = bufs[0].sampleRate, nc = bufs[0].numberOfChannels; const tl = bufs.reduce((s, b) => s + b.length, 0);
-  if (slots[ts]) pushHistory(ts);
-  const m = audioCtx.createBuffer(nc, tl, sr); let off = 0;
-  for (const b of bufs) { for (let c = 0; c < nc; c++) { m.getChannelData(c).set(b.getChannelData(c), off); } off += b.length; }
-  slots[ts] = m; activeSlot = ts; selection = null; selectMode = false; selectedSlots.clear();
-  $('invertOn').checked = false; slotSettings[ts].invert = false;
-  $('selectModeBtn').innerHTML = '✓ ' + t('select'); $('modeIndicator').textContent = '';
-  drawWave(); updatePads(); updateTransportButtons(); updateMergeButton();
-  setStatus(t('merged') + ' ' + bufs.length + ' ' + t('slot') + ' ' + (ts + 1)); saveProgressToVK();
-};
-
-$('exportBtn').onclick = async () => {
-  const validSlots = slots.filter(slot => slot !== null);
-  if (validSlots.length === 0) { setStatus(t('noValidSlots')); return; }
-  const sr = validSlots[0].sampleRate; const nc = validSlots[0].numberOfChannels;
-  const totalLength = validSlots.reduce((sum, slot) => sum + slot.length, 0);
-  const mergedBuffer = audioCtx.createBuffer(nc, totalLength, sr); let offset = 0;
-  for (const slot of validSlots) { for (let c = 0; c < nc; c++) { mergedBuffer.getChannelData(c).set(slot.getChannelData(c), offset); } offset += slot.length; }
-  setStatus(t('loading'));
-  try {
-    const oc = new OfflineAudioContext(nc, totalLength, sr);
-    const source = oc.createBufferSource(); source.buffer = mergedBuffer; source.connect(oc.destination); source.start(0);
-    const r = await oc.startRendering();
-    const mp3 = await convertToMP3(r);
-    // Дополнительная проверка размера для экспорта
-    if (mp3.size < 10000) throw new Error("Конвертация выдала некорректный файл");
-    await saveFileToDevice(mp3, 'smplrbot_export.mp3');
-  } catch (err) { 
-    console.error('Export error:', err); 
-    setStatus(t('errorExport') + ': попробуйте записать микс через кнопку "Запись микса"'); 
-  }
-};
-
-function makeDistortionCurve(a) { const k = a, n = 44100, c = new Float32Array(n), d = Math.PI / 180; for (let i = 0; i < n; i++) { const x = i * 2 / n - 1; c[i] = (3 + k) * x * 20 * d / (Math.PI + k * Math.abs(x)); } return c; }
-function makeImpulse(ac, dur, dec) { const r = ac.sampleRate, l = Math.max(1, Math.floor(r * dur)); const i = ac.createBuffer(2, l, r); for (let c = 0; c < 2; c++) { const ch = i.getChannelData(c); for (let x = 0; x < l; x++) ch[x] = (Math.random() * 2 - 1) * Math.pow(1 - x / l, dec); } return i; }
-
-function updateLabelsUI() {
-  $('tempoVal').textContent = parseFloat($('tempo').value).toFixed(2) + 'x';
-  $('pitchVal').textContent = $('pitch').value + ' ct';
-  $('volVal').textContent = Math.round($('vol').value * 100) + '%';
-  const p = parseFloat($('pan').value);
-  if (Math.abs(p) < 0.02) $('panVal').textContent = 'C'; else if (p < 0) $('panVal').textContent = 'L' + Math.round(-p * 100); else $('panVal').textContent = 'R' + Math.round(p * 100);
-  $('revVal').textContent = Math.round($('rev').value * 100) + '%';
-  $('delVal').textContent = $('del').value + ' ms';
-  $('distVal').textContent = $('dist').value;
-  $('filtVal').innerHTML = $('filtOn').checked ? $('filt').value + ' Hz' : t('off');
-  $('tremVal').textContent = Math.round($('trem').value * 100) + '%';
-  $('invertVal').innerHTML = $('invertOn').checked ? t('on') : t('off');
+  drawWave();
+  saveCurrentSettings();
 }
 
-function updateLabels() { updateLabelsUI(); saveCurrentSettings(); updateAllChains(); }
-['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id => $(id).addEventListener('input', updateLabels));
-$('filtOn').addEventListener('change', updateLabels);
+canvas.addEventListener('contextmenu',e=>{if(viewMode!=='pattern')return;e.preventDefault();const x=getPos(e),y=getYPos(e);const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);const lh=canvas.height/vis.length;const li=Math.floor(y/lh);if(li>=0&&li<vis.length){const si=vis[li];if(slots[si]){const pps=50*viewZoom;const vd=slots[si].duration/slotSettings[si].tempo;const bw=Math.max(20,vd*pps);const bx=16+slotSettings[si].offset*pps;if(x>=bx&&x<=bx+bw){selectedPatternSlot=si;drawWave();showCtx(e.clientX,e.clientY)}}}});
+let lpTimer=null;
+canvas.addEventListener('touchstart',e=>{if(viewMode!=='pattern'||e.touches.length!==1)return;const tc=e.touches[0];lpTimer=setTimeout(()=>{const x=getPos(e),y=getYPos(e);const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);const lh=canvas.height/vis.length;const li=Math.floor(y/lh);if(li>=0&&li<vis.length){const si=vis[li];if(slots[si]){const pps=50*viewZoom;const vd=slots[si].duration/slotSettings[si].tempo;const bw=Math.max(20,vd*pps);const bx=16+slotSettings[si].offset*pps;if(x>=bx&&x<=bx+bw){selectedPatternSlot=si;drawWave();showCtx(tc.clientX,tc.clientY)}}}},500)});
+canvas.addEventListener('touchend',()=>{if(lpTimer){clearTimeout(lpTimer);lpTimer=null}});
+canvas.addEventListener('touchmove',()=>{if(lpTimer){clearTimeout(lpTimer);lpTimer=null}});
+document.addEventListener('click',e=>{if(!e.target.closest('.context-menu'))hideCtx()});
 
-$('invertOn').addEventListener('change', (e) => {
-  const buf = slots[activeSlot];
-  if (!buf) { e.target.checked = false; $('invertVal').innerHTML = t('off'); return; }
-  pushHistory(activeSlot);
-  for (let c = 0; c < buf.numberOfChannels; c++) buf.getChannelData(c).reverse();
-  slotSettings[activeSlot].invert = e.target.checked;
-  updateLabelsUI(); saveCurrentSettings();
-  setStatus(e.target.checked ? t('sampleReversed') : t('sampleRestored'));
-});
+function getPos(e){const r=canvas.getBoundingClientRect();const cx=e.touches?e.touches[0].clientX:e.clientX;return(cx-r.left)*(canvas.width/r.width)}
+function getYPos(e){const r=canvas.getBoundingClientRect();const cy=e.touches?e.touches[0].clientY:e.clientY;return(cy-r.top)*(canvas.height/r.height)}
 
-function setStatus(text) { $('status').textContent = text; }
+canvas.addEventListener('pointerdown',startDrag);
+canvas.addEventListener('pointermove',moveDrag);
+canvas.addEventListener('pointerup',endDrag);
+canvas.addEventListener('pointercancel',endDrag);
+canvas.addEventListener('pointerleave',endDrag);
+
+function startDrag(e){
+  if(viewMode==='sample'&&slots[activeSlot]){
+    const x=getPos(e),y=getYPos(e);const W=canvas.width,H=canvas.height;
+    for(let i=0;i<volPoints[activeSlot].length;i++){
+      const px=volPoints[activeSlot][i].x*W,py=(1-volPoints[activeSlot][i].y)*H;
+      if(Math.abs(x-px)<12&&Math.abs(y-py)<12){draggingVolPoint=i;e.preventDefault();return}
+    }
+    e.preventDefault();isDragging=true;dragStart=x;selection={start:x,end:x};return;
+  }
+  if(viewMode==='pattern'){
+    const x=getPos(e),y=getYPos(e);
+    const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
+    const lh=canvas.height/vis.length;const li=Math.floor(y/lh);
+    if(li>=0&&li<vis.length){
+      const si=vis[li];
+      if(slots[si]){
+        const pps=50*viewZoom;
+        const vd=slots[si].duration/slotSettings[si].tempo;
+        const bw=Math.max(20,vd*pps);
+        const bx=16+slotSettings[si].offset*pps;
+        if(x>=bx+bw-15&&x<=bx+bw+15){isResizing=true;resizeSlotIndex=si;resizeStartX=x;resizeStartVisualDuration=vd;e.preventDefault();return}
+        if(x>=bx&&x<=bx+bw){
+          selectedPatternSlot=si;activeSlot=si;loadSlotSettings(si);
+          isDraggingPattern=true;dragPatternSlot=si;dragPatternStartX=x;dragPatternStartOffset=slotSettings[si].offset;
+          pendingMoveSlot=-1;
+          updatePads();drawWave();e.preventDefault();return;
+        }
+      }
+    }
+    selectedPatternSlot=-1;drawWave();
+  }
+}
+function moveDrag(e){
+  if(draggingVolPoint>=0){
+    e.preventDefault();const y=getYPos(e);const H=canvas.height;
+    volPoints[activeSlot][draggingVolPoint].y=Math.max(0,Math.min(1,1-y/H));
+    const avg=volPoints[activeSlot].reduce((s,p)=>s+p.y,0)/volPoints[activeSlot].length;
+    slotSettings[activeSlot].vol=avg;$('vol').value=avg;updateLabelsUI();drawWave();return;
+  }
+  if(isResizing&&resizeSlotIndex>=0){
+    e.preventDefault();const x=getPos(e);const dx=x-resizeStartX;const pps=50*viewZoom;
+    let nvd=resizeStartVisualDuration+(dx/pps);nvd=Math.max(0.1,Math.min(30,nvd));
+    let nt=slots[resizeSlotIndex].duration/nvd;nt=Math.max(0.25,Math.min(4,nt));
+    slotSettings[resizeSlotIndex].tempo=nt;if(resizeSlotIndex===activeSlot){$('tempo').value=nt;updateLabelsUI()}
+    updateAllChains();updatePads();drawWave();return;
+  }
+  if(isDraggingPattern&&dragPatternSlot>=0){
+    e.preventDefault();
+    const x=getPos(e),y=getYPos(e);
+    const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
+    const lh=canvas.height/vis.length;const li=Math.floor(y/lh);
+    if(li>=0&&li<vis.length){
+      const targetSlot=vis[li];
+      if(targetSlot===dragPatternSlot){
+        const dx=x-dragPatternStartX;const pps=50*viewZoom;
+        let newOffset=dragPatternStartOffset+(dx/pps);
+        slotSettings[dragPatternSlot].offset=newOffset;
+        drawWave();
+      } else if(targetSlot!==dragPatternSlot){
+        if(slots[targetSlot]){
+          const tmpBuf=slots[targetSlot];const tmpSet={...slotSettings[targetSlot]};const tmpVol=volPoints[targetSlot].map(p=>({...p}));
+          slots[targetSlot]=slots[dragPatternSlot];slotSettings[targetSlot]={...slotSettings[dragPatternSlot]};volPoints[targetSlot]=volPoints[dragPatternSlot].map(p=>({...p}));
+          slots[dragPatternSlot]=tmpBuf;slotSettings[dragPatternSlot]=tmpSet;volPoints[dragPatternSlot]=tmpVol;
+        } else {
+          slots[targetSlot]=slots[dragPatternSlot];slotSettings[targetSlot]={...slotSettings[dragPatternSlot]};volPoints[targetSlot]=volPoints[dragPatternSlot].map(p=>({...p}));
+          slots[dragPatternSlot]=null;slotSettings[dragPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[dragPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+        }
+        selectedPatternSlot=targetSlot;activeSlot=targetSlot;dragPatternSlot=targetSlot;
+        loadSlotSettings(targetSlot);updatePads();drawWave();
+      }
+    }
+    return;
+  }
+  if(!isDragging||viewMode!=='sample')return;
+  e.preventDefault();const x=Math.max(0,Math.min(canvas.width,getPos(e)));
+  selection.start=Math.min(dragStart,x);selection.end=Math.max(dragStart,x);drawWave();
+  const b=slots[activeSlot];if(b)$('selInfo').textContent=(selection.start/canvas.width*b.duration).toFixed(2)+'s — '+(selection.end/canvas.width*b.duration).toFixed(2)+'s';
+}
+function endDrag(){
+  if(draggingVolPoint>=0){draggingVolPoint=-1;saveCurrentSettings()}
+  if(isResizing){isResizing=false;resizeSlotIndex=-1;canvas.style.cursor='crosshair';saveCurrentSettings()}
+  if(isDraggingPattern){isDraggingPattern=false;dragPatternSlot=-1;saveCurrentSettings()}
+  isDragging=false;
+}
+
+// Простая чёткая белая волна без анимации
+function drawWave(){
+  const W=canvas.width,H=canvas.height;if(!W||!H)return;
+  ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,W,H);
+  if(viewMode==='sample'){
+    const buf=slots[activeSlot];if(!buf)return;
+    const data=buf.getChannelData(0);const totalSamples=data.length;const visibleSamples=Math.floor(totalSamples/viewZoom);const step=Math.max(1,Math.ceil(visibleSamples/W));const amp=H/2;const duration=buf.duration/viewZoom;
+    // Разметка в секундах
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
+    const secInterval=duration>10?2:duration>5?1:0.5;
+    for(let s=0;s<=duration;s+=secInterval){const x=(s/duration)*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='9px sans-serif';ctx.fillText(s.toFixed(1)+'s',x+2,H-4)}
+    // Выделение
+    if(selection&&selection.end-selection.start>1){ctx.fillStyle='rgba(0,255,0,0.15)';ctx.fillRect(selection.start,0,selection.end-selection.start,H);ctx.strokeStyle='#0f0';ctx.lineWidth=1;ctx.strokeRect(selection.start,0,selection.end-selection.start,H)}
+    // Белая чёткая волна (сохраняется на экране)
+    ctx.strokeStyle='#ffffff';ctx.lineWidth=1.2;ctx.beginPath();
+    for(let i=0;i<W;i++){let mn=1,mx=-1;const base=i*step;for(let j=0;j<step;j++){const v=data[base+j]||0;if(v<mn)mn=v;if(v>mx)mx=v}if(i===0)ctx.moveTo(i,(1+mn)*amp);ctx.lineTo(i,(1+mn)*amp);ctx.lineTo(i,(1+mx)*amp)}
+    ctx.stroke();
+    // Громкость (7 точек)
+    ctx.strokeStyle='rgba(74,222,128,0.9)';ctx.lineWidth=2;ctx.beginPath();
+    for(let i=0;i<volPoints[activeSlot].length;i++){const px=volPoints[activeSlot][i].x*W,py=(1-volPoints[activeSlot][i].y)*H;if(i===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}
+    ctx.stroke();
+    for(let i=0;i<volPoints[activeSlot].length;i++){const px=volPoints[activeSlot][i].x*W,py=(1-volPoints[activeSlot][i].y)*H;ctx.fillStyle=i===draggingVolPoint?'#fff':'#4ade80';ctx.beginPath();ctx.arc(px,py,5,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#000';ctx.lineWidth=1;ctx.stroke()}
+    drawPlayhead();
+  } else {
+    // ПАТТЕРН
+    const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
+    const lh=H/vis.length;const pps=50*viewZoom;
+    const totalDuration=Math.max(...vis.map(i=>slots[i]?((slots[i].duration/slotSettings[i].tempo)+Math.max(0,slotSettings[i].offset)):0),10);
+    // Разметка в секундах
+    ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
+    const secInterval=totalDuration>20?5:totalDuration>10?2:1;
+    for(let s=0;s<=totalDuration;s+=secInterval){const x=16+s*pps;if(x>W)break;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='9px sans-serif';ctx.fillText(s+'s',x+2,H-4)}
+    // Дорожки
+    for(let i=0;i<vis.length;i++){
+      const si=vis[i],y=i*lh;
+      ctx.fillStyle=(si===activeSlot)?'#1a2f1a':'#141414';ctx.fillRect(0,y,W,lh);
+      ctx.strokeStyle='#333';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+      ctx.fillStyle='#666';ctx.font='10px sans-serif';ctx.fillText((si+1)+'',4,y+14);
+      if(slots[si]){
+        const vd=slots[si].duration/slotSettings[si].tempo;const bw=Math.max(20,vd*pps);
+        const bx=16+Math.max(0,slotSettings[si].offset)*pps;
+        const colors=['#2d5a2d','#166534','#14532d','#713f12','#7f1d1d','#450a0a','#3a3a3a','#2a2a2a','#1a1a1a','#0f0f0f'];
+        ctx.fillStyle=colors[si%10];ctx.fillRect(bx,y+4,bw,lh-8);
+        if(si===selectedPatternSlot){ctx.strokeStyle='#d97706';ctx.lineWidth=3;ctx.strokeRect(bx,y+4,bw,lh-8)}
+        const data=slots[si].getChannelData(0);const st=Math.max(1,Math.ceil(data.length/bw));const wa=(lh-8)/2;const cy2=y+4+wa;
+        ctx.strokeStyle='rgba(255,255,255,0.7)';ctx.lineWidth=1;ctx.beginPath();
+        for(let px=0;px<bw;px++){let mn=1,mx=-1;const ds=Math.floor((px/bw)*data.length);for(let j=ds;j<Math.min(data.length,ds+st);j++){const v=data[j]||0;if(v<mn)mn=v;if(v>mx)mx=v}if(px===0)ctx.moveTo(bx+px,cy2+mn*wa);ctx.lineTo(bx+px,cy2+mn*wa);ctx.lineTo(bx+px,cy2+mx*wa)}
+        ctx.stroke();
+        ctx.strokeStyle='rgba(74,222,128,0.5)';ctx.lineWidth=1;ctx.beginPath();
+        for(let p=0;p<volPoints[si].length;p++){const px=bx+volPoints[si][p].x*bw,py=y+4+(1-volPoints[si][p].y)*(lh-8);if(p===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}
+        ctx.stroke();
+        ctx.fillStyle='rgba(255,255,255,0.5)';ctx.fillRect(bx+bw-4,y+4,4,lh-8);
+        ctx.fillStyle='#fff';ctx.font='9px sans-serif';ctx.fillText(vd.toFixed(1)+'s',bx+4,y+lh-6);
+      }
+    }
+    // КРАСНЫЙ КУРСОР ПАТТЕРНА
+    if(patternStartTime>0){
+      const elapsed=audioCtx.currentTime-patternStartTime;
+      const cursorX=16+elapsed*pps;
+      if(cursorX>=0&&cursorX<=W){
+        // Свечение
+        ctx.strokeStyle='rgba(220,38,38,0.25)';ctx.lineWidth=8;
+        ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
+        // Основная линия
+        ctx.strokeStyle='#dc2626';ctx.lineWidth=2;
+        ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
+        // Треугольник сверху
+        ctx.fillStyle='#dc2626';ctx.beginPath();ctx.moveTo(cursorX-6,0);ctx.lineTo(cursorX+6,0);ctx.lineTo(cursorX,10);ctx.closePath();ctx.fill();
+      }
+    }
+  }
+}
+function drawPlayhead(){if(!canvas.width)return;const H=canvas.height;activeChains.forEach((d,si)=>{const pos=getCurPos(d.chain);const vd=d.chain.bufferDuration/d.chain.playbackRate;const x=(pos/vd)*canvas.width;ctx.strokeStyle=si===activeSlot?'#dc2626':'rgba(255,255,255,0.3)';ctx.lineWidth=si===activeSlot?2:1;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()})}
+function getCurPos(c){if(!audioCtx)return 0;const el=audioCtx.currentTime-c.startTime;let p=c.offset+el*c.playbackRate;if(c.loop){const ll=c.loopEnd-c.loopStart;if(ll>0&&p>=c.loopEnd)p=c.loopStart+((p-c.loopStart)%ll)}else if(p>c.bufferDuration)p=c.bufferDuration;return Math.max(0,Math.min(c.bufferDuration,p))}
+function renderLoop(){drawWave();if(activeChains.size>0)rafId=requestAnimationFrame(renderLoop);else rafId=null}
+function startRenderLoop(){if(!rafId)rafId=requestAnimationFrame(renderLoop)}
+function stopRenderLoop(){if(rafId){cancelAnimationFrame(rafId);rafId=null}drawWave()}
+
+// Создание аудио-цепочки БЕЗ автоматического старта (startAt определяет время старта)
+function createChain(ac,buf,opts,si){
+  const src=ac.createBufferSource();src.buffer=buf;src.loop=opts.loop;src.playbackRate.value=opts.playbackRate;src.detune.value=opts.detune;
+  if(opts.loop){src.loopStart=opts.loopStart;src.loopEnd=opts.loopEnd}
+  const flt=ac.createBiquadFilter();flt.type='lowpass';flt.frequency.value=opts.filtOn?opts.filt:20000;
+  const sh=ac.createWaveShaper();sh.curve=mkDist(opts.dist);sh.oversample='4x';
+  const dly=ac.createDelay(2);dly.delayTime.value=Math.max(.001,opts.del/1000);
+  const dfb=ac.createGain();dfb.gain.value=.4;const dw=ac.createGain();dw.gain.value=opts.del>0?.5:0;
+  const cv=ac.createConvolver();cv.buffer=mkImp(ac,2,2);
+  const rw=ac.createGain();rw.gain.value=opts.rev;const rd=ac.createGain();rd.gain.value=1-opts.rev*.5;
+  const tg=ac.createGain();tg.gain.value=1;
+  const tl=ac.createOscillator();tl.frequency.value=6;tl.type='sine';
+  const td=ac.createGain();td.gain.value=opts.trem*.5;
+  tl.connect(td);td.connect(tg.gain);tl.start();
+  const pn=ac.createStereoPanner();pn.pan.value=opts.pan;
+  const og=ac.createGain();og.gain.value=opts.vol;
+  src.connect(flt);flt.connect(sh);sh.connect(dly);dly.connect(dfb);dfb.connect(dly);dly.connect(dw);
+  const ad=ac.createGain();sh.connect(ad);dw.connect(ad);ad.connect(cv);cv.connect(rw);ad.connect(rd);
+  const ar=ac.createGain();rw.connect(ar);rd.connect(ar);ar.connect(tg);tg.connect(pn);pn.connect(og);og.connect(ac.destination);
+  if(isRecordingMix&&mixStreamDest)og.connect(mixStreamDest);
+  const now=ac.currentTime;
+  const vp=volPoints[si];
+  og.gain.setValueAtTime(vp[0].y*opts.vol,now);
+  for(let i=1;i<vp.length;i++){const time=now+vp[i].x*buf.duration/opts.playbackRate;og.gain.linearRampToValueAtTime(vp[i].y*opts.vol,time)}
+  // Старт: если указан startAt - стартуем в это время, иначе сразу
+  const startTime=opts.startAt!==undefined?opts.startAt:now;
+  if(opts.loop){src.start(startTime,opts.offset||0)}
+  else if(opts.offset>0||opts.duration){src.start(startTime,opts.offset,opts.duration)}
+  else{src.start(startTime)}
+  return{source:src,filter:flt,shaper:sh,delay:dly,delayFb:dfb,delayWet:dw,convolver:cv,revWet:rw,revDry:rd,tremoloGain:tg,tremoloLfo:tl,tremoloDepth:td,panner:pn,outputGain:og,slotIndex:si,startTime:startTime,offset:opts.offset||0,bufferDuration:buf.duration,playbackRate:opts.playbackRate,loop:opts.loop,loopStart:opts.loopStart||0,loopEnd:opts.loopEnd||buf.duration}
+}
+function updateAllChains(){activeChains.forEach((d,si)=>{const c=d.chain,s=slotSettings[si];c.source.playbackRate.value=s.tempo;c.source.detune.value=s.pitch;c.playbackRate=s.tempo;c.filter.frequency.value=s.filtOn?s.filt:20000;c.shaper.curve=mkDist(s.dist);c.delay.delayTime.value=Math.max(.001,s.del/1000);c.delayWet.gain.value=s.del>0?.5:0;c.revWet.gain.value=s.rev;c.revDry.gain.value=1-s.rev*.5;c.tremoloDepth.gain.value=s.trem*.5;c.panner.pan.value=s.pan;c.outputGain.gain.value=s.vol})}
+
+function play(loop){
+  stopAll();
+  if(viewMode==='sample'){
+    const buf=slots[activeSlot];if(!buf)return;
+    const id=++currentSourceId;const s=slotSettings[activeSlot];
+    const opts={loop,playbackRate:s.tempo,detune:s.pitch,vol:s.vol,pan:s.pan,filtOn:s.filtOn,filt:s.filt,dist:s.dist,del:s.del,rev:s.rev,trem:s.trem,offset:0,duration:buf.duration,loopStart:0,loopEnd:buf.duration};
+    if(selection&&selection.end-selection.start>2){
+      const d=buf.duration;const o=selection.start/canvas.width*d;const l=(selection.end-selection.start)/canvas.width*d;
+      if(loop){opts.offset=o;opts.loopStart=o;opts.loopEnd=o+l}else{opts.offset=o;opts.duration=Math.min(l,d-o)}
+    }
+    const ch=createChain(audioCtx,buf,opts,activeSlot);
+    activeChains.set(activeSlot,{chain:ch,id});
+    updatePads();startRenderLoop();
+    ch.source.onended=()=>{
+      const d=activeChains.get(activeSlot);
+      if(d&&d.id===id){try{ch.tremoloLfo.stop()}catch(e){}activeChains.delete(activeSlot);updatePads();if(!activeChains.size){stopRenderLoop();if(isLooping){isLooping=false;$('loopBtn').classList.remove('active')}}}
+    };
+  } else {
+    // ПАТТЕРН
+    let maxEndTime=0;
+    const now=audioCtx.currentTime;
+    patternStartTime=now;
+    for(let i=0;i<10;i++){
+      if(!slots[i]||!unlockedSlots[i])continue;
+      const buf=slots[i];const s=slotSettings[i];
+      const vd=buf.duration/s.tempo;
+      const offset=Math.max(0,s.offset);
+      const endTime=offset+vd;
+      if(endTime>maxEndTime)maxEndTime=endTime;
+      const id=++currentSourceId;
+      const opts={loop:false,playbackRate:s.tempo,detune:s.pitch,vol:s.vol,pan:s.pan,filtOn:s.filtOn,filt:s.filt,dist:s.dist,del:s.del,rev:s.rev,trem:s.trem,offset:0,duration:buf.duration,loopStart:0,loopEnd:buf.duration,startAt:now+offset};
+      const ch=createChain(audioCtx,buf,opts,i);
+      activeChains.set(i,{chain:ch,id});
+    }
+    updatePads();startRenderLoop();
+    if(loop&&maxEndTime>0){
+      const loopDuration=maxEndTime*1000;
+      patternLoopTimer=setTimeout(()=>{if(isLooping){play(true)}},loopDuration);
+    }
+  }
+}
+
+function stopSlot(i){const d=activeChains.get(i);if(d){try{d.chain.source.stop()}catch(e){}try{d.chain.tremoloLfo.stop()}catch(e){}activeChains.delete(i)}updatePads();if(!activeChains.size)stopRenderLoop()}
+function stopAll(){
+  if(patternLoopTimer){clearTimeout(patternLoopTimer);patternLoopTimer=null}
+  activeChains.forEach(d=>{try{d.chain.source.stop()}catch(e){}try{d.chain.tremoloLfo.stop()}catch(e){}});
+  activeChains.clear();updatePads();stopRenderLoop();isLooping=false;$('loopBtn').classList.remove('active');patternStartTime=0;
+}
+$('playBtn').onclick=()=>{if(isLooping){isLooping=false;$('loopBtn').classList.remove('active');stopAll()}else{play(false)}};
+$('loopBtn').onclick=()=>{if(isLooping){isLooping=false;$('loopBtn').classList.remove('active');stopAll()}else{isLooping=true;$('loopBtn').classList.add('active');play(true)}};
+$('stopBtn').onclick=stopAll;
+
+$('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;ensureCtx();setStatus(t('loading'));try{pushHistory(activeSlot);slots[activeSlot]=await audioCtx.decodeAudioData(await f.arrayBuffer());selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('loadedToSlot')+' '+(activeSlot+1))}catch(er){setStatus(t('errorLoading'))}};
+$('recBtn').addEventListener('click',async function(){try{if(isRecording){if(recTimerInterval)clearInterval(recTimerInterval);if(recMediaRecorder&&recMediaRecorder.state!=='inactive')recMediaRecorder.stop();return}ensureCtx();const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});recStream=stream;recChunks=[];recMediaRecorder=new MediaRecorder(stream);recMediaRecorder.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data)};recMediaRecorder.onstop=async()=>{if(recStream){recStream.getTracks().forEach(t=>t.stop());recStream=null}if(!recChunks.length){setStatus(t('noAudioRecorded'));resetRecUI();return}try{const buf=await audioCtx.decodeAudioData(await new Blob(recChunks,{type:recMediaRecorder.mimeType}).arrayBuffer());pushHistory(activeSlot);slots[activeSlot]=buf;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('recorded')+' '+buf.duration.toFixed(1)+'s')}catch(e){setStatus(t('errorProcessing'))}resetRecUI()};recMediaRecorder.start();isRecording=true;recStartTime=Date.now();$('recBtn').classList.add('active');$('recBtn').textContent='■';$('recIndicator').classList.add('active');recTimerInterval=setInterval(()=>{const s=Math.floor((Date.now()-recStartTime)/1000);$('recTime').textContent=Math.floor(s/60)+':'+(s%60+'').padStart(2,'0')},100)}catch(e){setStatus(e.name==='NotAllowedError'?t('micPermissionDenied'):t('micError'));resetRecUI()}});
+function resetRecUI(){isRecording=false;$('recBtn').classList.remove('active');$('recBtn').textContent='●';$('recIndicator').classList.remove('active')}
+
+$('recMixBtn').onclick=async()=>{ensureCtx();await audioCtx.resume();if(!isRecordingMix){mixStreamDest=audioCtx.createMediaStreamDestination();mixChunks=[];activeChains.forEach(d=>d.chain.outputGain.connect(mixStreamDest));let mt='';if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mt='audio/webm;codecs=opus';else if(MediaRecorder.isTypeSupported('audio/webm'))mt='audio/webm';mixRecorder=new MediaRecorder(mixStreamDest.stream,mt?{mimeType:mt}:undefined);mixRecorder.ondataavailable=e=>{if(e.data.size>0)mixChunks.push(e.data)};mixRecorder.start(100);isRecordingMix=true;mixStartTime=Date.now();$('recMixBtn').classList.add('active');$('recMixBtn').textContent='■ '+t('save');setStatus(t('recordingMix'))}else{if(mixTimerInterval)clearInterval(mixTimerInterval);activeChains.forEach(d=>{try{d.chain.outputGain.disconnect(mixStreamDest)}catch(e){}});mixRecorder.onstop=async()=>{if(!mixChunks.length){setStatus(t('noAudioRecorded'));resetMixUI();return}try{const blob=new Blob(mixChunks,{type:mixRecorder.mimeType||'audio/webm'});await saveFileToDevice(blob,'smplrbot_mix.webm')}catch(e){setStatus(t('errorExport'))}resetMixUI()};try{mixRecorder.stop()}catch(e){resetMixUI()}}};
+function resetMixUI(){isRecordingMix=false;$('recMixBtn').classList.remove('active');$('recMixBtn').textContent='⏺  '+t('recMix');mixChunks=[];mixStreamDest=null;mixRecorder=null}
+
+async function saveFileToDevice(blob,filename){setStatus(t('processing'));try{if(navigator.share&&navigator.canShare){const file=new File([blob],filename,{type:blob.type});if(navigator.canShare({files:[file]})){await navigator.share({files:[file]});setStatus(t('exported'));return}}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);setStatus(t('exported'))}catch(e){setStatus(t('errorExport'))}}
+
+async function convertToMP3(ab){const sr=ab.sampleRate,nc=ab.numberOfChannels,len=ab.length;const enc=new lamejs.Mp3Encoder(nc,sr,128);const l=f32i16(ab.getChannelData(0));const r=nc>1?f32i16(ab.getChannelData(1)):l;const d=[];for(let i=0;i<len;i+=1152){const b=enc.encodeBuffer(l.subarray(i,i+1152),r.subarray(i,i+1152));if(b.length)d.push(b)}const e=enc.flush();if(e.length)d.push(e);return new Blob(d,{type:'audio/mp3'})}
+function f32i16(f){const i=new Int16Array(f.length);for(let x=0;x<f.length;x++){const s=Math.max(-1,Math.min(1,f[x]));i[x]=s<0?s*0x8000:s*0x7FFF}return i}
+function mkDist(a){const k=a,n=44100,c=new Float32Array(n),d=Math.PI/180;for(let i=0;i<n;i++){const x=i*2/n-1;c[i]=(3+k)*x*20*d/(Math.PI+k*Math.abs(x))}return c}
+function mkImp(ac,dur,dec){const r=ac.sampleRate,l=Math.max(1,Math.floor(r*dur));const i=ac.createBuffer(2,l,r);for(let c=0;c<2;c++){const ch=i.getChannelData(c);for(let x=0;x<l;x++)ch[x]=(Math.random()*2-1)*Math.pow(1-x/l,dec)}return i}
+
+$('trimBtn').onclick=()=>{const b=slots[activeSlot];if(!b||!selection||selection.end-selection.start<2){setStatus(t('selectSliceFirst'));return}const s=Math.floor(selection.start/canvas.width*b.length),e=Math.floor(selection.end/canvas.width*b.length);const nl=Math.max(1,e-s);pushHistory(activeSlot);const nb=audioCtx.createBuffer(b.numberOfChannels,nl,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c),dst=nb.getChannelData(c);for(let i=0;i<nl;i++)dst[i]=src[s+i]||0}slots[activeSlot]=nb;selection=null;drawWave();updatePads();setStatus(t('chopped'))};
+$('resetBtn').onclick=$('clearBtn').onclick=()=>{if(slots[activeSlot])pushHistory(activeSlot);stopSlot(activeSlot);slots[activeSlot]=null;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('slotCleared'))};
+$('mergeBtn').onclick=()=>{if(selectedSlots.size<2)return;const idx=[...selectedSlots].sort((a,b)=>a-b);const bufs=idx.map(i=>slots[i]).filter(b=>b);if(bufs.length<2){setStatus(t('notEnoughSlots'));return}let ts=slots.findIndex(s=>s===null);if(ts<0){setStatus(t('noFreeSlots'));return}const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);const m=audioCtx.createBuffer(nc,tl,sr);let off=0;for(const b of bufs){for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);off+=b.length}slots[ts]=m;activeSlot=ts;selectMode=false;selectedSlots.clear();$('selectModeBtn').innerHTML='✓  '+t('select');$('modeIndicator').textContent='';drawWave();updatePads();updateTransportButtons();setStatus(t('merged'))};
+$('exportBtn').onclick=async()=>{const vs=slots.filter(s=>s);if(!vs.length){setStatus(t('noValidSlots'));return}setStatus(t('processing'));try{const sr=vs[0].sampleRate,nc=vs[0].numberOfChannels;const tl=vs.reduce((s,b)=>s+b.length,0);const oc=new OfflineAudioContext(nc,tl,sr);let ct=0;for(let i=0;i<10;i++){if(slots[i]&&unlockedSlots[i]){const src=oc.createBufferSource();src.buffer=slots[i];src.playbackRate.value=slotSettings[i].tempo;src.connect(oc.destination);src.start(ct);ct+=slots[i].duration/slotSettings[i].tempo}}const r=await oc.startRendering();const mp3=await convertToMP3(r);await saveFileToDevice(mp3,'smplrbot_export.mp3')}catch(e){setStatus(t('errorExport'))}};
+
+function updateLabelsUI(){$('tempoVal').textContent=(+$('tempo').value).toFixed(2)+'x';$('pitchVal').textContent=$('pitch').value+' ct';$('volVal').textContent=Math.round($('vol').value*100)+'%';const p=+$('pan').value;$('panVal').textContent=Math.abs(p)<.02?'C':p<0?'L'+Math.round(-p*100):'R'+Math.round(p*100);$('revVal').textContent=Math.round($('rev').value*100)+'%';$('delVal').textContent=$('del').value+' ms';$('distVal').textContent=$('dist').value;$('filtVal').innerHTML=$('filtOn').checked?$('filt').value+' Hz':t('off');$('tremVal').textContent=Math.round($('trem').value*100)+'%';$('invertVal').innerHTML=$('invertOn').checked?t('on'):t('off')}
+function updateLabels(){updateLabelsUI();saveCurrentSettings();updateAllChains()}
+['tempo','pitch','vol','pan','rev','del','dist','filt','trem'].forEach(id=>$(id).addEventListener('input',updateLabels));
+$('filtOn').addEventListener('change',updateLabels);
+$('invertOn').addEventListener('change',e=>{const b=slots[activeSlot];if(!b){e.target.checked=false;return}pushHistory(activeSlot);for(let c=0;c<b.numberOfChannels;c++)b.getChannelData(c).reverse();slotSettings[activeSlot].invert=e.target.checked;updateLabelsUI();setStatus(e.target.checked?t('sampleReversed'):t('sampleRestored'))});
+function setStatus(t){$('status').textContent=t}
+
+function openAbout(){$('aboutModal').classList.add('active');document.body.style.overflow='hidden'}
+function closeAbout(){$('aboutModal').classList.remove('active');document.body.style.overflow=''}
+$('aboutModal').addEventListener('click',e=>{if(e.target.id==='aboutModal')closeAbout()});
+
+function checkAdReadiness(){if(!window.vkBridge)return;window.vkBridge.send('VKWebAppCheckNativeAds',{ad_format:'reward'}).then(d=>{isAdReady=d.result}).catch(()=>{isAdReady=false})}
+function unlockNextSlot(){if(!window.vkBridge)return;const i=unlockedSlots.findIndex(u=>!u);if(i<0){setStatus(t('allUnlocked'));return}if(!isAdReady){setStatus(t('adLoadingWait'));checkAdReadiness();return}window.vkBridge.send('VKWebAppShowNativeAds',{ad_format:'reward'}).then(d=>{if(d.result){unlockedSlots[i]=true;updatePads();drawWave();setStatus(t('slotUnlocked')+' '+(i+1));setTimeout(checkAdReadiness,2000)}else setStatus(t('adUnavailable'))}).catch(()=>setStatus(t('adUnavailable')))}
+if(window.vkBridge){window.vkBridge.send('VKWebAppInit').then(()=>{checkAdReadiness();setInterval(checkAdReadiness,30000)})}
 
 init();
 </script>
