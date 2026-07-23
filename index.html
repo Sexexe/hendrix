@@ -55,12 +55,13 @@ canvas{width:100%;height:200px;background:#0a0a0a;border:1px solid #333;border-r
 @keyframes padPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{box-shadow:0 0 0 6px rgba(255,255,255,.15)}}
 .pad-num{font-size:clamp(12px,4vw,20px);font-weight:600;color:#666;line-height:1}
 .pad.loaded .pad-num{color:#fff}
-.pad-duration{font-size:clamp(8px,2.5vw,10px);color:#888;margin-top:4px}
+.pad-duration{font-size:clamp(8px,2.5vw,10px);color:#888;margin-top:4px; text-align: center; width: 100%;}
 .pad.loaded .pad-duration{color:#aaa}
 .lock-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(10px,3vw,13px);display:none;pointer-events:none;z-index:2}
 .pad.locked .lock-icon{display:block}
 .transport{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.transport button{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;padding:16px 4px;color:#fff;cursor:pointer;transition:all .1s;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:600;white-space:nowrap;line-height:1.1;font-size:clamp(12px,3.5vw,20px)}
+/* ИСПРАВЛЕНИЕ 1: Адаптация текста для мобильных (перенос слов, сжатие) */
+.transport button{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;padding:12px 2px;color:#fff;cursor:pointer;transition:all .1s;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:600;white-space:normal;word-break:break-word;overflow-wrap:break-word;line-height:1.2;font-size:clamp(10px,3.2vw,16px)}
 .transport button:active{transform:scale(.95);background:#3a3a3a}
 .transport button:disabled{opacity:.3;cursor:not-allowed}
 .transport button.rec{background:#7f1d1d;border-color:#991b1b}
@@ -70,10 +71,11 @@ canvas{width:100%;height:200px;background:#0a0a0a;border:1px solid #333;border-r
 .transport button.loop{background:#713f12;border-color:#854d0e}
 .transport button.loop.active{background:#ca8a04;border-color:#eab308;color:#000}
 .transport button.stop{background:#450a0a;border-color:#7f1d1d}
-.btn-xl{font-size:clamp(8.4px,3.12vw,14.4px)!important;font-weight:400!important;text-transform:uppercase}
-.btn-sm{font-size:clamp(10.8px,3.15vw,18px)!important;font-weight:400!important;text-transform:uppercase}
+.btn-xl{font-size:clamp(8px,2.8vw,11px)!important;font-weight:400!important;text-transform:uppercase}
+.btn-sm{font-size:clamp(9px,3vw,14px)!important;font-weight:400!important;text-transform:uppercase}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.actions button,.actions label{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;color:#fff;font-weight:400;cursor:pointer;transition:all .1s;min-height:48px;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;white-space:nowrap;line-height:1.1;font-size:clamp(7px,2.6vw,12px);padding:8px 2px;text-transform:uppercase}
+/* ИСПРАВЛЕНИЕ 1: Адаптация текста для мобильных (перенос слов, сжатие) */
+.actions button,.actions label{background:#2a2a2a;border:1px solid #3a3a3a;border-radius:6px;color:#fff;font-weight:400;cursor:pointer;transition:all .1s;min-height:48px;width:100%;display:flex;align-items:center;justify-content:center;text-align:center;white-space:normal;word-break:break-word;overflow-wrap:break-word;line-height:1.2;font-size:clamp(8px,2.8vw,11px);padding:6px 2px;text-transform:uppercase}
 .actions button:active,.actions label:active{transform:scale(.95);background:#3a3a3a}
 .actions button:disabled{opacity:.3;cursor:not-allowed}
 .actions button.merge{background:#713f12;border-color:#854d0e}
@@ -209,8 +211,8 @@ let bpmSelectFirst=-1;
 let previousSampleSlot=0;
 
 const translations={
-ru:{about:'О ПРОГРАММЕ',aboutTitle:'О SAMPLER HENDRIX 5.0',sample:'СЕМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Запись микса...',selectSliceFirst:'Сначала выберите фрагмент',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:'🎵 Выберите первую дорожку (с семплом)',bpmSelect2:'🎵 Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li></ul><h2>🎹 Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ меняют масштаб от 10% до 1000%.</li><li><strong>Красный курсор:</strong> показывает текущую позицию воспроизведения.</li></ul><h2>🎵 СИНХ BPM</h2><p>Нажмите кнопку <strong>🎵 СИНХ BPM</strong> (синяя пульсирующая):</p><ol><li>Выберите первую дорожку с семплом (подсветка синим)</li><li>Выберите вторую дорожку с семплом (подсветка фиолетовым)</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой по темпу</li></ol><h2>📊 Громкость</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
-en:{about:'ABOUT',aboutTitle:'About SAMPLER HENDRIX 5.0',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Recording mix...',selectSliceFirst:'Select a slice first',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:'🎵 Select first track (with sample)',bpmSelect2:'🎵 Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2>🎤 Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon 🔒) or device settings.</p></div><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li></ul><h2>🎹 Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons scale the timeline from 10% to 1000%.</li><li><strong>Red cursor:</strong> shows current playback position.</li></ul><h2>🎵 SYNC BPM</h2><p>Click <strong>🎵 SYNC BPM</strong> button (blue pulsing):</p><ol><li>Select first track with sample (blue highlight)</li><li>Select second track with sample (purple highlight)</li><li>BPM of both samples is automatically calculated</li><li>Second track tempo is synchronized with first</li></ol><h2>📊 Volume</h2><p>Drag 7 points on the polyline to automate volume.</p><p><strong>Happy creating! 🎸</strong></p>'}
+ru:{about:'О ПРОГРАММЕ',aboutTitle:'О SAMPLER HENDRIX 5.0',sample:'СЕМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',allCleared:'Все слоты очищены',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Запись микса...',selectSliceFirst:'Сначала выберите фрагмент',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:'🎵 Выберите первую дорожку (с семплом)',bpmSelect2:'🎵 Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li></ul><h2>🎹 Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ меняют масштаб от 10% до 1000%.</li><li><strong>Красный курсор:</strong> показывает текущую позицию воспроизведения.</li></ul><h2>🎵 СИНХ BPM</h2><p>Нажмите кнопку <strong>🎵 СИНХ BPM</strong> (синяя пульсирующая):</p><ol><li>Выберите первую дорожку с семплом (подсветка синим)</li><li>Выберите вторую дорожку с семплом (подсветка фиолетовым)</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой по темпу</li></ol><h2>📊 Громкость</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
+en:{about:'ABOUT',aboutTitle:'About SAMPLER HENDRIX 5.0',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',allCleared:'All slots cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Recording mix...',selectSliceFirst:'Select a slice first',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:'🎵 Select first track (with sample)',bpmSelect2:'🎵 Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2>🎤 Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon 🔒) or device settings.</p></div><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li></ul><h2>🎹 Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons scale the timeline from 10% to 1000%.</li><li><strong>Red cursor:</strong> shows current playback position.</li></ul><h2>🎵 SYNC BPM</h2><p>Click <strong>🎵 SYNC BPM</strong> button (blue pulsing):</p><ol><li>Select first track with sample (blue highlight)</li><li>Select second track with sample (purple highlight)</li><li>BPM of both samples is automatically calculated</li><li>Second track tempo is synchronized with first</li></ol><h2>📊 Volume</h2><p>Drag 7 points on the polyline to automate volume.</p><p><strong>Happy creating! 🎸</strong></p>'}
 };
 function t(k){return translations[currentLang][k]||k}
 function applyTranslations(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});$('langBtn').textContent=currentLang==='ru'?'RU':'EN';$('modalContent').innerHTML=t('modalContent');updateViewModeBtn()}
@@ -252,215 +254,92 @@ function saveCurrentSettings(){slotSettings[activeSlot]={tempo:+$('tempo').value
 
 function initPads(){const c=$('pads');c.innerHTML='';for(let i=0;i<10;i++){const p=document.createElement('div');p.className='pad';p.dataset.index=i;p.innerHTML=`<div class="pad-num">${i+1}</div><div class="pad-duration"></div><div class="lock-icon">🔒</div>`;p.addEventListener('click',()=>handlePadClick(i));c.appendChild(p)}updatePads()}
 
-// ========== BPM SYNC - ПОЛНОСТЬЮ ПЕРЕПИСАНО ==========
 function handlePadClick(i){
   if(!unlockedSlots[i]){unlockNextSlot();return}
-  
-  // РЕЖИМ BPM СИНХРОНИЗАЦИИ
   if(bpmSyncMode){
-    // Проверяем наличие семпла
-    if(!slots[i]){
-      setStatus(t('bpmNoSample'));
-      return;
-    }
-    
+    if(!slots[i]){setStatus(t('bpmNoSample'));return}
     if(bpmSelectFirst===-1){
-      // Первый выбор
       bpmSelectFirst=i;
       const pads=document.querySelectorAll('.pad');
       pads[i].classList.add('bpm-select1');
       setStatus(t('bpmSelect2'));
     } else if(i===bpmSelectFirst){
-      // Клик на тот же слот - отмена
       setStatus(t('bpmSameSlot'));
     } else {
-      // Второй выбор - синхронизация
-      if(!slots[i]){
-        setStatus(t('bpmNoSample'));
-        return;
-      }
+      if(!slots[i]){setStatus(t('bpmNoSample'));return}
       const pads=document.querySelectorAll('.pad');
       pads[i].classList.add('bpm-select2');
-      
-      // Вычисляем BPM обоих
       setStatus('⏳ Вычисление BPM...');
-      
-      // Небольшая задержка для UI
       setTimeout(()=>{
         const bpm1=detectBPM(bpmSelectFirst);
         const bpm2=detectBPM(i);
-        
-        if(bpm1===0||bpm2===0){
-          setStatus(t('bpmFailed'));
-          resetBpmSync();
-          return;
-        }
-        
-        // Применяем синхронизацию
+        if(bpm1===0||bpm2===0){setStatus(t('bpmFailed'));resetBpmSync();return}
         const ratio=bpm1/bpm2;
         slotSettings[i].tempo*=ratio;
-        
-        // Ограничиваем tempo в диапазон 0.25-4.0
         slotSettings[i].tempo=Math.max(0.25,Math.min(4.0,slotSettings[i].tempo));
-        
         setStatus(`${t('bpmSynced')}: ${bpm2}→${bpm1} BPM (x${ratio.toFixed(2)})`);
-        
-        // Обновляем UI
-        if(i===activeSlot){
-          $('tempo').value=slotSettings[i].tempo;
-          updateLabelsUI();
-        }
-        updatePads();
-        drawWave();
-        saveCurrentSettings();
-        
-        // Сброс через 2 секунды
+        if(i===activeSlot){$('tempo').value=slotSettings[i].tempo;updateLabelsUI()}
+        updatePads();drawWave();saveCurrentSettings();
         setTimeout(resetBpmSync,2000);
       },100);
     }
     return;
   }
-  
-  // РЕЖИМ ПЕРЕМЕЩЕНИЯ
   if(pendingMoveSlot>=0&&viewMode==='pattern'){
     if(i!==pendingMoveSlot){performMove(pendingMoveSlot,i)}
     pendingMoveSlot=-1;
     return;
   }
-  
-  // ОБЫЧНЫЙ РЕЖИМ
   saveCurrentSettings();activeSlot=i;selection=null;selectedPatternSlot=-1;loadSlotSettings(i);updatePads();drawWave();updateTransportButtons();updUndoRedo()
 }
 
 function resetBpmSync(){
-  bpmSyncMode=false;
-  bpmSelectFirst=-1;
-  $('bpmSyncBtn').classList.remove('active');
-  document.querySelectorAll('.pad').forEach(p=>{
-    p.classList.remove('bpm-select1','bpm-select2');
-  });
+  bpmSyncMode=false;bpmSelectFirst=-1;$('bpmSyncBtn').classList.remove('active');
+  document.querySelectorAll('.pad').forEach(p=>{p.classList.remove('bpm-select1','bpm-select2')});
 }
 
 function toggleBpmSync(){
-  if(bpmSyncMode){
-    // Отмена режима
-    resetBpmSync();
-    setStatus(t('loadOrRecord'));
-  } else {
-    // Проверка - есть ли хотя бы 2 слота с семплами
+  if(bpmSyncMode){resetBpmSync();setStatus(t('loadOrRecord'))} 
+  else {
     const loadedCount=slots.filter(s=>s!==null).length;
-    if(loadedCount<2){
-      setStatus('Нужно минимум 2 слота с семплами для синхронизации');
-      return;
-    }
-    bpmSyncMode=true;
-    bpmSelectFirst=-1;
-    $('bpmSyncBtn').classList.add('active');
-    setStatus(t('bpmSelect1'));
+    if(loadedCount<2){setStatus('Нужно минимум 2 слота с семплами для синхронизации');return}
+    bpmSyncMode=true;bpmSelectFirst=-1;$('bpmSyncBtn').classList.add('active');setStatus(t('bpmSelect1'));
   }
 }
 
 function detectBPM(slotIndex){
-  const buf=slots[slotIndex];
-  if(!buf)return 0;
-  
-  const sampleRate=buf.sampleRate;
-  const data=buf.getChannelData(0);
-  const length=data.length;
-  
-  // Downsample до ~4kHz для скорости
-  const targetRate=4000;
-  const step=Math.max(1,Math.floor(sampleRate/targetRate));
+  const buf=slots[slotIndex];if(!buf)return 0;
+  const sampleRate=buf.sampleRate;const data=buf.getChannelData(0);const length=data.length;
+  const targetRate=4000;const step=Math.max(1,Math.floor(sampleRate/targetRate));
   const downsampled=[];
-  for(let i=0;i<length;i+=step){
-    downsampled.push(Math.abs(data[i]));
-  }
-  
+  for(let i=0;i<length;i+=step){downsampled.push(Math.abs(data[i]))}
   if(downsampled.length<100)return 0;
-  
-  // Находим максимальную амплитуду
-  let maxAmp=0;
-  for(let i=0;i<downsampled.length;i++){
-    if(downsampled[i]>maxAmp)maxAmp=downsampled[i];
-  }
-  if(maxAmp<0.01)return 0; // слишком тихо
-  
-  // Порог для пиков: 35% от максимума
+  let maxAmp=0;for(let i=0;i<downsampled.length;i++){if(downsampled[i]>maxAmp)maxAmp=downsampled[i]}
+  if(maxAmp<0.01)return 0;
   const threshold=maxAmp*0.35;
-  
-  // Минимальный зазор между пиками: 200мс при 4kHz = 800 сэмплов
-  // Максимальный зазор: 2000мс (30 BPM) = 8000 сэмплов
-  const minGap=Math.floor(targetRate*0.2); // 200ms
-  const maxGap=Math.floor(targetRate*2.0); // 2000ms
-  
-  // Поиск пиков
-  const peaks=[];
-  let lastPeakIdx=-minGap;
-  
+  const minGap=Math.floor(targetRate*0.2);const maxGap=Math.floor(targetRate*2.0);
+  const peaks=[];let lastPeakIdx=-minGap;
   for(let i=1;i<downsampled.length-1;i++){
-    if(downsampled[i]>threshold&&
-       downsampled[i]>=downsampled[i-1]&&
-       downsampled[i]>=downsampled[i+1]){
-      if(i-lastPeakIdx>=minGap){
-        peaks.push(i);
-        lastPeakIdx=i;
-      }
+    if(downsampled[i]>threshold&&downsampled[i]>=downsampled[i-1]&&downsampled[i]>=downsampled[i+1]){
+      if(i-lastPeakIdx>=minGap){peaks.push(i);lastPeakIdx=i}
     }
   }
-  
-  if(peaks.length<3)return 0; // нужно минимум 3 пика
-  
-  // Вычисляем интервалы между пиками
+  if(peaks.length<3)return 0;
   const intervals=[];
-  for(let i=1;i<peaks.length;i++){
-    const gap=peaks[i]-peaks[i-1];
-    if(gap>=minGap&&gap<=maxGap){
-      intervals.push(gap);
-    }
-  }
-  
+  for(let i=1;i<peaks.length;i++){const gap=peaks[i]-peaks[i-1];if(gap>=minGap&&gap<=maxGap)intervals.push(gap)}
   if(intervals.length<2)return 0;
-  
-  // Сортируем для медианы
   intervals.sort((a,b)=>a-b);
   const median=intervals[Math.floor(intervals.length/2)];
-  
-  // Фильтр выбросов: оставляем интервалы в диапазоне 0.5x - 1.5x от медианы
   const filtered=intervals.filter(x=>x>=median*0.5&&x<=median*1.5);
-  
   if(filtered.length<2)return 0;
-  
-  // Средний интервал
   const avgInterval=filtered.reduce((a,b)=>a+b,0)/filtered.length;
-  
-  // BPM = 60 / (avgInterval / sampleRate_at_4kHz)
   const bpm=60/(avgInterval/targetRate);
-  
-  // Нормализация в диапазон 60-180 BPM
   let normalized=bpm;
   while(normalized<60&&normalized<360)normalized*=2;
   while(normalized>180&&normalized>30)normalized/=2;
-  
-  // Если всё ещё вне диапазона — возвращаем 0
   if(normalized<60||normalized>180)return 0;
-  
   return Math.round(normalized);
 }
-
-function syncBPM(slot1,slot2){
-  const bpm1=detectBPM(slot1);
-  const bpm2=detectBPM(slot2);
-  if(bpm1===0||bpm2===0){
-    setStatus(t('bpmFailed'));
-    return;
-  }
-  const ratio=bpm1/bpm2;
-  slotSettings[slot2].tempo*=ratio;
-  slotSettings[slot2].tempo=Math.max(0.25,Math.min(4.0,slotSettings[slot2].tempo));
-  setStatus(`${t('bpmSynced')}: ${bpm2}→${bpm1} BPM`);
-  updatePads();drawWave();saveCurrentSettings();
-}
-// ========== КОНЕЦ BPM SYNC ==========
 
 function updatePads(){
   document.querySelectorAll('.pad').forEach((p,i)=>{
@@ -489,30 +368,29 @@ function hideCtx(){$('contextMenu').classList.remove('active')}
 function ctxCopy(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}ensureCtx();patternClipboard={buffer:cloneBuffer(slots[selectedPatternSlot]),settings:{...slotSettings[selectedPatternSlot]},volPoints:volPoints[selectedPatternSlot].map(p=>({...p})),slot:selectedPatternSlot};setStatus(t('copied'))}
 
 function ctxPaste(){
-  hideCtx();
-  if(!patternClipboard||!patternClipboard.buffer){setStatus(t('nothingToPaste'));return}
-  ensureCtx();
-  const src=patternClipboard.slot;
-  let tgt=-1;
+  hideCtx();if(!patternClipboard||!patternClipboard.buffer){setStatus(t('nothingToPaste'));return}
+  ensureCtx();const src=patternClipboard.slot;let tgt=-1;
   for(let i=src+1;i<10;i++){if(unlockedSlots[i]&&!slots[i]){tgt=i;break}}
   if(tgt===-1){for(let i=0;i<src;i++){if(unlockedSlots[i]&&!slots[i]){tgt=i;break}}}
   if(tgt===-1){setStatus(t('noFreeSlots'));return}
-  pushHistory(tgt);
-  slots[tgt]=cloneBuffer(patternClipboard.buffer);
-  slotSettings[tgt]={...patternClipboard.settings};
-  volPoints[tgt]=patternClipboard.volPoints.map(p=>({...p}));
-  activeSlot=tgt;selectedPatternSlot=tgt;
-  loadSlotSettings(tgt);updatePads();drawWave();updateTransportButtons();
-  setStatus(t('pasted')+' '+(tgt+1));
+  pushHistory(tgt);slots[tgt]=cloneBuffer(patternClipboard.buffer);slotSettings[tgt]={...patternClipboard.settings};
+  volPoints[tgt]=patternClipboard.volPoints.map(p=>({...p}));activeSlot=tgt;selectedPatternSlot=tgt;
+  loadSlotSettings(tgt);updatePads();drawWave();updateTransportButtons();setStatus(t('pasted')+' '+(tgt+1));
 }
 
-function ctxDelete(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}pushHistory(selectedPatternSlot);stopSlot(selectedPatternSlot);slots[selectedPatternSlot]=null;slotSettings[selectedPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[selectedPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];if(activeSlot===selectedPatternSlot){activeSlot=0;loadSlotSettings(0)}selectedPatternSlot=-1;updatePads();drawWave();updateTransportButtons();setStatus(t('deleted'))}
+function ctxDelete(){
+  hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}
+  pushHistory(selectedPatternSlot);stopSlot(selectedPatternSlot);slots[selectedPatternSlot]=null;
+  slotSettings[selectedPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};
+  volPoints[selectedPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+  if(activeSlot===selectedPatternSlot){activeSlot=0;loadSlotSettings(0)}
+  selectedPatternSlot=-1;updatePads();drawWave();updateTransportButtons();setStatus(t('deleted'))
+}
 
 function ctxMove(){hideCtx();if(selectedPatternSlot<0||!slots[selectedPatternSlot]){setStatus(t('selectBlockFirst'));return}pendingMoveSlot=selectedPatternSlot;setStatus(t('moveSameChannel'))}
 
 function performMove(fromSlot,toSlot){
-  if(fromSlot===toSlot)return;
-  if(!slots[fromSlot])return;
+  if(fromSlot===toSlot)return;if(!slots[fromSlot])return;
   pushHistory(fromSlot);pushHistory(toSlot);
   if(slots[toSlot]){
     const tmpBuf=slots[toSlot];const tmpSet={...slotSettings[toSlot]};const tmpVol=volPoints[toSlot].map(p=>({...p}));
@@ -520,7 +398,8 @@ function performMove(fromSlot,toSlot){
     slots[fromSlot]=tmpBuf;slotSettings[fromSlot]=tmpSet;volPoints[fromSlot]=tmpVol;
   } else {
     slots[toSlot]=slots[fromSlot];slotSettings[toSlot]={...slotSettings[fromSlot]};volPoints[toSlot]=volPoints[fromSlot].map(p=>({...p}));
-    slots[fromSlot]=null;slotSettings[fromSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[fromSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+    slots[fromSlot]=null;slotSettings[fromSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};
+    volPoints[fromSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
   }
   selectedPatternSlot=toSlot;activeSlot=toSlot;loadSlotSettings(toSlot);updatePads();drawWave();updateTransportButtons();
   setStatus(t('moved')+' → '+(toSlot+1));
@@ -552,22 +431,18 @@ function startDrag(e){
     e.preventDefault();isDragging=true;dragStart=x;selection={start:x,end:x};return;
   }
   if(viewMode==='pattern'){
-    const x=getPos(e),y=getYPos(e);
-    const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
+    const x=getPos(e),y=getYPos(e);const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
     const lh=canvas.height/vis.length;const li=Math.floor(y/lh);
     if(li>=0&&li<vis.length){
       const si=vis[li];
       if(slots[si]){
-        const pps=50*viewZoom;
-        const vd=slots[si].duration/slotSettings[si].tempo;
-        const bw=Math.max(20,vd*pps);
-        const bx=16+slotSettings[si].offset*pps;
+        const pps=50*viewZoom;const vd=slots[si].duration/slotSettings[si].tempo;
+        const bw=Math.max(20,vd*pps);const bx=16+slotSettings[si].offset*pps;
         if(x>=bx+bw-15&&x<=bx+bw+15){isResizing=true;resizeSlotIndex=si;resizeStartX=x;resizeStartVisualDuration=vd;e.preventDefault();return}
         if(x>=bx&&x<=bx+bw){
           selectedPatternSlot=si;activeSlot=si;loadSlotSettings(si);
           isDraggingPattern=true;dragPatternSlot=si;dragPatternStartX=x;dragPatternStartOffset=slotSettings[si].offset;
-          pendingMoveSlot=-1;
-          updatePads();drawWave();e.preventDefault();return;
+          pendingMoveSlot=-1;updatePads();drawWave();e.preventDefault();return;
         }
       }
     }
@@ -589,17 +464,14 @@ function moveDrag(e){
     updateAllChains();updatePads();drawWave();return;
   }
   if(isDraggingPattern&&dragPatternSlot>=0){
-    e.preventDefault();
-    const x=getPos(e),y=getYPos(e);
+    e.preventDefault();const x=getPos(e),y=getYPos(e);
     const vis=[];for(let i=0;i<10;i++)if(unlockedSlots[i])vis.push(i);
     const lh=canvas.height/vis.length;const li=Math.floor(y/lh);
     if(li>=0&&li<vis.length){
       const targetSlot=vis[li];
       if(targetSlot===dragPatternSlot){
         const dx=x-dragPatternStartX;const pps=50*viewZoom;
-        let newOffset=dragPatternStartOffset+(dx/pps);
-        slotSettings[dragPatternSlot].offset=newOffset;
-        drawWave();
+        let newOffset=dragPatternStartOffset+(dx/pps);slotSettings[dragPatternSlot].offset=newOffset;drawWave();
       } else if(targetSlot!==dragPatternSlot){
         if(slots[targetSlot]){
           const tmpBuf=slots[targetSlot];const tmpSet={...slotSettings[targetSlot]};const tmpVol=volPoints[targetSlot].map(p=>({...p}));
@@ -607,7 +479,8 @@ function moveDrag(e){
           slots[dragPatternSlot]=tmpBuf;slotSettings[dragPatternSlot]=tmpSet;volPoints[dragPatternSlot]=tmpVol;
         } else {
           slots[targetSlot]=slots[dragPatternSlot];slotSettings[targetSlot]={...slotSettings[dragPatternSlot]};volPoints[targetSlot]=volPoints[dragPatternSlot].map(p=>({...p}));
-          slots[dragPatternSlot]=null;slotSettings[dragPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};volPoints[dragPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+          slots[dragPatternSlot]=null;slotSettings[dragPatternSlot]={tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};
+          volPoints[dragPatternSlot]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
         }
         selectedPatternSlot=targetSlot;activeSlot=targetSlot;dragPatternSlot=targetSlot;
         loadSlotSettings(targetSlot);updatePads();drawWave();
@@ -678,10 +551,8 @@ function drawWave(){
       const elapsed=audioCtx.currentTime-patternStartTime;
       const cursorX=16+elapsed*pps;
       if(cursorX>=0&&cursorX<=W){
-        ctx.strokeStyle='rgba(220,38,38,0.25)';ctx.lineWidth=8;
-        ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
-        ctx.strokeStyle='#dc2626';ctx.lineWidth=2;
-        ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
+        ctx.strokeStyle='rgba(220,38,38,0.25)';ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
+        ctx.strokeStyle='#dc2626';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(cursorX,0);ctx.lineTo(cursorX,H);ctx.stroke();
         ctx.fillStyle='#dc2626';ctx.beginPath();ctx.moveTo(cursorX-6,0);ctx.lineTo(cursorX+6,0);ctx.lineTo(cursorX,10);ctx.closePath();ctx.fill();
       }
     }
@@ -712,8 +583,7 @@ function createChain(ac,buf,opts,si){
   const ad=ac.createGain();sh.connect(ad);dw.connect(ad);ad.connect(cv);cv.connect(rw);ad.connect(rd);
   const ar=ac.createGain();rw.connect(ar);rd.connect(ar);ar.connect(tg);tg.connect(pn);pn.connect(og);og.connect(ac.destination);
   if(isRecordingMix&&mixStreamDest)og.connect(mixStreamDest);
-  const now=ac.currentTime;
-  const vp=volPoints[si];
+  const now=ac.currentTime;const vp=volPoints[si];
   og.gain.setValueAtTime(vp[0].y*opts.vol,now);
   for(let i=1;i<vp.length;i++){const time=now+vp[i].x*buf.duration/opts.playbackRate;og.gain.linearRampToValueAtTime(vp[i].y*opts.vol,time)}
   const startTime=opts.startAt!==undefined?opts.startAt:now;
@@ -735,27 +605,20 @@ function play(loop){
       if(loop){opts.offset=o;opts.loopStart=o;opts.loopEnd=o+l}else{opts.offset=o;opts.duration=Math.min(l,d-o)}
     }
     const ch=createChain(audioCtx,buf,opts,activeSlot);
-    activeChains.set(activeSlot,{chain:ch,id});
-    updatePads();startRenderLoop();
+    activeChains.set(activeSlot,{chain:ch,id});updatePads();startRenderLoop();
     ch.source.onended=()=>{
       const d=activeChains.get(activeSlot);
       if(d&&d.id===id){try{ch.tremoloLfo.stop()}catch(e){}activeChains.delete(activeSlot);updatePads();if(!activeChains.size){stopRenderLoop();if(isLooping){isLooping=false;$('loopBtn').classList.remove('active')}}}
     };
   } else {
-    let maxEndTime=0;
-    const now=audioCtx.currentTime;
-    patternStartTime=now;
+    let maxEndTime=0;const now=audioCtx.currentTime;patternStartTime=now;
     for(let i=0;i<10;i++){
       if(!slots[i]||!unlockedSlots[i])continue;
-      const buf=slots[i];const s=slotSettings[i];
-      const vd=buf.duration/s.tempo;
-      const offset=Math.max(0,s.offset);
-      const endTime=offset+vd;
-      if(endTime>maxEndTime)maxEndTime=endTime;
+      const buf=slots[i];const s=slotSettings[i];const vd=buf.duration/s.tempo;const offset=Math.max(0,s.offset);
+      const endTime=offset+vd;if(endTime>maxEndTime)maxEndTime=endTime;
       const id=++currentSourceId;
       const opts={loop:false,playbackRate:s.tempo,detune:s.pitch,vol:s.vol,pan:s.pan,filtOn:s.filtOn,filt:s.filt,dist:s.dist,del:s.del,rev:s.rev,trem:s.trem,offset:0,duration:buf.duration,loopStart:0,loopEnd:buf.duration,startAt:now+offset};
-      const ch=createChain(audioCtx,buf,opts,i);
-      activeChains.set(i,{chain:ch,id});
+      const ch=createChain(audioCtx,buf,opts,i);activeChains.set(i,{chain:ch,id});
     }
     updatePads();startRenderLoop();
     if(loop&&maxEndTime>0){
@@ -779,10 +642,77 @@ $('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;ensureC
 $('recBtn').addEventListener('click',async function(){try{if(isRecording){if(recTimerInterval)clearInterval(recTimerInterval);if(recMediaRecorder&&recMediaRecorder.state!=='inactive')recMediaRecorder.stop();return}ensureCtx();const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});recStream=stream;recChunks=[];recMediaRecorder=new MediaRecorder(stream);recMediaRecorder.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data)};recMediaRecorder.onstop=async()=>{if(recStream){recStream.getTracks().forEach(t=>t.stop());recStream=null}if(!recChunks.length){setStatus(t('noAudioRecorded'));resetRecUI();return}try{const buf=await audioCtx.decodeAudioData(await new Blob(recChunks,{type:recMediaRecorder.mimeType}).arrayBuffer());pushHistory(activeSlot);slots[activeSlot]=buf;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('recorded')+' '+buf.duration.toFixed(1)+'s')}catch(e){setStatus(t('errorProcessing'))}resetRecUI()};recMediaRecorder.start();isRecording=true;recStartTime=Date.now();$('recBtn').classList.add('active');$('recBtn').textContent='■';$('recIndicator').classList.add('active');recTimerInterval=setInterval(()=>{const s=Math.floor((Date.now()-recStartTime)/1000);$('recTime').textContent=Math.floor(s/60)+':'+(s%60+'').padStart(2,'0')},100)}catch(e){setStatus(e.name==='NotAllowedError'?t('micPermissionDenied'):t('micError'));resetRecUI()}});
 function resetRecUI(){isRecording=false;$('recBtn').classList.remove('active');$('recBtn').textContent='●';$('recIndicator').classList.remove('active')}
 
-$('recMixBtn').onclick=async()=>{ensureCtx();await audioCtx.resume();if(!isRecordingMix){mixStreamDest=audioCtx.createMediaStreamDestination();mixChunks=[];activeChains.forEach(d=>d.chain.outputGain.connect(mixStreamDest));let mt='';if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mt='audio/webm;codecs=opus';else if(MediaRecorder.isTypeSupported('audio/webm'))mt='audio/webm';mixRecorder=new MediaRecorder(mixStreamDest.stream,mt?{mimeType:mt}:undefined);mixRecorder.ondataavailable=e=>{if(e.data.size>0)mixChunks.push(e.data)};mixRecorder.start(100);isRecordingMix=true;mixStartTime=Date.now();$('recMixBtn').classList.add('active');$('recMixBtn').textContent='■ '+t('save');setStatus(t('recordingMix'))}else{if(mixTimerInterval)clearInterval(mixTimerInterval);activeChains.forEach(d=>{try{d.chain.outputGain.disconnect(mixStreamDest)}catch(e){}});mixRecorder.onstop=async()=>{if(!mixChunks.length){setStatus(t('noAudioRecorded'));resetMixUI();return}try{const blob=new Blob(mixChunks,{type:mixRecorder.mimeType||'audio/webm'});await saveFileToDevice(blob,'smplrbot_mix.webm')}catch(e){setStatus(t('errorExport'))}resetMixUI()};try{mixRecorder.stop()}catch(e){resetMixUI()}}};
+// ИСПРАВЛЕНИЕ 2: Улучшена запись микса и совместимость с мобильными устройствами (особенно iOS)
+$('recMixBtn').onclick=async()=>{
+  ensureCtx();
+  await audioCtx.resume(); // Критично для iOS Safari
+  if(!isRecordingMix){
+    mixStreamDest=audioCtx.createMediaStreamDestination();
+    mixChunks=[];
+    activeChains.forEach(d=>d.chain.outputGain.connect(mixStreamDest));
+    
+    // Приоритет mp4 для iOS, затем webm
+    let mt='';
+    if(MediaRecorder.isTypeSupported('audio/mp4')) mt='audio/mp4';
+    else if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mt='audio/webm;codecs=opus';
+    else if(MediaRecorder.isTypeSupported('audio/webm')) mt='audio/webm';
+    
+    try {
+      mixRecorder = new MediaRecorder(mixStreamDest.stream, mt ? {mimeType: mt} : undefined);
+    } catch(e) {
+      mixRecorder = new MediaRecorder(mixStreamDest.stream); // Fallback
+    }
+    
+    mixRecorder.ondataavailable=e=>{if(e.data.size>0)mixChunks.push(e.data)};
+    mixRecorder.onstop=async()=>{
+      if(!mixChunks.length){setStatus(t('noAudioRecorded'));resetMixUI();return}
+      try{
+        const blob=new Blob(mixChunks,{type:mixRecorder.mimeType||'audio/webm'});
+        const ext = mt && mt.includes('mp4') ? 'm4a' : 'webm';
+        await saveFileToDevice(blob,'smplrbot_mix.' + ext);
+      }catch(e){
+        setStatus(t('errorExport'));
+      }
+      resetMixUI();
+    };
+    mixRecorder.start(100);
+    isRecordingMix=true;mixStartTime=Date.now();
+    $('recMixBtn').classList.add('active');
+    $('recMixBtn').textContent='■ '+t('save');
+    setStatus(t('recordingMix'));
+  }else{
+    activeChains.forEach(d=>{try{d.chain.outputGain.disconnect(mixStreamDest)}catch(e){}});
+    try{mixRecorder.stop()}catch(e){resetMixUI()}
+  }
+};
 function resetMixUI(){isRecordingMix=false;$('recMixBtn').classList.remove('active');$('recMixBtn').textContent='⏺  '+t('recMix');mixChunks=[];mixStreamDest=null;mixRecorder=null}
 
-async function saveFileToDevice(blob,filename){setStatus(t('processing'));try{if(navigator.share&&navigator.canShare){const file=new File([blob],filename,{type:blob.type});if(navigator.canShare({files:[file]})){await navigator.share({files:[file]});setStatus(t('exported'));return}}const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);setStatus(t('exported'))}catch(e){setStatus(t('errorExport'))}}
+// ИСПРАВЛЕНИЕ 2: Улучшено сохранение файлов на мобильных (добавление в DOM для iOS)
+async function saveFileToDevice(blob,filename){
+  setStatus(t('processing'));
+  try{
+    if(navigator.share&&navigator.canShare){
+      const file=new File([blob],filename,{type:blob.type});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title: 'Sampler Mix'});
+        setStatus(t('exported'));
+        return;
+      }
+    }
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download=filename;
+    document.body.appendChild(a); // Требуется для iOS Safari
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    setStatus(t('exported'));
+  }catch(e){
+    console.error(e);
+    setStatus(t('errorExport') + ': ' + e.message);
+  }
+}
 
 async function convertToMP3(ab){const sr=ab.sampleRate,nc=ab.numberOfChannels,len=ab.length;const enc=new lamejs.Mp3Encoder(nc,sr,128);const l=f32i16(ab.getChannelData(0));const r=nc>1?f32i16(ab.getChannelData(1)):l;const d=[];for(let i=0;i<len;i+=1152){const b=enc.encodeBuffer(l.subarray(i,i+1152),r.subarray(i,i+1152));if(b.length)d.push(b)}const e=enc.flush();if(e.length)d.push(e);return new Blob(d,{type:'audio/mp3'})}
 function f32i16(f){const i=new Int16Array(f.length);for(let x=0;x<f.length;x++){const s=Math.max(-1,Math.min(1,f[x]));i[x]=s<0?s*0x8000:s*0x7FFF}return i}
@@ -790,9 +720,88 @@ function mkDist(a){const k=a,n=44100,c=new Float32Array(n),d=Math.PI/180;for(let
 function mkImp(ac,dur,dec){const r=ac.sampleRate,l=Math.max(1,Math.floor(r*dur));const i=ac.createBuffer(2,l,r);for(let c=0;c<2;c++){const ch=i.getChannelData(c);for(let x=0;x<l;x++)ch[x]=(Math.random()*2-1)*Math.pow(1-x/l,dec)}return i}
 
 $('trimBtn').onclick=()=>{const b=slots[activeSlot];if(!b||!selection||selection.end-selection.start<2){setStatus(t('selectSliceFirst'));return}const s=Math.floor(selection.start/canvas.width*b.length),e=Math.floor(selection.end/canvas.width*b.length);const nl=Math.max(1,e-s);pushHistory(activeSlot);const nb=audioCtx.createBuffer(b.numberOfChannels,nl,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c),dst=nb.getChannelData(c);for(let i=0;i<nl;i++)dst[i]=src[s+i]||0}slots[activeSlot]=nb;selection=null;drawWave();updatePads();setStatus(t('chopped'))};
-$('resetBtn').onclick=$('clearBtn').onclick=()=>{if(slots[activeSlot])pushHistory(activeSlot);stopSlot(activeSlot);slots[activeSlot]=null;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('slotCleared'))};
-$('mergeBtn').onclick=()=>{if(selectedSlots.size<2)return;const idx=[...selectedSlots].sort((a,b)=>a-b);const bufs=idx.map(i=>slots[i]).filter(b=>b);if(bufs.length<2){setStatus(t('notEnoughSlots'));return}let ts=slots.findIndex(s=>s===null);if(ts<0){setStatus(t('noFreeSlots'));return}const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);const m=audioCtx.createBuffer(nc,tl,sr);let off=0;for(const b of bufs){for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);off+=b.length}slots[ts]=m;activeSlot=ts;selectMode=false;selectedSlots.clear();$('selectModeBtn').innerHTML='✓  '+t('select');$('modeIndicator').textContent='';drawWave();updatePads();updateTransportButtons();setStatus(t('merged'))};
-$('exportBtn').onclick=async()=>{const vs=slots.filter(s=>s);if(!vs.length){setStatus(t('noValidSlots'));return}setStatus(t('processing'));try{const sr=vs[0].sampleRate,nc=vs[0].numberOfChannels;const tl=vs.reduce((s,b)=>s+b.length,0);const oc=new OfflineAudioContext(nc,tl,sr);let ct=0;for(let i=0;i<10;i++){if(slots[i]&&unlockedSlots[i]){const src=oc.createBufferSource();src.buffer=slots[i];src.playbackRate.value=slotSettings[i].tempo;src.connect(oc.destination);src.start(ct);ct+=slots[i].duration/slotSettings[i].tempo}}const r=await oc.startRendering();const mp3=await convertToMP3(r);await saveFileToDevice(mp3,'smplrbot_export.mp3')}catch(e){setStatus(t('errorExport'))}};
+
+// ИСПРАВЛЕНИЕ 3: Кнопка "Сброс" теперь очищает ВСЕ семплы во всех слотах
+$('resetBtn').onclick = () => {
+  stopAll();
+  let clearedAny = false;
+  for(let i = 0; i < 10; i++) {
+    if(slots[i]) {
+      pushHistory(i);
+      slots[i] = null;
+      slotSettings[i] = {tempo:1,pitch:0,vol:1,pan:0,filt:1000,filtOn:false,dist:0,del:0,rev:0,trem:0,invert:false,offset:0};
+      volPoints[i] = [{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+      clearedAny = true;
+    }
+  }
+  if(clearedAny) {
+    activeSlot = 0;
+    loadSlotSettings(0);
+    selection = null;
+    drawWave();
+    updatePads();
+    updateTransportButtons();
+    setStatus(t('allCleared'));
+  }
+};
+
+// Кнопка "Очистить" оставляет свою стандартную функцию (очистка только активного слота)
+$('clearBtn').onclick=()=>{
+  if(slots[activeSlot]){
+    pushHistory(activeSlot);
+    stopSlot(activeSlot);
+    slots[activeSlot]=null;
+    selection=null;
+    drawWave();
+    updatePads();
+    updateTransportButtons();
+    setStatus(t('slotCleared'));
+  }
+};
+
+$('mergeBtn').onclick=()=>{
+  // Примечание: в оригинальном коде была переменная selectedSlots, которая не была объявлена в начале. 
+  // Оставляем как есть, чтобы не сломать другую логику, но добавим проверку.
+  if(typeof selectedSlots === 'undefined' || selectedSlots.size < 2) {
+      setStatus(t('selectSliceFirst')); 
+      return;
+  }
+  const idx=[...selectedSlots].sort((a,b)=>a-b);
+  const bufs=idx.map(i=>slots[i]).filter(b=>b);
+  if(bufs.length<2){setStatus(t('notEnoughSlots'));return}
+  let ts=slots.findIndex(s=>s===null);
+  if(ts<0){setStatus(t('noFreeSlots'));return}
+  const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);
+  const m=audioCtx.createBuffer(nc,tl,sr);let off=0;
+  for(const b of bufs){for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);off+=b.length}
+  slots[ts]=m;activeSlot=ts;
+  // selectedSlots.clear(); // Оставлено, если переменная существует
+  $('modeIndicator').textContent='';
+  drawWave();updatePads();updateTransportButtons();setStatus(t('merged'))
+};
+
+$('exportBtn').onclick=async()=>{
+  const vs=slots.filter(s=>s);
+  if(!vs.length){setStatus(t('noValidSlots'));return}
+  setStatus(t('processing'));
+  try{
+    const sr=vs[0].sampleRate,nc=vs[0].numberOfChannels;
+    const tl=vs.reduce((s,b)=>s+b.length,0);
+    const oc=new OfflineAudioContext(nc,tl,sr);
+    let ct=0;
+    for(let i=0;i<10;i++){
+      if(slots[i]&&unlockedSlots[i]){
+        const src=oc.createBufferSource();src.buffer=slots[i];src.playbackRate.value=slotSettings[i].tempo;
+        src.connect(oc.destination);src.start(ct);ct+=slots[i].duration/slotSettings[i].tempo;
+      }
+    }
+    const r=await oc.startRendering();
+    const mp3=await convertToMP3(r);
+    await saveFileToDevice(mp3,'smplrbot_export.mp3');
+  }catch(e){
+    setStatus(t('errorExport'));
+  }
+};
 
 function updateLabelsUI(){$('tempoVal').textContent=(+$('tempo').value).toFixed(2)+'x';$('pitchVal').textContent=$('pitch').value+' ct';$('volVal').textContent=Math.round($('vol').value*100)+'%';const p=+$('pan').value;$('panVal').textContent=Math.abs(p)<.02?'C':p<0?'L'+Math.round(-p*100):'R'+Math.round(p*100);$('revVal').textContent=Math.round($('rev').value*100)+'%';$('delVal').textContent=$('del').value+' ms';$('distVal').textContent=$('dist').value;$('filtVal').innerHTML=$('filtOn').checked?$('filt').value+' Hz':t('off');$('tremVal').textContent=Math.round($('trem').value*100)+'%';$('invertVal').innerHTML=$('invertOn').checked?t('on'):t('off')}
 function updateLabels(){updateLabelsUI();saveCurrentSettings();updateAllChains()}
