@@ -109,6 +109,9 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .pad-duration{font-size:clamp(8px,2.5vw,10px);color:rgba(255,255,255,0.6);margin-top:4px;text-align:center;width:100%}
 .pad.loaded .pad-duration{color:rgba(255,255,255,0.9)}
 
+/* Индикатор выделения */
+.selection-badge{position:absolute;top:2px;right:2px;background:#ff9f0a;color:#000;font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:3;box-shadow:0 1px 3px rgba(0,0,0,0.5)}
+
 .transport{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .transport button{background:linear-gradient(180deg, #48484a 0%, #2c2c2e 100%);border:1px solid #000;border-top-color:rgba(255,255,255,0.2);border-radius:12px;padding:12px 2px;color:#f5f5f7;cursor:pointer;transition:all .1s;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:600;white-space:normal;word-break:break-word;overflow-wrap:break-word;line-height:1.2;font-size:clamp(10px,3.2vw,16px);box-shadow:0 3px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);text-shadow:0 -1px 0 rgba(0,0,0,0.8)}
 .transport button:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,0.6);background:linear-gradient(180deg, #2c2c2e 0%, #3a3a3c 100%);border-top-color:#000}
@@ -141,7 +144,6 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .actions button.ad-btn{background:linear-gradient(180deg, #1a7a3a 0%, #0f5a2a 100%);border-color:#0a3a1a;border-top-color:rgba(255,255,255,0.25);color:#fff;grid-column:2;}
 .actions button.ad-btn:hover{background:linear-gradient(180deg, #22883e 0%, #1a7a3a 100%)}
 
-/* ИСПРАВЛЕНО для мобильных - только расширения, правильное скрытие */
 input[type=file]{
   position:absolute;
   width:0.1px;
@@ -362,6 +364,9 @@ let selectedSlots=new Set(),currentProjectName='samplerx',isDraggingTimeline=fal
 let isRecordingMix=false;
 let lastDoubleTapActivation=0;
 let lastTapTimes=Array(10).fill(0);
+// Для long press выделения
+let longPressTimer=null;
+let longPressTriggered=false;
 
 const eqFreqs = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 12000, 16000, 20000];
 const eqLabels = ['31', '62', '125', '250', '500', '1K', '2K', '4K', '8K', '12K', '16K', '20K'];
@@ -375,8 +380,8 @@ const defaultSlot = {
 };
 
 const translations={
-ru:{about:'ИНФО',aboutTitle:'ИНФО',sample:'СЭМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',saveBtn:'СОХРАНИТЬ',saveProjectBtn:'СОХРАНИТЬ ПРОЕКТ',open:'ОТКРЫТЬ',microphone:'MIC',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',chorus:'Хорус',flanger:'Флэнжер',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',allCleared:'Все слоты очищены',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Рендеринг микса...',selectSliceFirst:'Сначала выделите 2+ слота (Shift+клик), затем нажмите Объединить',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки: только аудиофайлы',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:' Выберите первую дорожку (с семплом)',bpmSelect2:' Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',projectSaved:'Проект сохранён',projectOpened:'Проект открыт',projectName:'Введите имя проекта',incompatibleVersion:'Несовместимая версия проекта',errorOpeningProject:'Ошибка открытия проекта',mixRendered:'Микс сохранён как MP3',equalizer:'12-ПОЛОСНЫЙ ЭКВАЛАЙЗЕР',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>🎸 Новые эффекты</h2><ul><li><strong>Хорус</strong> — утолщает звук, создавая эффект «хора» из нескольких инструментов</li><li><strong>Флэнжер</strong> — реактивный металлический эффект с обратной связью</li></ul><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li><li><strong>📂 ОТКРЫТЬ</strong> — открыть проект (.sx)</li><li><strong>💾 СОХРАНИТЬ</strong> — сохранить проект (.sx)</li><li><strong>Полоса прокрутки</strong> — прокрутка по шкале времени</li><li><strong>Колёсико мыши</strong> — масштабирование сэмпл/паттерн</li></ul><h2>🎹 Выделение и объединение</h2><ul><li><strong>Shift+клик</strong> по пэду — добавить/убрать из выделения</li><li><strong>Обычный клик</strong> — выбрать слот (снимает выделение)</li><li><strong>Двойной тап/клик</strong> — загрузить аудиофайл в слот</li><li>Нажмите <strong>Объединить</strong> — вы увидите подсказку, затем выделите 2+ слота и нажмите <strong>Объединить</strong> снова</li></ul><h2> Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ или колёсико мыши меняют масштаб от 100% до 1000% (независимо для сэмпла и паттерна).</li></ul><h2> СИНХ BPM</h2><p>Нажмите кнопку <strong> СИНХ BPM</strong>:</p><ol><li>Выберите первую дорожку с семплом</li><li>Выберите вторую дорожку с семплом</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой по темпу</li></ol><h2> Громкость и Эквалайзер</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p>Используйте 12-полосный эквалайзер внизу для индивидуальной настройки тембра каждого сэмпла.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
-en:{about:'INFO',aboutTitle:'INFO',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',saveBtn:'SAVE',saveProjectBtn:'SAVE PROJECT',open:'OPEN',microphone:'MIC',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',chorus:'Chorus',flanger:'Flanger',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',allCleared:'All slots cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Rendering mix...',selectSliceFirst:'First select 2+ slots (Shift+click), then press Merge',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error: audio files only',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:' Select first track (with sample)',bpmSelect2:' Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',projectSaved:'Project saved',projectOpened:'Project opened',projectName:'Enter project name',incompatibleVersion:'Incompatible project version',errorOpeningProject:'Error opening project',mixRendered:'Mix saved as MP3',equalizer:'12-BAND EQUALIZER',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2> Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon ) or device settings.</p></div><h2>🎸 New Effects</h2><ul><li><strong>Chorus</strong> — thickens sound, creating "chorus" effect of multiple instruments</li><li><strong>Flanger</strong> — jet-like metallic effect with feedback</li></ul><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li><li><strong>📂 OPEN</strong> — open project (.sx)</li><li><strong>💾 SAVE</strong> — save project (.sx)</li><li><strong>Scroll bar</strong> — timeline scrolling</li><li><strong>Mouse wheel</strong> — zoom sample/pattern</li></ul><h2>🎹 Selection & Merge</h2><ul><li><strong>Shift+click</strong> on pad — add/remove from selection</li><li><strong>Normal click</strong> — select slot (clears selection)</li><li><strong>Double tap/click</strong> — load audio file into slot</li><li>Press <strong>Merge</strong> — you will see a hint, then select 2+ slots and press <strong>Merge</strong> again</li></ul><h2>🎹 Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons or mouse wheel scale the timeline from 100% to 1000%.</li></ul><h2>🎵 SYNC BPM</h2><p>Click <strong> SYNC BPM</strong> button:</p><ol><li>Select first track with sample</li><li>Select second track with sample</li><li>BPM of both samples is automatically calculated</li><li>Second track tempo is synchronized with first</li></ol><h2> Volume & EQ</h2><p>Drag 7 points on the polyline to automate volume.</p><p>Use the 12-band equalizer at the bottom for individual timbre adjustment.</p><p><strong>Happy creating! 🎸</strong></p>'}
+ru:{about:'ИНФО',aboutTitle:'ИНФО',sample:'СЭМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',saveBtn:'СОХРАНИТЬ',saveProjectBtn:'СОХРАНИТЬ ПРОЕКТ',open:'ОТКРЫТЬ',microphone:'MIC',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',chorus:'Хорус',flanger:'Флэнжер',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',allCleared:'Все слоты очищены',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Рендеринг микса...',selectSliceFirst:'Выделите 2+ пэда долгим нажатием, затем снова нажмите Объединить',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки: только аудиофайлы',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:' Выберите первую дорожку (с семплом)',bpmSelect2:' Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',projectSaved:'Проект сохранён',projectOpened:'Проект открыт',projectName:'Введите имя проекта',incompatibleVersion:'Несовместимая версия проекта',errorOpeningProject:'Ошибка открытия проекта',mixRendered:'Микс сохранён как MP3',equalizer:'12-ПОЛОСНЫЙ ЭКВАЛАЙЗЕР',selectedCount:'Выделено пэдов',mergeReady:'Готово к объединению',longPressHint:'Удерживайте пэд для выделения',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>🎹 Объединение на мобильных</h2><ul><li><strong>Долгое нажатие</strong> на пэде — добавляет/убирает из выделения</li><li>Можно выделить несколько пэдов</li><li>Нажмите <strong>Объединить</strong> — появится подсказка</li><li>Выделите 2+ пэда долгим нажатием</li><li>Нажмите <strong>Объединить</strong> снова — сэмплы сольются</li></ul><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li><li><strong>Двойной тап</strong> — загрузить аудиофайл</li><li><strong>Долгое нажатие</strong> — выделить пэд</li></ul><h2>🎸 Эффекты</h2><ul><li><strong>Хорус</strong> — утолщает звук</li><li><strong>Флэнжер</strong> — реактивный металлический эффект</li><li><strong>12-полосный эквалайзер</strong> — индивидуальная настройка тембра</li></ul><p><strong>Приятного творчества! 🎸</strong></p>'},
+en:{about:'INFO',aboutTitle:'INFO',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',saveBtn:'SAVE',saveProjectBtn:'SAVE PROJECT',open:'OPEN',microphone:'MIC',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',chorus:'Chorus',flanger:'Flanger',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',allCleared:'All slots cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Rendering mix...',selectSliceFirst:'Long-press 2+ pads, then press Merge again',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error: audio files only',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:' Select first track (with sample)',bpmSelect2:' Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',projectSaved:'Project saved',projectOpened:'Project opened',projectName:'Enter project name',incompatibleVersion:'Incompatible project version',errorOpeningProject:'Error opening project',mixRendered:'Mix saved as MP3',equalizer:'12-BAND EQUALIZER',selectedCount:'Pads selected',mergeReady:'Ready to merge',longPressHint:'Long press pad to select',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2> Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon ) or device settings.</p></div><h2>🎹 Merging on mobile</h2><ul><li><strong>Long press</strong> on a pad — add/remove from selection</li><li>Multiple pads can be selected</li><li>Press <strong>Merge</strong> — hint will appear</li><li>Long-press 2+ pads to select them</li><li>Press <strong>Merge</strong> again — samples will merge</li></ul><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li><li><strong>Double tap</strong> — load audio file</li><li><strong>Long press</strong> — select pad</li></ul><h2>🎸 Effects</h2><ul><li><strong>Chorus</strong> — thickens sound</li><li><strong>Flanger</strong> — jet-like metallic effect</li><li><strong>12-band equalizer</strong> — individual timbre adjustment</li></ul><p><strong>Happy creating! 🎸</strong></p>'}
 };
 function t(k){return translations[currentLang][k]||k}
 function applyTranslations(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});$('langBtn').textContent=currentLang==='ru'?'RU':'EN';$('modalContent').innerHTML=t('modalContent');updateViewModeBtn();updateProjectNameDisplay()}
@@ -488,13 +493,69 @@ function openFileForSlot(i){
   }
 }
 
+function toggleSlotSelection(i){
+  if(selectedSlots.has(i)){
+    selectedSlots.delete(i);
+  }else{
+    selectedSlots.add(i);
+  }
+  updatePads();
+  updateSelectionInfo();
+}
+
 function initPads(){
   const c=$('pads');c.innerHTML='';
   for(let i=0;i<10;i++){
     const p=document.createElement('div');p.className='pad';p.dataset.index=i;
     p.innerHTML='<div class="pad-num">'+(i+1)+'</div><div class="pad-duration"></div>';
     
+    // LONG PRESS для выделения (работает и на ПК и на мобильных)
+    let pressTimer=null;
+    let wasLongPress=false;
+    let pressStartX=0, pressStartY=0;
+    
+    const startPress = (e) => {
+      wasLongPress=false;
+      const pos = e.touches ? e.touches[0] : e;
+      pressStartX=pos.clientX;
+      pressStartY=pos.clientY;
+      
+      pressTimer=setTimeout(()=>{
+        wasLongPress=true;
+        // Вибрация если поддерживается
+        if(navigator.vibrate){navigator.vibrate(30)}
+        toggleSlotSelection(i);
+        setStatus(t('longPressHint'));
+      },500);
+    };
+    
+    const cancelPress = () => {
+      if(pressTimer){clearTimeout(pressTimer);pressTimer=null}
+    };
+    
+    const moveCheck = (e) => {
+      const pos = e.touches ? e.touches[0] : e;
+      const dx=Math.abs(pos.clientX-pressStartX);
+      const dy=Math.abs(pos.clientY-pressStartY);
+      if(dx>10||dy>10){cancelPress()}
+    };
+    
+    p.addEventListener('pointerdown',(e)=>{
+      startPress(e);
+    });
+    p.addEventListener('pointermove',(e)=>{
+      moveCheck(e);
+    });
     p.addEventListener('pointerup',(e)=>{
+      cancelPress();
+      if(wasLongPress){
+        e.preventDefault();
+        e.stopPropagation();
+        wasLongPress=false;
+        return;
+      }
+      
+      // Проверяем двойной тап
       const now=Date.now();
       const last=lastTapTimes[i];
       if(last>0 && now-last<400){
@@ -509,12 +570,14 @@ function initPads(){
       }else{
         lastTapTimes[i]=now;
         setTimeout(()=>{
-          if(lastTapTimes[i]===now){
+          if(lastTapTimes[i]===now && !wasLongPress){
             handlePadClick(i,e);
           }
         },410);
       }
     });
+    p.addEventListener('pointercancel',cancelPress);
+    p.addEventListener('pointerleave',cancelPress);
     
     c.appendChild(p);
   }
@@ -523,6 +586,14 @@ function initPads(){
 
 function handlePadClick(i,e){
   if(!unlockedSlots[i]){unlockNextSlot();return}
+  
+  // Если есть выделенные слоты и это не Shift+click - очищаем выделение
+  if(selectedSlots.size>0 && !(e&&e.shiftKey)){
+    selectedSlots.clear();
+    updatePads();
+    updateSelectionInfo();
+  }
+  
   if(bpmSyncMode){
     if(!slots[i]){setStatus(t('bpmNoSample'));return}
     if(bpmSelectFirst===-1){bpmSelectFirst=i;document.querySelectorAll('.pad')[i].classList.add('bpm-select1');setStatus(t('bpmSelect2'))}
@@ -544,15 +615,27 @@ function handlePadClick(i,e){
     return;
   }
   if(pendingMoveSlot>=0&&viewMode==='pattern'){if(i!==pendingMoveSlot)performMove(pendingMoveSlot,i);pendingMoveSlot=-1;return}
-  if(e&&e.shiftKey){if(selectedSlots.has(i))selectedSlots.delete(i);else selectedSlots.add(i);updatePads();updateTransportButtons();updateSelectionInfo();return}
-  selectedSlots.clear();saveCurrentSettings();activeSlot=i;selection=null;selectedPatternSlot=-1;loadSlotSettings(i);updatePads();drawWave();updateTransportButtons();updUndoRedo();updateSelectionInfo();updateTimelineScroll()
+  if(e&&e.shiftKey){
+    toggleSlotSelection(i);
+    return;
+  }
+  selectedSlots.clear();
+  saveCurrentSettings();activeSlot=i;selection=null;selectedPatternSlot=-1;loadSlotSettings(i);updatePads();drawWave();updateTransportButtons();updUndoRedo();updateSelectionInfo();updateTimelineScroll()
 }
 
 function updateSelectionInfo(){
   if(selectedSlots.size>0){
-    $('modeIndicator').textContent='Выбрано: '+[...selectedSlots].sort((a,b)=>a-b).map(i=>i+1).join(', ')+' (Shift+клик)';
+    const sorted=[...selectedSlots].sort((a,b)=>a-b).map(i=>i+1).join(', ');
+    if(selectedSlots.size>=2){
+      $('modeIndicator').textContent='✓ '+t('selectedCount')+': '+sorted+' — '+t('mergeReady');
+      $('mergeBtn').classList.add('active');
+    }else{
+      $('modeIndicator').textContent=t('selectedCount')+': '+sorted;
+      $('mergeBtn').classList.remove('active');
+    }
   }else{
     $('modeIndicator').textContent='';
+    $('mergeBtn').classList.remove('active');
   }
 }
 function resetBpmSync(){bpmSyncMode=false;bpmSelectFirst=-1;$('bpmSyncBtn').classList.remove('active');document.querySelectorAll('.pad').forEach(p=>p.classList.remove('bpm-select1','bpm-select2'))}
@@ -585,11 +668,24 @@ function detectBPM(slotIndex){
 function updatePads(){
   document.querySelectorAll('.pad').forEach((p,i)=>{
     p.classList.remove('active','loaded','selected','playing','locked');
+    
+    // Удаляем существующий badge
+    const existingBadge=p.querySelector('.selection-badge');
+    if(existingBadge)existingBadge.remove();
+    
     if(!unlockedSlots[i])p.classList.add('locked');
     if(slots[i]){p.classList.add('loaded');p.querySelector('.pad-duration').textContent=(slots[i].duration/slotSettings[i].tempo).toFixed(1)+'s'}
     else{p.querySelector('.pad-duration').textContent=''}
     if(i===activeSlot)p.classList.add('active');
-    if(selectedSlots.has(i))p.classList.add('selected');
+    if(selectedSlots.has(i)){
+      p.classList.add('selected');
+      // Добавляем badge с номером выделения
+      const order=[...selectedSlots].sort((a,b)=>a-b).indexOf(i)+1;
+      const badge=document.createElement('div');
+      badge.className='selection-badge';
+      badge.textContent=order;
+      p.appendChild(badge);
+    }
     if(activeChains.has(i))p.classList.add('playing');
   });
 }
@@ -1143,15 +1239,27 @@ function mkImp(ac,dur,dec){const r=ac.sampleRate,l=Math.max(1,Math.floor(r*dur))
 $('trimBtn').onclick=()=>{const b=slots[activeSlot];if(!b||!selection||selection.end-selection.start<2){setStatus(t('selectSliceFirst'));return}const s=Math.floor(selection.start/canvas.width*b.length),e=Math.floor(selection.end/canvas.width*b.length),nl=Math.max(1,e-s);pushHistory(activeSlot);const nb=audioCtx.createBuffer(b.numberOfChannels,nl,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c),dst=nb.getChannelData(c);for(let i=0;i<nl;i++)dst[i]=src[s+i]||0}slots[activeSlot]=nb;selection=null;drawWave();updatePads();setStatus(t('chopped'))};
 $('clearBtn').onclick=()=>{if(slots[activeSlot]){pushHistory(activeSlot);stopSlot(activeSlot);slots[activeSlot]=null;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('slotCleared'))}};
 
+// MERGE В ДВА ЭТАПА
 $('mergeBtn').onclick=()=>{
+  // Проверяем сколько слотов выделено
   if(selectedSlots.size<2){
+    // Первое нажатие - показываем подсказку как выделить
     setStatus(t('selectSliceFirst'));
     return;
   }
-  const idx=[...selectedSlots].sort((a,b)=>a-b),bufs=idx.map(i=>slots[i]).filter(b=>b);
+  
+  // Второе нажатие (после выделения 2+ слотов) - выполняем merge
+  const idx=[...selectedSlots].sort((a,b)=>a-b);
+  const bufs=idx.map(i=>slots[i]).filter(b=>b);
   if(bufs.length<2){setStatus(t('notEnoughSlots'));return}
+  
+  // Находим первый свободный слот для результата
   let ts=slots.findIndex(s=>s===null);
-  if(ts<0){setStatus(t('noFreeSlots'));return}
+  // Если все заняты, используем первый выделенный
+  if(ts<0){
+    ts=idx[0];
+  }
+  
   const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);
   const m=audioCtx.createBuffer(nc,tl,sr);
   let off=0;
@@ -1159,7 +1267,17 @@ $('mergeBtn').onclick=()=>{
     for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);
     off+=b.length;
   }
+  
+  // Сохраняем настройки первого выделенного слота
+  const firstSlot=idx[0];
+  const mergedSettings={...slotSettings[firstSlot]};
+  mergedSettings.offset=0;
+  
   slots[ts]=m;
+  slotSettings[ts]=mergedSettings;
+  volPoints[ts]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+  
+  // Очищаем остальные выделенные слоты (кроме целевого)
   idx.forEach(i=>{
     if(i!==ts){
       slots[i]=null;
@@ -1167,6 +1285,7 @@ $('mergeBtn').onclick=()=>{
       volPoints[i]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
     }
   });
+  
   activeSlot=ts;
   selectedSlots.clear();
   loadSlotSettings(ts);
