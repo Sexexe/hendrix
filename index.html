@@ -60,8 +60,8 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe U
 .arrow-triangle.left{border-top:10px solid transparent;border-bottom:10px solid transparent;border-right:15px solid #f5f5f7}
 .arrow-triangle.right{border-top:10px solid transparent;border-bottom:10px solid transparent;border-left:15px solid #f5f5f7}
 .arrow-triangle:hover{transform:scale(1.0)}
-.arrow-triangle.left:hover{border-right-color:#0a84ff}
-.arrow-triangle.right:hover{border-left-color:#0a84ff}
+.arrow-triangle.left:hover{border-right-color:#ff9f0a}
+.arrow-triangle.right:hover{border-left-color:#ff9f0a}
 .arrow-triangle:active{transform:scale(0.85)}
 .arrow-triangle[data-disabled="true"]{opacity:0.3;cursor:not-allowed;pointer-events:none}
 .arrow-triangle[data-disabled="true"]:hover{transform:scale(0.8);border-right-color:#f5f5f7;border-left-color:#f5f5f7}
@@ -94,20 +94,13 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .pads{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
 .pad{aspect-ratio:1;background:linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);border:1px solid #000;border-top-color:rgba(255,255,255,0.15);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .1s;position:relative;min-height:0;padding:4px;box-shadow:0 3px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1)}
 .pad:active{transform:translateY(1px);box-shadow:inset 0 2px 4px rgba(0,0,0,0.6)}
-.pad.active{border-color:#0056b3;background:linear-gradient(180deg, #0a84ff 0%, #0071e3 100%);box-shadow:0 0 16px rgba(10,132,255,0.4), inset 0 1px 0 rgba(255,255,255,0.3)}
+.pad.active{border-color:#b35f00;background:linear-gradient(180deg, #ff9f0a 0%, #cc7a00 100%);box-shadow:0 0 16px rgba(255,159,10,0.4), inset 0 1px 0 rgba(255,255,255,0.3)}
 .pad.loaded{background:linear-gradient(180deg, #34c759 0%, #248a3d 100%);border-color:#14532d;border-top-color:rgba(255,255,255,0.2)}
-.pad.loaded.active{border-color:#0f3d22;background:linear-gradient(180deg, #30d158 0%, #28a745 100%)}
-
-/* Темный выделенный пэд */
-.pad.selected{
-  border-color:#7a4a00;
-  background:linear-gradient(180deg, #b35f00 0%, #8b4513 100%);
-  box-shadow:0 0 0 2px rgba(179,95,0,0.6), inset 0 2px 4px rgba(0,0,0,0.4);
-}
-
-.pad.bpm-select1{border-color:#0056b3!important;background:linear-gradient(180deg, #0a84ff 0%, #0071e3 100%)!important;animation:bpmPulse 1s infinite}
+.pad.loaded.active{border-color:#b35f00;background:linear-gradient(180deg, #ffb340 0%, #ff9f0a 100%)}
+.pad.selected{border-color:#7a4a00;background:linear-gradient(180deg, #b35f00 0%, #8b4513 100%);box-shadow:0 0 0 2px rgba(179,95,0,0.6), inset 0 2px 4px rgba(0,0,0,0.4)}
+.pad.bpm-select1{border-color:#b35f00!important;background:linear-gradient(180deg, #ff9f0a 0%, #cc7a00 100%)!important;animation:bpmPulse 1s infinite}
 .pad.bpm-select2{border-color:#6a1b9a!important;background:linear-gradient(180deg, #bf5af2 0%, #8944c4 100%)!important;animation:bpmPulse 1s infinite}
-@keyframes bpmPulse{0%,100%{box-shadow:0 0 0 0 rgba(10,132,255,.4)}50%{box-shadow:0 0 0 8px rgba(10,132,255,.15)}}
+@keyframes bpmPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,159,10,.4)}50%{box-shadow:0 0 0 8px rgba(255,159,10,.15)}}
 .pad.playing{animation:padPulse .6s infinite}
 .pad.locked{opacity:.5;border-style:dashed;border-color:#636366;background:#1c1c1e;box-shadow:inset 0 2px 4px rgba(0,0,0,0.6)}
 @keyframes padPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.3)}50%{box-shadow:0 0 0 6px rgba(255,255,255,.15)}}
@@ -115,8 +108,6 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .pad.loaded .pad-num, .pad.active .pad-num, .pad.selected .pad-num{color:#fff}
 .pad-duration{font-size:clamp(8px,2.5vw,10px);color:rgba(255,255,255,0.6);margin-top:4px;text-align:center;width:100%}
 .pad.loaded .pad-duration{color:rgba(255,255,255,0.9)}
-.lock-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:clamp(10px,3vw,13px);display:none;pointer-events:none;z-index:2}
-.pad.locked .lock-icon{display:block}
 
 .transport{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .transport button{background:linear-gradient(180deg, #48484a 0%, #2c2c2e 100%);border:1px solid #000;border-top-color:rgba(255,255,255,0.2);border-radius:12px;padding:12px 2px;color:#f5f5f7;cursor:pointer;transition:all .1s;min-height:60px;display:flex;align-items:center;justify-content:center;font-weight:600;white-space:normal;word-break:break-word;overflow-wrap:break-word;line-height:1.2;font-size:clamp(10px,3.2vw,16px);box-shadow:0 3px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.15);text-shadow:0 -1px 0 rgba(0,0,0,0.8)}
@@ -141,14 +132,16 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .actions button.merge{background:linear-gradient(180deg, #d4a017 0%, #8b6508 100%);border-color:#5a4504;border-top-color:rgba(255,255,255,0.25);color:#1c1c1e;text-shadow:0 1px 0 rgba(255,255,255,0.2)}
 .actions button.merge.active{background:linear-gradient(180deg, #e6b422 0%, #d4a017 100%)}
 
-.actions button.bpm-sync{background:linear-gradient(180deg, #1c1c1e 0%, #000000 100%);border-color:#000;border-top-color:rgba(255,255,255,0.25);color:#f5f5f7}
-.actions button.bpm-sync.active{background:linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%);box-shadow:0 0 0 2px rgba(10,132,255,0.5)}
+.actions button.bpm-sync{background:linear-gradient(180deg, #ff9f0a 0%, #cc7a00 100%);border-color:#8a5200;border-top-color:rgba(255,255,255,0.25);color:#1c1c1e;text-shadow:0 1px 0 rgba(255,255,255,0.2)}
+.actions button.bpm-sync.active{background:linear-gradient(180deg, #ffb340 0%, #ff9f0a 100%);box-shadow:0 0 0 2px rgba(255,159,10,0.5)}
 
 .actions button.rec-mix{background:linear-gradient(180deg, #ff453a 0%, #b30010 100%);border-color:#600008;border-top-color:rgba(255,255,255,0.25)}
 .actions button.rec-mix.active{background:linear-gradient(180deg, #ff3b30 0%, #d70015 100%);animation:recPulse 1s infinite}
 
-.actions button.ad-btn{background:linear-gradient(180deg, #bf5af2 0%, #7a20a3 100%);border-color:#4a1166;border-top-color:rgba(255,255,255,0.25);grid-column:2;}
-input[type=file]{display:none}
+.actions button.ad-btn{background:linear-gradient(180deg, #1a7a3a 0%, #0f5a2a 100%);border-color:#0a3a1a;border-top-color:rgba(255,255,255,0.25);color:#fff;grid-column:2;}
+.actions button.ad-btn:hover{background:linear-gradient(180deg, #22883e 0%, #1a7a3a 100%)}
+
+input[type=file]{position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;border:0;padding:0}
 
 .status{text-align:center;color:#86868b;font-size:12px;margin-top:12px;min-height:18px;white-space:normal;word-wrap:break-word;text-shadow:0 1px 0 rgba(255,255,255,0.05)}
 
@@ -164,7 +157,7 @@ input[type=file]{display:none}
 .effect-sub .effect-value{font-size:10px;color:#86868b}
 
 .toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:clamp(9px,2.5vw,11px);color:#86868b;white-space:nowrap}
-.toggle input{width:16px;height:16px;cursor:pointer;accent-color:#0a84ff}
+.toggle input{width:16px;height:16px;cursor:pointer;accent-color:#ff9f0a}
 
 .selection-info{text-align:center;color:#636366;font-size:11px;margin-top:8px;min-height:16px}
 .mode-indicator{text-align:center;color:#ff9f0a;font-size:11px;margin-bottom:4px;min-height:0;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,0.5)}
@@ -221,10 +214,10 @@ input[type=file]{display:none}
 .eq-slider { -webkit-appearance: none; appearance: none; width: 90px; height: 4px; background: transparent; cursor: pointer; margin: 0; transform: rotate(-90deg); z-index: 2; }
 .eq-slider::-webkit-slider-runnable-track { width: 100%; height: 2px; background: linear-gradient(90deg, #3a3a3c 0%, #636366 50%, #3a3a3c 100%); border-radius: 1px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.9); }
 .eq-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 22px; border-radius: 6px; background: linear-gradient(180deg, #f5f5f7 0%, #a1a1a6 40%, #8e8e93 100%); border: 1px solid #000; box-shadow: 0 3px 6px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.9); margin-top: -10px; cursor: ns-resize; transition: box-shadow 0.15s; }
-.eq-slider::-webkit-slider-thumb:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.9), 0 0 8px rgba(10,132,255,0.4); }
+.eq-slider::-webkit-slider-thumb:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.9), 0 0 8px rgba(255,159,10,0.4); }
 .eq-slider::-moz-range-track { width: 100%; height: 2px; background: #636366; border-radius: 1px; }
 .eq-slider::-moz-range-thumb { width: 12px; height: 22px; border-radius: 6px; background: linear-gradient(180deg, #f5f5f7 0%, #a1a1a6 40%, #8e8e93 100%); border: 1px solid #000; box-shadow: 0 3px 6px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.9); cursor: ns-resize; }
-.eq-val { font-size: 9px; color: #0a84ff; font-weight: 700; min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+.eq-val { font-size: 9px; color: #ff9f0a; font-weight: 700; min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 </style>
 </head>
 <body>
@@ -284,11 +277,11 @@ input[type=file]{display:none}
     <div class="rec-indicator" id="recIndicator"><div class="rec-dot"></div><span id="recTime">0:00</span><div class="rec-level"><div class="rec-level-bar" id="recLevel"></div></div></div>
     <div class="actions">
       <label for="fileInput" id="loadBtn" class="btn-xl">📂  <span data-i18n="load">Загрузить</span></label>
-      <input type="file" id="fileInput" accept="audio/*,.wav,.wave,.mp3,.ogg,.oga,.flac,.aac,.m4a,.aiff,.aif,.webm,.mp4,.opus,.wma,.ape,.alac">
+      <input type="file" id="fileInput" accept="audio/*">
       <button id="trimBtn" class="btn-xl" disabled>✂  <span data-i18n="chop">Обрезать</span></button>
       <button id="clearBtn" class="btn-xl" disabled>  <span data-i18n="clear">Очистить</span></button>
       <button id="recMixBtn" class="rec-mix btn-xl">  <span data-i18n="recMix">Запись микса</span></button>
-      <button id="mergeBtn" class="merge btn-xl" disabled>  <span data-i18n="merge">Объединить</span></button>
+      <button id="mergeBtn" class="merge btn-xl">  <span data-i18n="merge">Объединить</span></button>
       <button id="bpmSyncBtn" class="bpm-sync btn-xl" onclick="toggleBpmSync()">  <span data-i18n="bpmSync">СИНХ BPM</span></button>
       <button id="adBtn" class="ad-btn btn-xl" onclick="unlockNextSlot()">  <span data-i18n="bonus">Бонус</span></button>
     </div>
@@ -346,6 +339,7 @@ input[type=file]{display:none}
 </div>
 <script>
 let currentLang=localStorage.getItem('samplerLang')||'ru';
+// Блокировка слотов 6-10 как было изначально
 let unlockedSlots=[true,true,true,true,true,false,false,false,false,false];
 let isAdReady=false,isInterstitialAdReady=false;
 let viewMode='sample';
@@ -359,6 +353,8 @@ let pendingMoveSlot=-1,patternLoopTimer=null,patternStartTime=0;
 let bpmSyncMode=false,bpmSelectFirst=-1,previousSampleSlot=0,padDoubleClickSlot=-1;
 let selectedSlots=new Set(),currentProjectName='samplerx',isDraggingTimeline=false;
 let isRecordingMix=false;
+let lastDoubleTapActivation=0;
+let lastTapTimes=Array(10).fill(0);
 
 const eqFreqs = [31, 62, 125, 250, 500, 1000, 2000, 4000, 8000, 12000, 16000, 20000];
 const eqLabels = ['31', '62', '125', '250', '500', '1K', '2K', '4K', '8K', '12K', '16K', '20K'];
@@ -372,8 +368,8 @@ const defaultSlot = {
 };
 
 const translations={
-ru:{about:'ИНФО',aboutTitle:'ИНФО',sample:'СЭМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',saveBtn:'СОХРАНИТЬ',saveProjectBtn:'СОХРАНИТЬ ПРОЕКТ',open:'ОТКРЫТЬ',microphone:'MIC',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',chorus:'Хорус',flanger:'Флэнжер',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',allCleared:'Все слоты очищены',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Рендеринг микса...',selectSliceFirst:'Сначала выберите 2+ слота (Shift+клик)',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! ',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:' Выберите первую дорожку (с семплом)',bpmSelect2:' Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',projectSaved:'Проект сохранён',projectOpened:'Проект открыт',projectName:'Введите имя проекта',incompatibleVersion:'Несовместимая версия проекта',errorOpeningProject:'Ошибка открытия проекта',mixRendered:'Микс сохранён как MP3',equalizer:'12-ПОЛОСНЫЙ ЭКВАЛАЙЗЕР',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>🎸 Новые эффекты</h2><ul><li><strong>Хорус</strong> — утолщает звук, создавая эффект «хора» из нескольких инструментов</li><li><strong>Флэнжер</strong> — реактивный металлический эффект с обратной связью</li></ul><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li><li><strong>📂 ОТКРЫТЬ</strong> — открыть проект (.sx)</li><li><strong>💾 СОХРАНИТЬ</strong> — сохранить проект (.sx)</li><li><strong>Полоса прокрутки</strong> — прокрутка по шкале времени</li><li><strong>Колёсико мыши</strong> — масштабирование сэмпл/паттерн</li></ul><h2>🎹 Выделение и объединение</h2><ul><li><strong>Shift+клик</strong> по пэду — добавить/убрать из выделения</li><li><strong>Обычный клик</strong> — выбрать слот (снимает выделение)</li><li><strong>Двойной клик</strong> — загрузить файл в слот</li><li>Выберите 2+ слота и нажмите <strong> Объединить</strong></li></ul><h2> Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ или колёсико мыши меняют масштаб от 100% до 1000% (независимо для сэмпла и паттерна).</li></ul><h2> СИНХ BPM</h2><p>Нажмите кнопку <strong> СИНХ BPM</strong>:</p><ol><li>Выберите первую дорожку с семплом (подсветка синим)</li><li>Выберите вторую дорожку с семплом (подсветка фиолетовым)</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой по темпу</li></ol><h2> Громкость и Эквалайзер</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p>Используйте 12-полосный эквалайзер внизу для индивидуальной настройки тембра каждого сэмпла.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
-en:{about:'INFO',aboutTitle:'INFO',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',saveBtn:'SAVE',saveProjectBtn:'SAVE PROJECT',open:'OPEN',microphone:'MIC',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',chorus:'Chorus',flanger:'Flanger',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',allCleared:'All slots cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Rendering mix...',selectSliceFirst:'Select 2+ slots first (Shift+click)',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:' Select first track (with sample)',bpmSelect2:' Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',projectSaved:'Project saved',projectOpened:'Project opened',projectName:'Enter project name',incompatibleVersion:'Incompatible project version',errorOpeningProject:'Error opening project',mixRendered:'Mix saved as MP3',equalizer:'12-BAND EQUALIZER',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2> Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon ) or device settings.</p></div><h2>🎸 New Effects</h2><ul><li><strong>Chorus</strong> — thickens sound, creating "chorus" effect of multiple instruments</li><li><strong>Flanger</strong> — jet-like metallic effect with feedback</li></ul><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li><li><strong>📂 OPEN</strong> — open project (.sx)</li><li><strong>💾 SAVE</strong> — save project (.sx)</li><li><strong>Scroll bar</strong> — timeline scrolling</li><li><strong>Mouse wheel</strong> — zoom sample/pattern</li></ul><h2>🎹 Selection & Merge</h2><ul><li><strong>Shift+click</strong> on pad — add/remove from selection</li><li><strong>Normal click</strong> — select slot (clears selection)</li><li><strong>Double click</strong> — load file into slot</li><li>Select 2+ slots and press <strong>🔗 Merge</strong></li></ul><h2>🎹 Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons or mouse wheel scale the timeline from 100% to 1000%.</li></ul><h2>🎵 SYNC BPM</h2><p>Click <strong> SYNC BPM</strong> button:</p><ol><li>Select first track with sample (blue highlight)</li><li>Select second track with sample (purple highlight)</li><li>BPM of both samples is automatically calculated</li><li>Second track tempo is synchronized with first</li></ol><h2> Volume & EQ</h2><p>Drag 7 points on the polyline to automate volume.</p><p>Use the 12-band equalizer at the bottom for individual timbre adjustment.</p><p><strong>Happy creating! 🎸</strong></p>'}
+ru:{about:'ИНФО',aboutTitle:'ИНФО',sample:'СЭМПЛ',pattern:'ПАТТЕРН',tapDrag:'Нажмите и перетащите для выбора',loop:'ЦИКЛ',load:'Загрузить',chop:'Обрезать',reset:'Сброс',save:'Сохранить',saveBtn:'СОХРАНИТЬ',saveProjectBtn:'СОХРАНИТЬ ПРОЕКТ',open:'ОТКРЫТЬ',microphone:'MIC',recMix:'Запись микса',merge:'Объединить',clear:'Очистить',select:'Выбрать',bpmSync:'СИНХ BPM',cancel:'Отмена',loadOrRecord:'Загрузите аудио или запишите',slot:'Слот',tempo:'Темп',pitch:'Тон',volume:'Громкость',pan:'Панорама',filter:'Фильтр',distortion:'Дисторшн',delay:'Задержка',reverb:'Реверб',tremolo:'Тремоло',chorus:'Хорус',flanger:'Флэнжер',invert:'Инверт',off:'Выкл',on:'Вкл',reverse:'Реверс',emptySlot:'Пустой слот',selectMode:'РЕЖИМ ВЫБОРА',sampleReversed:'Сэмпл перевернут',sampleRestored:'Сэмпл восстановлен',slotCleared:'Слот очищен',allCleared:'Все слоты очищены',chopped:'Обрезано',merged:'Объединено',exported:'Экспортировано',recorded:'Записано',loading:'Загрузка...',processing:'Обработка...',recording:'Запись...',recordingMix:'Рендеринг микса...',selectSliceFirst:'Сначала выделите 2+ слота (Shift+клик), затем нажмите Объединить',invalidSelection:'Неверный выбор',notEnoughSlots:'Недостаточно слотов',noFreeSlots:'Нет свободных слотов',noValidSlots:'Нет валидных слотов',micNotSupported:'Микрофон не поддерживается',micPermissionDenied:'Доступ к микрофону запрещен',micError:'Ошибка микрофона',noAudioRecorded:'Аудио не записано',errorLoading:'Ошибка загрузки',errorProcessing:'Ошибка обработки',errorExport:'Ошибка экспорта',initError:'Ошибка инициализации',loadedToSlot:'Загружено в слот',requestMic:'Запрос микрофона...',undo:'Отмена',redo:'Вернуть',nothingToUndo:'Нечего отменять',nothingToRedo:'Нечего возвращать',bonus:'Бонус',adLoading:'Загрузка рекламы...',adUnavailable:'Реклама недоступна',adLoadingWait:'Загрузка рекламы...',progressLoaded:'Прогресс загружен',slotUnlocked:'Слот разблокирован:',allUnlocked:'Все слоты открыты! 🎉',copy:'Копировать',paste:'Вставить',delete:'Удалить',move:'Двигать',copied:'Скопировано',pasted:'Вставлено в слот',deleted:'Удалено',moved:'Перемещено',selectBlockFirst:'Сначала выберите блок',nothingToPaste:'Нечего вставлять',moveSameChannel:'Тяните блок влево/вправо или на другой слот',bpmSelect1:' Выберите первую дорожку (с семплом)',bpmSelect2:' Выберите вторую дорожку (с семплом)',bpmSynced:'BPM синхронизировано',bpmNoSample:'В этом слоте нет семпла!',bpmFailed:'Не удалось определить BPM',bpmSameSlot:'Выберите другой слот',projectSaved:'Проект сохранён',projectOpened:'Проект открыт',projectName:'Введите имя проекта',incompatibleVersion:'Несовместимая версия проекта',errorOpeningProject:'Ошибка открытия проекта',mixRendered:'Микс сохранён как MP3',equalizer:'12-ПОЛОСНЫЙ ЭКВАЛАЙЗЕР',modalContent:'<h1>🎛️ Руководство пользователя</h1><p>Полное руководство по использованию веб-сэмплера.</p><div class="warning"><h2>🎤 Доступ к микрофону</h2><p>Разрешите доступ к микрофону в настройках браузера (значок замка 🔒) или в настройках устройства.</p></div><h2>🎸 Новые эффекты</h2><ul><li><strong>Хорус</strong> — утолщает звук, создавая эффект «хора» из нескольких инструментов</li><li><strong>Флэнжер</strong> — реактивный металлический эффект с обратной связью</li></ul><h2>📱 Интерфейс</h2><ul><li><strong>Верхняя панель</strong> — форма волны или редактор паттернов</li><li><strong>Пэды</strong> — 10 ячеек для хранения сэмплов</li><li><strong>📂 ОТКРЫТЬ</strong> — открыть проект (.sx)</li><li><strong>💾 СОХРАНИТЬ</strong> — сохранить проект (.sx)</li><li><strong>Полоса прокрутки</strong> — прокрутка по шкале времени</li><li><strong>Колёсико мыши</strong> — масштабирование сэмпл/паттерн</li></ul><h2>🎹 Выделение и объединение</h2><ul><li><strong>Shift+клик</strong> по пэду — добавить/убрать из выделения</li><li><strong>Обычный клик</strong> — выбрать слот (снимает выделение)</li><li><strong>Двойной тап/клик</strong> — загрузить файл в слот</li><li>Нажмите <strong>Объединить</strong> — вы увидите подсказку, затем выделите 2+ слота и нажмите <strong>Объединить</strong> снова</li></ul><h2> Режим паттернов (Pro)</h2><ul><li><strong>Мини-волны:</strong> блоки отображают форму звука.</li><li><strong>Контекстное меню:</strong> правый клик или долгое нажатие на блоке для копирования, вставки, удаления, перемещения.</li><li><strong>Растягивание:</strong> тяните правый край блока или используйте щипок двумя пальцами для изменения темпа.</li><li><strong>Масштаб:</strong> кнопки ➖ и ➕ или колёсико мыши меняют масштаб от 100% до 1000% (независимо для сэмпла и паттерна).</li></ul><h2> СИНХ BPM</h2><p>Нажмите кнопку <strong> СИНХ BPM</strong>:</p><ol><li>Выберите первую дорожку с семплом</li><li>Выберите вторую дорожку с семплом</li><li>Автоматически вычисляется BPM обоих семплов</li><li>Вторая дорожка синхронизируется с первой по темпу</li></ol><h2> Громкость и Эквалайзер</h2><p>Тяните 7 точек на ломаной линии для автоматизации громкости.</p><p>Используйте 12-полосный эквалайзер внизу для индивидуальной настройки тембра каждого сэмпла.</p><p><strong>Приятного творчества! 🎸</strong></p>'},
+en:{about:'INFO',aboutTitle:'INFO',sample:'SAMPLE',pattern:'PATTERN',tapDrag:'Tap and drag to select',loop:'LOOP',load:'Load',chop:'Chop',reset:'Reset',save:'Save',saveBtn:'SAVE',saveProjectBtn:'SAVE PROJECT',open:'OPEN',microphone:'MIC',recMix:'Rec Mix',merge:'Merge',clear:'Clear',select:'Select',bpmSync:'SYNC BPM',cancel:'Cancel',loadOrRecord:'Load audio or record',slot:'Slot',tempo:'Tempo',pitch:'Pitch',volume:'Volume',pan:'Pan',filter:'Filter',distortion:'Distortion',delay:'Delay',reverb:'Reverb',tremolo:'Tremolo',chorus:'Chorus',flanger:'Flanger',invert:'Invert',off:'Off',on:'On',reverse:'Reverse',emptySlot:'Empty slot',selectMode:'SELECT MODE',sampleReversed:'Sample reversed',sampleRestored:'Sample restored',slotCleared:'Slot cleared',allCleared:'All slots cleared',chopped:'Chopped',merged:'Merged',exported:'Exported',recorded:'Recorded',loading:'Loading...',processing:'Processing...',recording:'Recording...',recordingMix:'Rendering mix...',selectSliceFirst:'First select 2+ slots (Shift+click), then press Merge',invalidSelection:'Invalid selection',notEnoughSlots:'Not enough slots',noFreeSlots:'No free slots',noValidSlots:'No valid slots',micNotSupported:'Mic not supported',micPermissionDenied:'Mic permission denied',micError:'Mic error',noAudioRecorded:'No audio recorded',errorLoading:'Load error',errorProcessing:'Processing error',errorExport:'Export error',initError:'Init error',loadedToSlot:'Loaded to slot',requestMic:'Requesting mic...',undo:'Undo',redo:'Redo',nothingToUndo:'Nothing to undo',nothingToRedo:'Nothing to redo',bonus:'Bonus',adLoading:'Loading ad...',adUnavailable:'Ad unavailable',adLoadingWait:'Loading ad...',progressLoaded:'Progress loaded',slotUnlocked:'Slot unlocked:',allUnlocked:'All slots unlocked! 🎉',copy:'Copy',paste:'Paste',delete:'Delete',move:'Move',copied:'Copied',pasted:'Pasted to slot',deleted:'Deleted',moved:'Moved',selectBlockFirst:'Select a block first',nothingToPaste:'Nothing to paste',moveSameChannel:'Drag block left/right or to another slot',bpmSelect1:' Select first track (with sample)',bpmSelect2:' Select second track (with sample)',bpmSynced:'BPM synchronized',bpmNoSample:'No sample in this slot!',bpmFailed:'Failed to detect BPM',bpmSameSlot:'Select a different slot',projectSaved:'Project saved',projectOpened:'Project opened',projectName:'Enter project name',incompatibleVersion:'Incompatible project version',errorOpeningProject:'Error opening project',mixRendered:'Mix saved as MP3',equalizer:'12-BAND EQUALIZER',modalContent:'<h1>🎛️ User Guide</h1><p>Complete guide to using the web sampler.</p><div class="warning"><h2> Microphone Access</h2><p>Allow microphone access in your browser settings (lock icon ) or device settings.</p></div><h2>🎸 New Effects</h2><ul><li><strong>Chorus</strong> — thickens sound, creating "chorus" effect of multiple instruments</li><li><strong>Flanger</strong> — jet-like metallic effect with feedback</li></ul><h2>📱 Interface</h2><ul><li><strong>Top panel</strong> — waveform or pattern editor</li><li><strong>Pads</strong> — 10 cells for storing samples</li><li><strong>📂 OPEN</strong> — open project (.sx)</li><li><strong>💾 SAVE</strong> — save project (.sx)</li><li><strong>Scroll bar</strong> — timeline scrolling</li><li><strong>Mouse wheel</strong> — zoom sample/pattern</li></ul><h2>🎹 Selection & Merge</h2><ul><li><strong>Shift+click</strong> on pad — add/remove from selection</li><li><strong>Normal click</strong> — select slot (clears selection)</li><li><strong>Double tap/click</strong> — load file into slot</li><li>Press <strong>Merge</strong> — you will see a hint, then select 2+ slots and press <strong>Merge</strong> again</li></ul><h2>🎹 Pattern Mode (Pro)</h2><ul><li><strong>Mini-waveforms:</strong> blocks display the actual sound shape.</li><li><strong>Context menu:</strong> right-click or long-press on a block to copy, paste, delete, or move.</li><li><strong>Stretch:</strong> drag the right edge of a block or use a two-finger pinch to change tempo.</li><li><strong>Zoom:</strong> ➖ and ➕ buttons or mouse wheel scale the timeline from 100% to 1000%.</li></ul><h2>🎵 SYNC BPM</h2><p>Click <strong> SYNC BPM</strong> button:</p><ol><li>Select first track with sample</li><li>Select second track with sample</li><li>BPM of both samples is automatically calculated</li><li>Second track tempo is synchronized with first</li></ol><h2> Volume & EQ</h2><p>Drag 7 points on the polyline to automate volume.</p><p>Use the 12-band equalizer at the bottom for individual timbre adjustment.</p><p><strong>Happy creating! 🎸</strong></p>'}
 };
 function t(k){return translations[currentLang][k]||k}
 function applyTranslations(){document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'))});$('langBtn').textContent=currentLang==='ru'?'RU':'EN';$('modalContent').innerHTML=t('modalContent');updateViewModeBtn();updateProjectNameDisplay()}
@@ -414,8 +410,19 @@ function updateProjectNameDisplay(){$('projectNameDisplay').textContent=currentP
 function openProject(){$('projectFileInput').click()}
 
 function init(){
-  const w=()=>{if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100,latencyHint:'interactive'})}catch(e){};if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume()};
-  window.addEventListener('pointerdown',w);window.addEventListener('touchstart',w,{passive:true});
+  // Инициализация AudioContext на любом user gesture
+  const initAudio = ()=>{
+    if(!audioCtx){
+      try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100,latencyHint:'interactive'})}catch(e){}
+    }
+    if(audioCtx&&audioCtx.state==='suspended'){
+      audioCtx.resume();
+    }
+  };
+  window.addEventListener('pointerdown',initAudio);
+  window.addEventListener('touchstart',initAudio,{passive:true});
+  window.addEventListener('click',initAudio);
+  
   initPads();initEQ();loadSlotSettings(activeSlot);updateTransportButtons();applyTranslations();updUndoRedo();resizeCanvas();initTimelineScroll();
   canvas.addEventListener('wheel',(e)=>{e.preventDefault();changeZoom(e.deltaY>0?-0.1:0.1)},{passive:false});
 }
@@ -463,34 +470,54 @@ function saveCurrentSettings(){
   });
 }
 
+function openFileForSlot(i){
+  lastDoubleTapActivation=Date.now();
+  padDoubleClickSlot=i;
+  const fi=$('fileInput');
+  fi.value='';
+  // Синхронный вызов click() из user gesture - критично для мобильных
+  try{
+    fi.click();
+  }catch(e){
+    console.error('File input click error:', e);
+  }
+}
+
 function initPads(){
   const c=$('pads');c.innerHTML='';
   for(let i=0;i<10;i++){
     const p=document.createElement('div');p.className='pad';p.dataset.index=i;
-    p.innerHTML='<div class="pad-num">'+(i+1)+'</div><div class="pad-duration"></div><div class="lock-icon"></div>';
-    p.addEventListener('click',(e)=>handlePadClick(i,e));
-    p.addEventListener('dblclick',()=>handlePadDoubleClick(i));
+    // БЕЗ иконки замка
+    p.innerHTML='<div class="pad-num">'+(i+1)+'</div><div class="pad-duration"></div>';
     
-    // Touch double-tap handling for mobile
-    let lastTapTime = 0;
-    p.addEventListener('touchend', (e) => {
-      const now = Date.now();
-      if (now - lastTapTime < 400) {
+    // pointerup для отслеживания двойного тапа/клика
+    p.addEventListener('pointerup',(e)=>{
+      const now=Date.now();
+      const last=lastTapTimes[i];
+      if(last>0 && now-last<400){
+        // Двойной тап/клик
         e.preventDefault();
-        handlePadDoubleClick(i);
+        e.stopPropagation();
+        lastTapTimes[i]=0;
+        if(unlockedSlots[i]){
+          openFileForSlot(i);
+        }else{
+          unlockNextSlot();
+        }
+      }else{
+        lastTapTimes[i]=now;
+        // Одиночный клик с небольшой задержкой
+        setTimeout(()=>{
+          if(lastTapTimes[i]===now){
+            handlePadClick(i,e);
+          }
+        },410);
       }
-      lastTapTime = now;
     });
     
     c.appendChild(p);
   }
   updatePads();
-}
-
-function handlePadDoubleClick(i){
-  if(!unlockedSlots[i])return;
-  padDoubleClickSlot=i;
-  $('fileInput').click();
 }
 
 function handlePadClick(i,e){
@@ -520,7 +547,13 @@ function handlePadClick(i,e){
   selectedSlots.clear();saveCurrentSettings();activeSlot=i;selection=null;selectedPatternSlot=-1;loadSlotSettings(i);updatePads();drawWave();updateTransportButtons();updUndoRedo();updateSelectionInfo();updateTimelineScroll()
 }
 
-function updateSelectionInfo(){$('modeIndicator').textContent=selectedSlots.size>0?'Выбрано: '+[...selectedSlots].sort((a,b)=>a-b).map(i=>i+1).join(', ')+' (Shift+клик)':''}
+function updateSelectionInfo(){
+  if(selectedSlots.size>0){
+    $('modeIndicator').textContent='Выбрано: '+[...selectedSlots].sort((a,b)=>a-b).map(i=>i+1).join(', ')+' (Shift+клик)';
+  }else{
+    $('modeIndicator').textContent='';
+  }
+}
 function resetBpmSync(){bpmSyncMode=false;bpmSelectFirst=-1;$('bpmSyncBtn').classList.remove('active');document.querySelectorAll('.pad').forEach(p=>p.classList.remove('bpm-select1','bpm-select2'))}
 function toggleBpmSync(){if(bpmSyncMode){resetBpmSync();setStatus(t('loadOrRecord'))}else{if(slots.filter(s=>s!==null).length<2){setStatus('Нужно минимум 2 слота');return}bpmSyncMode=true;bpmSelectFirst=-1;$('bpmSyncBtn').classList.add('active');setStatus(t('bpmSelect1'))}}
 
@@ -563,8 +596,7 @@ function updatePads(){
 function updateTransportButtons(){
   let hasAudio=viewMode==='sample'?slots[activeSlot]!==null:slots.some(s=>s!==null);
   ['playBtn','loopBtn','stopBtn','trimBtn','clearBtn'].forEach(id=>$(id).disabled=!hasAudio);
-  $('mergeBtn').disabled=selectedSlots.size<2;
-  $('mergeBtn').classList.toggle('active',selectedSlots.size>=2);
+  // Merge НЕ disabled - работает в два этапа
 }
 
 function resizeCanvas(){const r=canvas.getBoundingClientRect();if(r.width>0&&r.height>0){canvas.width=r.width;canvas.height=r.height;drawWave();updateTimelineScroll()}}
@@ -721,7 +753,7 @@ function drawWave(){
     ctx.strokeStyle='rgba(255,255,255,0.1)';ctx.lineWidth=1;
     const si2=visibleDuration>10?2:visibleDuration>5?1:0.5;
     for(let s=0;s<=visibleDuration;s+=si2){const x=(s/visibleDuration)*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='9px sans-serif';ctx.fillText((timelineOffsetSample+s).toFixed(1)+'s',x+2,H-4)}
-    if(selection&&selection.end-selection.start>1){ctx.fillStyle='rgba(10,132,255,0.2)';ctx.fillRect(selection.start,0,selection.end-selection.start,H);ctx.strokeStyle='#0a84ff';ctx.lineWidth=1;ctx.strokeRect(selection.start,0,selection.end-selection.start,H)}
+    if(selection&&selection.end-selection.start>1){ctx.fillStyle='rgba(255,159,10,0.2)';ctx.fillRect(selection.start,0,selection.end-selection.start,H);ctx.strokeStyle='#ff9f0a';ctx.lineWidth=1;ctx.strokeRect(selection.start,0,selection.end-selection.start,H)}
     ctx.strokeStyle='#f5f5f7';ctx.lineWidth=1.2;ctx.beginPath();
     for(let i=0;i<W;i++){const sampleIndex=startSample+Math.floor((i/W)*visibleSamples),nextSampleIndex=startSample+Math.floor(((i+1)/W)*visibleSamples);let mn=1,mx=-1;for(let j=sampleIndex;j<Math.min(totalSamples,nextSampleIndex);j++){const v=data[j];if(v<mn)mn=v;if(v>mx)mx=v}if(i===0)ctx.moveTo(i,(1+mn)*amp);ctx.lineTo(i,(1+mn)*amp);ctx.lineTo(i,(1+mx)*amp)}
     ctx.stroke();
@@ -741,14 +773,14 @@ function drawWave(){
     for(let s=0;s<=vd2;s+=si4){const x=16+s*pps;if(x>W)break;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='9px sans-serif';ctx.fillText((timelineOffsetPattern+s)+'s',x+2,H-4)}
     for(let i=0;i<vis.length;i++){
       const si5=vis[i],y=i*lh;
-      ctx.fillStyle=(si5===activeSlot)?'rgba(10,132,255,0.15)':'#111113';ctx.fillRect(0,y,W,lh);
+      ctx.fillStyle=(si5===activeSlot)?'rgba(255,159,10,0.15)':'#111113';ctx.fillRect(0,y,W,lh);
       ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
       ctx.fillStyle='#86868b';ctx.font='10px sans-serif';ctx.fillText((si5+1)+'',4,y+14);
       if(slots[si5]){
         const vd3=slots[si5].duration/slotSettings[si5].tempo,bw=Math.max(20,vd3*pps);
         const bx=16+Math.max(0,slotSettings[si5].offset)*pps-timelineOffsetPattern*pps;
         if(bx+bw<0||bx>W)continue;
-        const colors=['#30d158','#0a84ff','#bf5af2','#ff9f0a','#ff453a','#636366','#48484a','#3a3a3c','#2c2c2e','#1c1c1e'];
+        const colors=['#30d158','#ff9f0a','#bf5af2','#d4a017','#ff453a','#636366','#48484a','#3a3a3c','#2c2c2e','#1c1c1e'];
         ctx.fillStyle=colors[si5%10];ctx.fillRect(Math.max(0,bx),y+4,Math.min(bw,W-Math.max(0,bx)),lh-8);
         if(si5===selectedPatternSlot){ctx.strokeStyle='#ff9f0a';ctx.lineWidth=2;ctx.strokeRect(Math.max(0,bx),y+4,Math.min(bw,W-Math.max(0,bx)),lh-8)}
         const data=slots[si5].getChannelData(0),st=Math.max(1,Math.ceil(data.length/bw)),wa=(lh-8)/2,cy2=y+4+wa;
@@ -922,7 +954,32 @@ $('playBtn').onclick=()=>{if(isLooping){isLooping=false;$('loopBtn').classList.r
 $('loopBtn').onclick=()=>{if(isLooping){isLooping=false;$('loopBtn').classList.remove('active');stopAll()}else{isLooping=true;$('loopBtn').classList.add('active');play(true)}};
 $('stopBtn').onclick=stopAll;
 
-$('fileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;ensureCtx();setStatus(t('loading'));try{const targetSlot=padDoubleClickSlot>=0?padDoubleClickSlot:activeSlot;pushHistory(targetSlot);slots[targetSlot]=await audioCtx.decodeAudioData(await f.arrayBuffer());if(padDoubleClickSlot>=0){activeSlot=padDoubleClickSlot;padDoubleClickSlot=-1;loadSlotSettings(activeSlot)}selection=null;drawWave();updatePads();updateTransportButtons();updateTimelineScroll();setStatus(t('loadedToSlot')+' '+(activeSlot+1))}catch(er){setStatus(t('errorLoading'))}e.target.value=''};
+$('fileInput').onchange=async e=>{
+  const f=e.target.files[0];
+  if(!f)return;
+  ensureCtx();
+  setStatus(t('loading'));
+  try{
+    const targetSlot=padDoubleClickSlot>=0?padDoubleClickSlot:activeSlot;
+    pushHistory(targetSlot);
+    slots[targetSlot]=await audioCtx.decodeAudioData(await f.arrayBuffer());
+    if(padDoubleClickSlot>=0){
+      activeSlot=padDoubleClickSlot;
+      padDoubleClickSlot=-1;
+      loadSlotSettings(activeSlot);
+    }
+    selection=null;
+    drawWave();
+    updatePads();
+    updateTransportButtons();
+    updateTimelineScroll();
+    setStatus(t('loadedToSlot')+' '+(activeSlot+1));
+  }catch(er){
+    console.error('Load error:', er);
+    setStatus(t('errorLoading'));
+  }
+  e.target.value='';
+};
 
 $('projectFileInput').onchange=async e=>{const f=e.target.files[0];if(!f)return;setStatus('Загрузка проекта...');try{const text=await f.text(),data=JSON.parse(text);if(data.version!=='5.0'){setStatus(t('incompatibleVersion'));return}stopAll();if(data.unlockedSlots)unlockedSlots=data.unlockedSlots;for(let i=0;i<10;i++){if(data.slots&&data.slots[i]&&data.slots[i].buffer){slots[i]=deserializeBuffer(data.slots[i].buffer);slotSettings[i]=normalizeSlot(data.slots[i].settings);volPoints[i]=data.slots[i].volPoints.map(p=>({...p}))}else{slots[i]=null;slotSettings[i]=normalizeSlot({});volPoints[i]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}]}}currentProjectName=data.projectName||'samplerx';activeSlot=0;selectedSlots.clear();timelineOffsetSample=0;timelineOffsetPattern=0;selection=null;loadSlotSettings(0);updatePads();drawWave();updateTransportButtons();updUndoRedo();updateSelectionInfo();updateTimelineScroll();updateProjectNameDisplay();setStatus(t('projectOpened')+': '+currentProjectName+'.sx')}catch(err){setStatus(t('errorOpeningProject')+': '+err.message)}e.target.value=''};
 
@@ -942,7 +999,136 @@ const dly=oc.createDelay(2);dly.delayTime.value=Math.max(0.001,s.del/1000);const
 
 function resetMixUI(){isRecordingMix=false;$('recMixBtn').classList.remove('active');$('recMixBtn').innerHTML='  <span data-i18n="recMix">Запись микса</span>';applyTranslations()}
 
-$('recBtn').addEventListener('click',async function(){try{if(isRecording){if(recTimerInterval)clearInterval(recTimerInterval);if(recMediaRecorder&&recMediaRecorder.state!=='inactive')recMediaRecorder.stop();return}ensureCtx();const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});recStream=stream;recChunks=[];recMediaRecorder=new MediaRecorder(stream);recMediaRecorder.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data)};recMediaRecorder.onstop=async()=>{if(recStream){recStream.getTracks().forEach(t=>t.stop());recStream=null}if(!recChunks.length){setStatus(t('noAudioRecorded'));resetRecUI();return}try{const buf=await audioCtx.decodeAudioData(await new Blob(recChunks,{type:recMediaRecorder.mimeType}).arrayBuffer());pushHistory(activeSlot);slots[activeSlot]=buf;selection=null;drawWave();updatePads();updateTransportButtons();updateTimelineScroll();setStatus(t('recorded')+' '+buf.duration.toFixed(1)+'s')}catch(e){setStatus(t('errorProcessing'))}resetRecUI()};recMediaRecorder.start();isRecording=true;recStartTime=Date.now();$('recBtn').classList.add('active');$('recBtn').innerHTML=' STOP';$('recIndicator').classList.add('active');recTimerInterval=setInterval(()=>{const s=Math.floor((Date.now()-recStartTime)/1000);$('recTime').textContent=Math.floor(s/60)+':'+(s%60+'').padStart(2,'0')},100)}catch(e){setStatus(e.name==='NotAllowedError'?t('micPermissionDenied'):t('micError'));resetRecUI()}});
+// ИСПРАВЛЕННАЯ ЗАПИСЬ МИКРОФОНА ДЛЯ МОБИЛЬНЫХ
+$('recBtn').addEventListener('click', function(){
+  // СИНХРОННО активируем AudioContext из user gesture
+  if(!audioCtx){
+    try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100})}catch(e){}
+  }
+  if(audioCtx&&audioCtx.state==='suspended'){
+    audioCtx.resume();
+  }
+  
+  if(isRecording){
+    if(recTimerInterval)clearInterval(recTimerInterval);
+    if(recMediaRecorder&&recMediaRecorder.state!=='inactive'){
+      recMediaRecorder.stop();
+    }
+    return;
+  }
+  
+  // Проверяем поддержку
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    setStatus(t('micNotSupported'));
+    return;
+  }
+  if(typeof MediaRecorder==='undefined'){
+    setStatus(t('micNotSupported'));
+    return;
+  }
+  
+  // Запускаем запись асинхронно
+  startMicRecording();
+});
+
+async function startMicRecording(){
+  try{
+    setStatus(t('requestMic'));
+    
+    const stream=await navigator.mediaDevices.getUserMedia({
+      audio:{
+        echoCancellation:false,
+        noiseSuppression:false,
+        autoGainControl:false
+      }
+    });
+    
+    recStream=stream;
+    recChunks=[];
+    
+    // Выбираем поддерживаемый mimeType
+    let mimeType='';
+    if(typeof MediaRecorder.isTypeSupported==='function'){
+      if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mimeType='audio/webm;codecs=opus';
+      else if(MediaRecorder.isTypeSupported('audio/webm'))mimeType='audio/webm';
+      else if(MediaRecorder.isTypeSupported('audio/ogg;codecs=opus'))mimeType='audio/ogg;codecs=opus';
+      else if(MediaRecorder.isTypeSupported('audio/mp4'))mimeType='audio/mp4';
+      else if(MediaRecorder.isTypeSupported('audio/aac'))mimeType='audio/aac';
+    }
+    
+    try{
+      recMediaRecorder=mimeType?new MediaRecorder(stream,{mimeType}):new MediaRecorder(stream);
+    }catch(err){
+      recMediaRecorder=new MediaRecorder(stream);
+    }
+    
+    recMediaRecorder.ondataavailable=e=>{
+      if(e.data.size>0)recChunks.push(e.data);
+    };
+    
+    recMediaRecorder.onstop=async()=>{
+      if(recStream){
+        recStream.getTracks().forEach(t=>t.stop());
+        recStream=null;
+      }
+      if(!recChunks.length){
+        setStatus(t('noAudioRecorded'));
+        resetRecUI();
+        return;
+      }
+      try{
+        const blobType=recMediaRecorder.mimeType||'audio/webm';
+        const audioBlob=new Blob(recChunks,{type:blobType});
+        const ab=await audioBlob.arrayBuffer();
+        
+        // Повторно активируем контекст для декодирования
+        if(audioCtx&&audioCtx.state==='suspended'){
+          await audioCtx.resume();
+        }
+        
+        const buf=await audioCtx.decodeAudioData(ab);
+        pushHistory(activeSlot);
+        slots[activeSlot]=buf;
+        selection=null;
+        drawWave();
+        updatePads();
+        updateTransportButtons();
+        updateTimelineScroll();
+        setStatus(t('recorded')+' '+buf.duration.toFixed(1)+'s');
+      }catch(e){
+        console.error('Decode error:',e);
+        setStatus(t('errorProcessing'));
+      }
+      resetRecUI();
+    };
+    
+    recMediaRecorder.onerror=(e)=>{
+      console.error('MediaRecorder error:',e);
+      setStatus(t('micError'));
+      resetRecUI();
+    };
+    
+    recMediaRecorder.start();
+    isRecording=true;
+    recStartTime=Date.now();
+    $('recBtn').classList.add('active');
+    $('recBtn').innerHTML='⏹ STOP';
+    $('recIndicator').classList.add('active');
+    recTimerInterval=setInterval(()=>{
+      const s=Math.floor((Date.now()-recStartTime)/1000);
+      $('recTime').textContent=Math.floor(s/60)+':'+(s%60+'').padStart(2,'0');
+    },100);
+    
+  }catch(e){
+    console.error('Mic error:',e);
+    if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'){
+      setStatus(t('micPermissionDenied'));
+    }else{
+      setStatus(t('micError'));
+    }
+    resetRecUI();
+  }
+}
 
 function resetRecUI(){isRecording=false;$('recBtn').classList.remove('active');$('recBtn').innerHTML='🎤 <span data-i18n="microphone">MIC</span>';applyTranslations();$('recIndicator').classList.remove('active')}
 
@@ -953,7 +1139,45 @@ function mkImp(ac,dur,dec){const r=ac.sampleRate,l=Math.max(1,Math.floor(r*dur))
 
 $('trimBtn').onclick=()=>{const b=slots[activeSlot];if(!b||!selection||selection.end-selection.start<2){setStatus(t('selectSliceFirst'));return}const s=Math.floor(selection.start/canvas.width*b.length),e=Math.floor(selection.end/canvas.width*b.length),nl=Math.max(1,e-s);pushHistory(activeSlot);const nb=audioCtx.createBuffer(b.numberOfChannels,nl,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c),dst=nb.getChannelData(c);for(let i=0;i<nl;i++)dst[i]=src[s+i]||0}slots[activeSlot]=nb;selection=null;drawWave();updatePads();setStatus(t('chopped'))};
 $('clearBtn').onclick=()=>{if(slots[activeSlot]){pushHistory(activeSlot);stopSlot(activeSlot);slots[activeSlot]=null;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('slotCleared'))}};
-$('mergeBtn').onclick=()=>{if(selectedSlots.size<2){setStatus(t('selectSliceFirst'));return}const idx=[...selectedSlots].sort((a,b)=>a-b),bufs=idx.map(i=>slots[i]).filter(b=>b);if(bufs.length<2){setStatus(t('notEnoughSlots'));return}let ts=slots.findIndex(s=>s===null);if(ts<0){setStatus(t('noFreeSlots'));return}const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);const m=audioCtx.createBuffer(nc,tl,sr);let off=0;for(const b of bufs){for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);off+=b.length}slots[ts]=m;idx.forEach(i=>{if(i!==ts){slots[i]=null;slotSettings[i]=normalizeSlot({});volPoints[i]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}]}});activeSlot=ts;selectedSlots.clear();loadSlotSettings(ts);$('modeIndicator').textContent='';drawWave();updatePads();updateTransportButtons();updateSelectionInfo();updateTimelineScroll();setStatus(t('merged'))};
+
+// MERGE В ДВА ЭТАПА
+$('mergeBtn').onclick=()=>{
+  if(selectedSlots.size<2){
+    // Первое нажатие - показываем подсказку
+    setStatus(t('selectSliceFirst'));
+    return;
+  }
+  // Второе нажатие (после выделения 2+ слотов) - выполняем merge
+  const idx=[...selectedSlots].sort((a,b)=>a-b),bufs=idx.map(i=>slots[i]).filter(b=>b);
+  if(bufs.length<2){setStatus(t('notEnoughSlots'));return}
+  let ts=slots.findIndex(s=>s===null);
+  if(ts<0){setStatus(t('noFreeSlots'));return}
+  const sr=bufs[0].sampleRate,nc=bufs[0].numberOfChannels,tl=bufs.reduce((s,b)=>s+b.length,0);
+  const m=audioCtx.createBuffer(nc,tl,sr);
+  let off=0;
+  for(const b of bufs){
+    for(let c=0;c<nc;c++)m.getChannelData(c).set(b.getChannelData(c),off);
+    off+=b.length;
+  }
+  slots[ts]=m;
+  idx.forEach(i=>{
+    if(i!==ts){
+      slots[i]=null;
+      slotSettings[i]=normalizeSlot({});
+      volPoints[i]=[{x:0,y:1},{x:0.167,y:1},{x:0.333,y:1},{x:0.5,y:1},{x:0.667,y:1},{x:0.833,y:1},{x:1,y:1}];
+    }
+  });
+  activeSlot=ts;
+  selectedSlots.clear();
+  loadSlotSettings(ts);
+  $('modeIndicator').textContent='';
+  drawWave();
+  updatePads();
+  updateTransportButtons();
+  updateSelectionInfo();
+  updateTimelineScroll();
+  setStatus(t('merged'));
+};
 
 function updateLabelsUI(){
   $('tempoVal').textContent=(+$('tempo').value).toFixed(2)+'x';
@@ -990,7 +1214,21 @@ $('aboutModal').addEventListener('click',e=>{if(e.target.id==='aboutModal')close
 function checkAdReadiness(){if(!window.vkBridge)return;window.vkBridge.send('VKWebAppCheckNativeAds',{ad_format:'reward'}).then(d=>{isAdReady=d.result}).catch(()=>{isAdReady=false})}
 function checkInterstitialAdReadiness(){if(!window.vkBridge)return;window.vkBridge.send('VKWebAppCheckNativeAds',{ad_format:'interstitial'}).then(d=>{isInterstitialAdReady=d.result}).catch(()=>{isInterstitialAdReady=false})}
 function showInterstitialAd(){if(!window.vkBridge)return;if(!isInterstitialAdReady){checkInterstitialAdReadiness();return}window.vkBridge.send('VKWebAppShowNativeAds',{ad_format:'interstitial'}).then(()=>{setTimeout(checkInterstitialAdReadiness,2000)}).catch(()=>{})}
-function unlockNextSlot(){if(!window.vkBridge)return;const i=unlockedSlots.findIndex(u=>!u);if(i<0){setStatus(t('allUnlocked'));return}if(!isAdReady){setStatus(t('adLoadingWait'));checkAdReadiness();return}window.vkBridge.send('VKWebAppShowNativeAds',{ad_format:'reward'}).then(d=>{if(d.result){unlockedSlots[i]=true;updatePads();drawWave();setStatus(t('slotUnlocked')+' '+(i+1));setTimeout(checkAdReadiness,2000)}else setStatus(t('adUnavailable'))}).catch(()=>setStatus(t('adUnavailable')))}
+function unlockNextSlot(){
+  if(!window.vkBridge)return;
+  const i=unlockedSlots.findIndex(u=>!u);
+  if(i<0){setStatus(t('allUnlocked'));return}
+  if(!isAdReady){setStatus(t('adLoadingWait'));checkAdReadiness();return}
+  window.vkBridge.send('VKWebAppShowNativeAds',{ad_format:'reward'}).then(d=>{
+    if(d.result){
+      unlockedSlots[i]=true;
+      updatePads();
+      drawWave();
+      setStatus(t('slotUnlocked')+' '+(i+1));
+      setTimeout(checkAdReadiness,2000);
+    }else setStatus(t('adUnavailable'));
+  }).catch(()=>setStatus(t('adUnavailable')));
+}
 if(window.vkBridge){window.vkBridge.send('VKWebAppInit').then(()=>{checkAdReadiness();checkInterstitialAdReadiness();setInterval(checkAdReadiness,30000);setInterval(checkInterstitialAdReadiness,30000)})}
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')showInterstitialAd()});
 init();
