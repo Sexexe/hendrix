@@ -141,7 +141,17 @@ canvas{width:100%;height:200px;background:#000;border:1px solid #000;border-radi
 .actions button.ad-btn{background:linear-gradient(180deg, #1a7a3a 0%, #0f5a2a 100%);border-color:#0a3a1a;border-top-color:rgba(255,255,255,0.25);color:#fff;grid-column:2;}
 .actions button.ad-btn:hover{background:linear-gradient(180deg, #22883e 0%, #1a7a3a 100%)}
 
-input[type=file]{position:fixed;top:-100px;left:-100px;width:1px;height:1px;opacity:0;pointer-events:none;overflow:hidden;border:0;padding:0}
+input[type=file]{
+  position:fixed;
+  top:-9999px;
+  left:-9999px;
+  width:1px;
+  height:1px;
+  opacity:0;
+  overflow:hidden;
+  border:0;
+  padding:0;
+}
 
 .status{text-align:center;color:#86868b;font-size:12px;margin-top:12px;min-height:18px;white-space:normal;word-wrap:break-word;text-shadow:0 1px 0 rgba(255,255,255,0.05)}
 
@@ -277,7 +287,7 @@ input[type=file]{position:fixed;top:-100px;left:-100px;width:1px;height:1px;opac
     <div class="rec-indicator" id="recIndicator"><div class="rec-dot"></div><span id="recTime">0:00</span><div class="rec-level"><div class="rec-level-bar" id="recLevel"></div></div></div>
     <div class="actions">
       <label for="fileInput" id="loadBtn" class="btn-xl">📂  <span data-i18n="load">Загрузить</span></label>
-      <input type="file" id="fileInput" accept="audio/*">
+      <input type="file" id="fileInput" accept="audio/mpeg,audio/mp3,audio/wav,audio/wave,audio/x-wav,audio/ogg,audio/oga,audio/aac,audio/mp4,audio/x-m4a,audio/aiff,audio/x-aiff,audio/flac,audio/webm">
       <button id="trimBtn" class="btn-xl" disabled>✂  <span data-i18n="chop">Обрезать</span></button>
       <button id="clearBtn" class="btn-xl" disabled>  <span data-i18n="clear">Очистить</span></button>
       <button id="recMixBtn" class="rec-mix btn-xl">  <span data-i18n="recMix">Запись микса</span></button>
@@ -339,7 +349,6 @@ input[type=file]{position:fixed;top:-100px;left:-100px;width:1px;height:1px;opac
 </div>
 <script>
 let currentLang=localStorage.getItem('samplerLang')||'ru';
-// Блокировка слотов 6-10 как было изначально
 let unlockedSlots=[true,true,true,true,true,false,false,false,false,false];
 let isAdReady=false,isInterstitialAdReady=false;
 let viewMode='sample';
@@ -410,7 +419,6 @@ function updateProjectNameDisplay(){$('projectNameDisplay').textContent=currentP
 function openProject(){$('projectFileInput').click()}
 
 function init(){
-  // Инициализация AudioContext на любом user gesture
   const initAudio = ()=>{
     if(!audioCtx){
       try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100,latencyHint:'interactive'})}catch(e){}
@@ -475,7 +483,6 @@ function openFileForSlot(i){
   padDoubleClickSlot=i;
   const fi=$('fileInput');
   fi.value='';
-  // Синхронный вызов click() из user gesture - критично для мобильных
   try{
     fi.click();
   }catch(e){
@@ -487,15 +494,12 @@ function initPads(){
   const c=$('pads');c.innerHTML='';
   for(let i=0;i<10;i++){
     const p=document.createElement('div');p.className='pad';p.dataset.index=i;
-    // БЕЗ иконки замка
     p.innerHTML='<div class="pad-num">'+(i+1)+'</div><div class="pad-duration"></div>';
     
-    // pointerup для отслеживания двойного тапа/клика
     p.addEventListener('pointerup',(e)=>{
       const now=Date.now();
       const last=lastTapTimes[i];
       if(last>0 && now-last<400){
-        // Двойной тап/клик
         e.preventDefault();
         e.stopPropagation();
         lastTapTimes[i]=0;
@@ -506,7 +510,6 @@ function initPads(){
         }
       }else{
         lastTapTimes[i]=now;
-        // Одиночный клик с небольшой задержкой
         setTimeout(()=>{
           if(lastTapTimes[i]===now){
             handlePadClick(i,e);
@@ -596,7 +599,6 @@ function updatePads(){
 function updateTransportButtons(){
   let hasAudio=viewMode==='sample'?slots[activeSlot]!==null:slots.some(s=>s!==null);
   ['playBtn','loopBtn','stopBtn','trimBtn','clearBtn'].forEach(id=>$(id).disabled=!hasAudio);
-  // Merge НЕ disabled - работает в два этапа
 }
 
 function resizeCanvas(){const r=canvas.getBoundingClientRect();if(r.width>0&&r.height>0){canvas.width=r.width;canvas.height=r.height;drawWave();updateTimelineScroll()}}
@@ -957,6 +959,15 @@ $('stopBtn').onclick=stopAll;
 $('fileInput').onchange=async e=>{
   const f=e.target.files[0];
   if(!f)return;
+  
+  const isAudio = f.type.startsWith('audio/') || 
+                  /\.(wav|wave|mp3|ogg|oga|flac|aac|m4a|aiff|aif|webm|mp4|opus|wma|alac)$/i.test(f.name);
+  if(!isAudio){
+    setStatus(t('errorLoading') + ': только аудиофайлы');
+    e.target.value='';
+    return;
+  }
+  
   ensureCtx();
   setStatus(t('loading'));
   try{
@@ -999,9 +1010,7 @@ const dly=oc.createDelay(2);dly.delayTime.value=Math.max(0.001,s.del/1000);const
 
 function resetMixUI(){isRecordingMix=false;$('recMixBtn').classList.remove('active');$('recMixBtn').innerHTML='  <span data-i18n="recMix">Запись микса</span>';applyTranslations()}
 
-// ИСПРАВЛЕННАЯ ЗАПИСЬ МИКРОФОНА ДЛЯ МОБИЛЬНЫХ
 $('recBtn').addEventListener('click', function(){
-  // СИНХРОННО активируем AudioContext из user gesture
   if(!audioCtx){
     try{audioCtx=new(window.AudioContext||window.webkitAudioContext)({sampleRate:44100})}catch(e){}
   }
@@ -1017,7 +1026,6 @@ $('recBtn').addEventListener('click', function(){
     return;
   }
   
-  // Проверяем поддержку
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     setStatus(t('micNotSupported'));
     return;
@@ -1027,7 +1035,6 @@ $('recBtn').addEventListener('click', function(){
     return;
   }
   
-  // Запускаем запись асинхронно
   startMicRecording();
 });
 
@@ -1046,7 +1053,6 @@ async function startMicRecording(){
     recStream=stream;
     recChunks=[];
     
-    // Выбираем поддерживаемый mimeType
     let mimeType='';
     if(typeof MediaRecorder.isTypeSupported==='function'){
       if(MediaRecorder.isTypeSupported('audio/webm;codecs=opus'))mimeType='audio/webm;codecs=opus';
@@ -1081,7 +1087,6 @@ async function startMicRecording(){
         const audioBlob=new Blob(recChunks,{type:blobType});
         const ab=await audioBlob.arrayBuffer();
         
-        // Повторно активируем контекст для декодирования
         if(audioCtx&&audioCtx.state==='suspended'){
           await audioCtx.resume();
         }
@@ -1140,14 +1145,11 @@ function mkImp(ac,dur,dec){const r=ac.sampleRate,l=Math.max(1,Math.floor(r*dur))
 $('trimBtn').onclick=()=>{const b=slots[activeSlot];if(!b||!selection||selection.end-selection.start<2){setStatus(t('selectSliceFirst'));return}const s=Math.floor(selection.start/canvas.width*b.length),e=Math.floor(selection.end/canvas.width*b.length),nl=Math.max(1,e-s);pushHistory(activeSlot);const nb=audioCtx.createBuffer(b.numberOfChannels,nl,b.sampleRate);for(let c=0;c<b.numberOfChannels;c++){const src=b.getChannelData(c),dst=nb.getChannelData(c);for(let i=0;i<nl;i++)dst[i]=src[s+i]||0}slots[activeSlot]=nb;selection=null;drawWave();updatePads();setStatus(t('chopped'))};
 $('clearBtn').onclick=()=>{if(slots[activeSlot]){pushHistory(activeSlot);stopSlot(activeSlot);slots[activeSlot]=null;selection=null;drawWave();updatePads();updateTransportButtons();setStatus(t('slotCleared'))}};
 
-// MERGE В ДВА ЭТАПА
 $('mergeBtn').onclick=()=>{
   if(selectedSlots.size<2){
-    // Первое нажатие - показываем подсказку
     setStatus(t('selectSliceFirst'));
     return;
   }
-  // Второе нажатие (после выделения 2+ слотов) - выполняем merge
   const idx=[...selectedSlots].sort((a,b)=>a-b),bufs=idx.map(i=>slots[i]).filter(b=>b);
   if(bufs.length<2){setStatus(t('notEnoughSlots'));return}
   let ts=slots.findIndex(s=>s===null);
